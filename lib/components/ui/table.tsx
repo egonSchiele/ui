@@ -2,20 +2,14 @@ import * as React from "react";
 
 import { cn } from "@/utils";
 
-function Table({
-  darkMode,
-  className,
-  ...props
-}: React.ComponentProps<"table"> & { darkMode?: boolean }) {
+function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div className={cn("relative w-full overflow-auto", darkMode && "dark")}>
-      <div className="relative w-full overflow-auto p-4">
-        <table
-          data-slot="table"
-          className={cn("w-full caption-bottom text-sm ", className)}
-          {...props}
-        />
-      </div>
+    <div className="relative w-full overflow-auto p-4">
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm ", className)}
+        {...props}
+      />
     </div>
   );
 }

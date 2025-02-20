@@ -1,5 +1,4 @@
-import * as React from "react";
-import "../../globals.css";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,11 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import clsx from "clsx";
+import "../../globals.css";
 
-export function CardWithForm({ darkMode }: { darkMode?: boolean }) {
+export function CardWithForm() {
   return (
-    <Card className={clsx(darkMode && "dark", "w-[350px]")}>
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>This is a description.</CardDescription>

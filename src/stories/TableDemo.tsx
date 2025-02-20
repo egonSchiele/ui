@@ -32,9 +32,9 @@ const invoices = [
   },
 ];
 
-export function TableDemo({ darkMode }: { darkMode?: boolean }) {
+export function TableDemo() {
   return (
-    <Table darkMode={darkMode}>
+    <Table>
       <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>

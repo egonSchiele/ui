@@ -18,26 +18,12 @@ const meta: Meta = {
   tags: ["autodocs"],
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
-  argTypes: {
-    darkMode: {
-      control: {
-        type: "boolean",
-      },
-    },
-  },
+  argTypes: {},
 } satisfies Meta<typeof CardWithForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    darkMode: false,
-  },
-};
-
-export const DarkMode: Story = {
-  args: {
-    darkMode: true,
-  },
+  args: {},
 };
