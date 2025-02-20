@@ -4,6 +4,13 @@
 
 [See storybook](https://ui-f9fn.vercel.app/?path=/docs/example-button--docs)
 
+### Storybook debugging
+
+- If styles look off, refresh.
+- You'll need these two buttons to toggle between light and dark mode. If you don't see them, refresh.
+
+![](/public/storybook-buttons.png)
+
 ## Use it
 
 ```bash
