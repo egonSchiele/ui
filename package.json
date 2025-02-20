@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "exports": {
-    "./button": {
-      "types": "./dist/Button.d.ts",
-      "import": "./dist/Button.jsx"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.jsx"
     }
   },
   "scripts": {
