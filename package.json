@@ -5,13 +5,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.jsx"
+      "types": "./dist/lib/index.d.ts",
+      "import": "./dist/lib/index.jsx"
     }
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "vite": "vite",
     "storybook": "start-storybook -p 6006",
     "shadcn": "shadcn"
@@ -27,6 +27,7 @@
     "shadcn": "2.4.0-canary.6",
     "storybook": "^8.5.8",
     "tailwindcss": "^4.0.7",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.7.3",
     "vite": "^6.1.1"
   },
