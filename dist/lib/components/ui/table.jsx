@@ -12,9 +12,9 @@ var __rest = (this && this.__rest) || function (s, e) {
 import * as React from "react";
 import { cn } from "../../utils";
 function Table(_a) {
-    var { className } = _a, props = __rest(_a, ["className"]);
-    return (<div className="relative w-full overflow-auto p-4">
-      <table data-slot="table" className={cn("w-full caption-bottom text-sm ", className)} {...props}/>
+    var { className, tableClassName } = _a, props = __rest(_a, ["className", "tableClassName"]);
+    return (<div className={cn("relative w-full overflow-auto p-4", className)}>
+      <table data-slot="table" className={cn("w-full caption-bottom text-sm ", tableClassName)} {...props}/>
     </div>);
 }
 function TableHeader(_a) {
