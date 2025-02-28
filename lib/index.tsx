@@ -27,6 +27,16 @@ import {
   SelectValue,
 } from "./components/ui/select";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./components/ui/dialog";
+
 export {
   Button,
   Table,
@@ -50,4 +60,11 @@ export {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 };
