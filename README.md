@@ -36,3 +36,13 @@ pnpm run shadcn add
 ```bash
 pnpm run build
 ```
+
+## Usage notes
+
+After you add the npm package, you'll also need to manually copy over the CSS. Additionally, you'll need to set this package as a source in your CSS, so Tailwind knows to pull Tailwind classes from Egon UI components.
+
+## Troubleshooting
+
+If you see an error related to props, make sure the React version in your app matches the React version in this package, currently React 19.
+
+If you see an error related to `useRef` being `null`, it might be because you're trying to use this package locally instead of pulling it from GitHub. This is a bug in pnpm. Change to pulling it from GitHub and it should now work.
