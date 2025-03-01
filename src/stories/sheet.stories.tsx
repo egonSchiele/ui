@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
 import "../../globals.css";
-import SidebarDemo from "./SidebarDemo";
+import { SheetDemo } from "./SheetDemo";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {
-  title: "Examples/Sidebar",
-  component: SidebarDemo,
+  title: "Examples/Sheet",
+  component: SheetDemo,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
@@ -18,12 +17,21 @@ const meta: Meta = {
   tags: ["autodocs"],
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
-  argTypes: {},
-} satisfies Meta<typeof SidebarDemo>;
+  argTypes: {
+    side: {
+      control: {
+        type: "select",
+        options: ["left", "right", "top", "bottom"],
+      },
+    }
+  },
+} satisfies Meta<typeof SheetDemo>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    side: "left"
+  },
 };

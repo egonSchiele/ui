@@ -1,29 +1,40 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
 import "../../globals.css";
-import SidebarDemo from "./SidebarDemo";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {
-  title: "Examples/Sidebar",
-  component: SidebarDemo,
+  title: "Examples/Skeleton",
+  component: Skeleton,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
     backgrounds: {
-      default: "dark",
+      default: "light",
     },
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ["autodocs"],
 
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
-  argTypes: {},
-} satisfies Meta<typeof SidebarDemo>;
+  argTypes: {
+    className: {
+      type: "string",
+    }
+  },
+} satisfies Meta<typeof Skeleton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {},
+export const Circle: Story = {
+  args: {
+    className: "h-12 w-12 rounded-full"
+  },
+};
+
+export const Rectangle: Story = {
+  args: {
+    className: "h-4 w-[250px]"
+  },
 };
