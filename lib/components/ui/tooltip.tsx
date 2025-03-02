@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
-import { cn } from "@/utils"
-import { TooltipProps, TooltipProviderProps } from "@radix-ui/react-tooltip"
+import { cn } from "@/utils";
+import { TooltipProps, TooltipProviderProps } from "@radix-ui/react-tooltip";
 
 function TooltipProvider({
   delayDuration = 0,
@@ -16,34 +16,34 @@ function TooltipProvider({
       delayDuration={delayDuration}
       {...props}
     />
-  )
+  );
 }
 
-function Tooltip({
-  ...props
-}: TooltipProps) {
+function Tooltip({ ...props }: TooltipProps) {
   return (
     <TooltipProvider>
       <TooltipPrimitive.Root data-slot="tooltip" {...props} />
     </TooltipProvider>
-  )
+  );
 }
 
 function TooltipTrigger({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
 // Types taken from
 // @radix-ui/react-popper/dist/index.d.mts
-declare const SIDE_OPTIONS: readonly ["top", "right", "bottom", "left"];
-declare const ALIGN_OPTIONS: readonly ["start", "center", "end"];
+const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
+const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Boundary = Element | null;
 
-type TooltipContentProps = React.ComponentProps<typeof TooltipPrimitive.Content> & {
+type TooltipContentProps = React.ComponentProps<
+  typeof TooltipPrimitive.Content
+> & {
   side?: Side;
   sideOffset?: number;
   align?: Align;
@@ -52,23 +52,19 @@ type TooltipContentProps = React.ComponentProps<typeof TooltipPrimitive.Content>
   avoidCollisions?: boolean;
   collisionBoundary?: Boundary | Boundary[];
   collisionPadding?: number | Partial<Record<Side, number>>;
-  sticky?: 'partial' | 'always';
+  sticky?: "partial" | "always";
   hideWhenDetached?: boolean;
-  updatePositionStrategy?: 'optimized' | 'always';
+  updatePositionStrategy?: "optimized" | "always";
   onPlaced?: () => void;
 
   forceMount?: true;
 
   children: React.ReactNode;
   className?: string;
-}
+};
 
 function TooltipContent(props: TooltipContentProps) {
-  const {
-    children,
-    sideOffset = 8,
-    className,
-  } = props;
+  const { children, sideOffset = 8, className } = props;
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -84,7 +80,7 @@ function TooltipContent(props: TooltipContentProps) {
         <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
-  )
+  );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
