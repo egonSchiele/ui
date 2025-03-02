@@ -4,11 +4,12 @@ import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
 import { cn } from "@/utils"
+import { TooltipProps, TooltipProviderProps } from "@radix-ui/react-tooltip"
 
 function TooltipProvider({
   delayDuration = 0,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+}: TooltipProviderProps) {
   return (
     <TooltipPrimitive.Provider
       data-slot="tooltip-provider"
@@ -20,7 +21,7 @@ function TooltipProvider({
 
 function Tooltip({
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
+}: TooltipProps) {
   return (
     <TooltipProvider>
       <TooltipPrimitive.Root data-slot="tooltip" {...props} />
@@ -34,12 +35,40 @@ function TooltipTrigger({
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
-function TooltipContent({
-  className,
-  sideOffset = 0,
-  children,
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+// Types taken from
+// @radix-ui/react-popper/dist/index.d.mts
+declare const SIDE_OPTIONS: readonly ["top", "right", "bottom", "left"];
+declare const ALIGN_OPTIONS: readonly ["start", "center", "end"];
+type Side = (typeof SIDE_OPTIONS)[number];
+type Align = (typeof ALIGN_OPTIONS)[number];
+type Boundary = Element | null;
+
+type TooltipContentProps = React.ComponentProps<typeof TooltipPrimitive.Content> & {
+  side?: Side;
+  sideOffset?: number;
+  align?: Align;
+  alignOffset?: number;
+  arrowPadding?: number;
+  avoidCollisions?: boolean;
+  collisionBoundary?: Boundary | Boundary[];
+  collisionPadding?: number | Partial<Record<Side, number>>;
+  sticky?: 'partial' | 'always';
+  hideWhenDetached?: boolean;
+  updatePositionStrategy?: 'optimized' | 'always';
+  onPlaced?: () => void;
+
+  forceMount?: true;
+
+  children: React.ReactNode;
+  className?: string;
+}
+
+function TooltipContent(props: TooltipContentProps) {
+  const {
+    children,
+    sideOffset = 8,
+    className,
+  } = props;
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
