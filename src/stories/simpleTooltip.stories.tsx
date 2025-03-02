@@ -128,7 +128,6 @@ export const Default: Story = {
     children: <Button>Hover me</Button>,
     tooltipContent: <p>Tooltip content</p>,
     side: "right",
-    open: true,
   },
 };
 
