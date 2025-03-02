@@ -9,11 +9,10 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import * as React from "react";
-import * as LabelPrimitive from "@radix-ui/react-label";
 import { cn } from "../../utils";
-function Label(_a) {
+import React from "react";
+function Skeleton(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<LabelPrimitive.Root data-slot="label" className={cn("text-sm text-foreground leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50", className)} {...props}/>);
+    return (<div data-slot="skeleton" className={cn("bg-primary/10 animate-pulse rounded-md", className)} {...props}/>);
 }
-export { Label };
+export { Skeleton };
