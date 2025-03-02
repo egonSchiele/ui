@@ -51,6 +51,8 @@ import {
   TableRow,
 } from "./components/ui/table";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+
 import {
   Tooltip,
   TooltipContent,
@@ -94,6 +96,10 @@ export {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipProvider,
