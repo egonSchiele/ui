@@ -20,6 +20,7 @@ import {
 
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
+import { LabeledSwitch } from "./components/ui/labeledSwitch";
 
 import {
   Pagination,
@@ -113,6 +114,7 @@ export {
   DialogTrigger,
   Input,
   Label,
+  LabeledSwitch,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
