@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
@@ -9,7 +7,8 @@ import { TooltipProps, TooltipProviderProps } from "@radix-ui/react-tooltip";
 function TooltipProvider({
   delayDuration = 0,
   ...props
-}: TooltipProviderProps) {
+}: TooltipProviderProps &
+  React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
     <TooltipPrimitive.Provider
       data-slot="tooltip-provider"
@@ -19,7 +18,9 @@ function TooltipProvider({
   );
 }
 
-function Tooltip({ ...props }: TooltipProps) {
+function Tooltip({
+  ...props
+}: TooltipProps & React.ComponentProps<typeof TooltipPrimitive.Root>) {
   return (
     <TooltipProvider>
       <TooltipPrimitive.Root data-slot="tooltip" {...props} />
