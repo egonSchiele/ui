@@ -13,8 +13,8 @@ import * as React from "react";
 import { cn } from "../../utils";
 function Table(_a) {
     var { className, tableClassName } = _a, props = __rest(_a, ["className", "tableClassName"]);
-    return (<div className={cn("relative w-full overflow-auto p-4", className)}>
-      <table data-slot="table" className={cn("w-full caption-bottom text-sm ", tableClassName)} {...props}/>
+    return (<div data-slot="table-container" className={cn("relative w-full overflow-x-auto", className)}>
+      <table data-slot="table" className={cn("w-full caption-bottom text-sm", tableClassName)} {...props}/>
     </div>);
 }
 function TableHeader(_a) {
@@ -23,7 +23,7 @@ function TableHeader(_a) {
 }
 function TableBody(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0 ", className)} {...props}/>);
+    return (<tbody data-slot="table-body" className={cn("[&_tr:last-child]:border-0", className)} {...props}/>);
 }
 function TableFooter(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
@@ -31,15 +31,15 @@ function TableFooter(_a) {
 }
 function TableRow(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<tr data-slot="table-row" className={cn("hover:bg-muted/50 data-[state=selected]:bg-muted   border-b transition-colors", className)} {...props}/>);
+    return (<tr data-slot="table-row" className={cn("hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", className)} {...props}/>);
 }
 function TableHead(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<th data-slot="table-head" className={cn("text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)} {...props}/>);
+    return (<th data-slot="table-head" className={cn("text-muted-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)} {...props}/>);
 }
 function TableCell(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<td data-slot="table-cell" className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)} {...props}/>);
+    return (<td data-slot="table-cell" className={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)} {...props}/>);
 }
 function TableCaption(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);

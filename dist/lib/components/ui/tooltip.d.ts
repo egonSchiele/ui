@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { TooltipProps, TooltipProviderProps } from "@radix-ui/react-tooltip";
-declare function TooltipProvider({ delayDuration, ...props }: TooltipProviderProps): React.JSX.Element;
-declare function Tooltip({ ...props }: TooltipProps): React.JSX.Element;
+declare function TooltipProvider({ delayDuration, ...props }: TooltipProviderProps & React.ComponentProps<typeof TooltipPrimitive.Provider>): React.JSX.Element;
+declare function Tooltip({ ...props }: TooltipProps & React.ComponentProps<typeof TooltipPrimitive.Root>): React.JSX.Element;
 declare function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimitive.Trigger>): React.JSX.Element;
 declare const SIDE_OPTIONS: readonly ["top", "right", "bottom", "left"];
 declare const ALIGN_OPTIONS: readonly ["start", "center", "end"];
