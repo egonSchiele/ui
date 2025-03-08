@@ -58,11 +58,13 @@ function SidebarProvider({
   className,
   style,
   children,
+  side = null,
   ...props
 }: React.ComponentProps<"div"> & {
   defaultOpen?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  side?: "left" | "right" | null
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
@@ -138,6 +140,7 @@ function SidebarProvider({
           }
           className={cn(
             "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            "border-border", side === "left" && "border-r", side === "right" && "border-l",
             className
           )}
           {...props}
@@ -564,7 +567,7 @@ function SidebarMenuAction({
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
-          "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
+        "peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0",
         className
       )}
       {...props}
