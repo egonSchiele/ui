@@ -36,7 +36,7 @@ function useSidebar() {
     return context;
 }
 function SidebarProvider(_a) {
-    var { defaultOpen = true, open: openProp, onOpenChange: setOpenProp, className, style, children } = _a, props = __rest(_a, ["defaultOpen", "open", "onOpenChange", "className", "style", "children"]);
+    var { defaultOpen = true, open: openProp, onOpenChange: setOpenProp, className, style, children, side = null } = _a, props = __rest(_a, ["defaultOpen", "open", "onOpenChange", "className", "style", "children", "side"]);
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
     // This is the internal state of the sidebar.
@@ -84,7 +84,7 @@ function SidebarProvider(_a) {
     }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]);
     return (<SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
-        <div data-slot="sidebar-wrapper" style={Object.assign({ "--sidebar-width": SIDEBAR_WIDTH, "--sidebar-width-icon": SIDEBAR_WIDTH_ICON }, style)} className={cn("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full", className)} {...props}>
+        <div data-slot="sidebar-wrapper" style={Object.assign({ "--sidebar-width": SIDEBAR_WIDTH, "--sidebar-width-icon": SIDEBAR_WIDTH_ICON }, style)} className={cn("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full", "border-border", side === "left" && "border-r", side === "right" && "border-l", className)} {...props}>
           {children}
         </div>
       </TooltipProvider>

@@ -15,10 +15,11 @@ type SidebarContext = {
 };
 declare const SidebarContext: React.Context<SidebarContext | null>;
 declare function useSidebar(): SidebarContext;
-declare function SidebarProvider({ defaultOpen, open: openProp, onOpenChange: setOpenProp, className, style, children, ...props }: React.ComponentProps<"div"> & {
+declare function SidebarProvider({ defaultOpen, open: openProp, onOpenChange: setOpenProp, className, style, children, side, ...props }: React.ComponentProps<"div"> & {
     defaultOpen?: boolean;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    side?: "left" | "right" | null;
 }): React.JSX.Element;
 declare function Sidebar({ side, variant, collapsible, className, children, ...props }: React.ComponentProps<"div"> & {
     side?: "left" | "right";
