@@ -18,7 +18,7 @@ function Tabs(_a) {
 }
 function TabsList(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<TabsPrimitive.List data-slot="tabs-list" className={cn("bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-1", className)} {...props}/>);
+    return (<TabsPrimitive.List data-slot="tabs-list" className={cn("bg-muted text-muted-foreground inline-flex h-9 w-full items-center justify-center rounded-lg p-1", className)} {...props}/>);
 }
 function TabsTrigger(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
