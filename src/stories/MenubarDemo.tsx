@@ -13,6 +13,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import React from "react";
 
 export default function MenubarDemo() {
   return (
