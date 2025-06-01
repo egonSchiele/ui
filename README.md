@@ -2,7 +2,7 @@
 
 ## Storybook
 
-[See storybook](https://ui-f9fn.vercel.app/?path=/docs/example-button--docs)
+[See storybook](https://ui-f9fn.vercel.app/?path=/docs/ui-button--docs)
 
 ### Storybook debugging
 
