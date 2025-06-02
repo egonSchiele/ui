@@ -11,7 +11,7 @@ import { Menubar, MenubarPortal, MenubarMenu, MenubarTrigger, MenubarContent, Me
 import { PageHeading } from "./components/ui/typography/pageHeading";
 import { PageHeading2 } from "./components/ui/typography/pageHeading2";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "./components/ui/pagination";
-import { Paragraph, } from "./components/ui/typography/paragraph";
+import { Paragraph } from "./components/ui/typography/paragraph";
 import { SectionHeading } from "./components/ui/typography/sectionHeading";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "./components/ui/form/select";
 import { Separator } from "./components/ui/layout/separator";

@@ -1,6 +1,6 @@
 import React from "react";
-export declare function SectionHeading({ text, description, className, actions, }: {
-    text: string;
+export declare function SectionHeading({ children, description, className, actions, }: {
+    children: string | React.ReactNode;
     description?: string;
     className?: string;
     actions?: React.ReactNode;

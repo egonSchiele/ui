@@ -1,6 +1,7 @@
 import React from "react";
-export type CalloutProps = {
-    text: string;
+type CalloutProps = {
+    children: string | React.ReactNode;
     className?: string;
 } & Record<string, any>;
 export declare function Callout(props: CalloutProps): React.JSX.Element;
+export {};

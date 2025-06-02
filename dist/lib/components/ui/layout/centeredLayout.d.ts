@@ -1,3 +1,5 @@
-export declare function CenteredLayout({ children }: {
+import React from "react";
+export declare function CenteredLayout({ children, className, }: {
     children?: React.ReactNode;
-}): import("react").JSX.Element;
+    className?: string;
+}): React.JSX.Element;
