@@ -8,6 +8,8 @@ import {
   CardTitle,
 } from "./components/ui/card";
 
+import { CenteredLayout } from "./components/ui/layout/centeredLayout";
+
 import {
   Dialog,
   DialogContent,
@@ -42,6 +44,7 @@ import {
 } from "./components/ui/menubar";
 
 import { PageHeading } from "./components/ui/typography/pageHeading";
+import { PageHeading2 } from "./components/ui/typography/pageHeading2";
 
 import {
   Pagination,
@@ -128,6 +131,7 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
+  CenteredLayout,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -156,6 +160,7 @@ export {
   MenubarSubTrigger,
   MenubarSubContent,
   PageHeading,
+  PageHeading2,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
