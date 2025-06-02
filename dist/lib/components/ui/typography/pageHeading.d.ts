@@ -1,6 +1,6 @@
 import React from "react";
-export declare function PageHeading({ text, className, actions, }: {
+export declare function PageHeading({ text, accentText, className, }: {
     text: string;
+    accentText?: string;
     className?: string;
-    actions?: React.ReactNode;
 }): React.JSX.Element;
