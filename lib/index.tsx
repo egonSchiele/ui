@@ -21,7 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./components/ui/dialog";
-import { Header } from "./components/ui/layout/header";
+import { Header, NavigationItem } from "./components/ui/layout/header";
 import { Input } from "./components/ui/form/input";
 import { Label } from "./components/ui/form/label";
 import { LabeledSwitch } from "./components/ui/form/labeledSwitch";
@@ -163,6 +163,7 @@ export {
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
+  NavigationItem,
   PageHeading,
   PageHeading2,
   Pagination,
