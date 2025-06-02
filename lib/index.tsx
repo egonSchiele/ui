@@ -1,3 +1,4 @@
+import { Banner } from "./components/ui/banner";
 import { Button } from "./components/ui/form/button";
 import { Callout } from "./components/ui/typography/callout";
 import {
@@ -125,6 +126,7 @@ import {
 } from "./components/ui/tooltip";
 
 export {
+  Banner,
   Button,
   Callout,
   Card,
