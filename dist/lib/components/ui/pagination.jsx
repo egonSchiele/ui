@@ -12,7 +12,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon, } from "lucide-react";
 import { cn } from "../../utils";
-import { buttonVariants } from "../../components/ui/button";
+import { buttonVariants } from "../../components/ui/form/button";
 function Pagination(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
     return (<nav role="navigation" aria-label="pagination" data-slot="pagination" className={cn("mx-auto flex w-full justify-center", className)} {...props}/>);

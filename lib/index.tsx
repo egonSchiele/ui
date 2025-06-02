@@ -53,6 +53,8 @@ import {
   PaginationPrevious,
 } from "./components/ui/pagination";
 
+import { SectionHeading } from "./components/ui/typography/sectionHeading";
+
 import {
   Select,
   SelectContent,
@@ -160,6 +162,7 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  SectionHeading,
   Select,
   SelectContent,
   SelectItem,
