@@ -14,7 +14,7 @@ export function PageHeading({
       <div className="min-w-0 flex-1">
         <h2
           className={cn(
-            "text-2xl/7 font-bold text-primary-foreground sm:truncate sm:text-3xl sm:tracking-tight",
+            "text-2xl/7 font-bold text-primary sm:truncate sm:text-3xl sm:tracking-tight",
             className
           )}
         >
