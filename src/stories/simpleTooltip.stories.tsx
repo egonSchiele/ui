@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/form/button";
 import type { Meta, StoryObj } from "@storybook/react";
 import "../../globals.css";
 import { SimpleTooltip } from "@/components/ui/simpleTooltip";

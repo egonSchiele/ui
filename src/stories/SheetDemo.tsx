@@ -1,7 +1,7 @@
-import React from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import React from "react";
+import { Button } from "@/components/ui/form/button";
+import { Input } from "@/components/ui/form/input";
+import { Label } from "@/components/ui/form/label";
 import {
   Sheet,
   SheetClose,
@@ -11,10 +11,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
+} from "@/components/ui/sheet";
 
-export function SheetDemo({ side }: {
-  side: "left" | "right" | "top" | "bottom"
+export function SheetDemo({
+  side,
+}: {
+  side: "left" | "right" | "top" | "bottom";
 }) {
   return (
     <Sheet>
@@ -49,5 +51,5 @@ export function SheetDemo({ side }: {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

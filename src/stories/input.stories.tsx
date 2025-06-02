@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import "../../globals.css";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/form/input";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {

@@ -5,9 +5,9 @@ import { PanelLeftIcon } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@//utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/form/button";
+import { Input } from "@/components/ui/form/input";
+import { Separator } from "@/components/ui/layout/separator";
 import {
   Sheet,
   SheetContent,
