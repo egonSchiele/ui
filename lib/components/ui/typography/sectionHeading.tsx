@@ -1,12 +1,12 @@
 import React from "react";
 import { cn } from "@/utils";
 export function SectionHeading({
-  text,
+  children,
   description,
   className,
   actions,
 }: {
-  text: string;
+  children: string | React.ReactNode;
   description?: string;
   className?: string;
   actions?: React.ReactNode;
@@ -14,7 +14,7 @@ export function SectionHeading({
   return (
     <div className="border-b border-border pb-5 sm:flex sm:items-center sm:justify-between">
       <div>
-        <h3 className="text-base font-semibold text-primary">{text}</h3>
+        <h3 className="text-base font-semibold text-primary">{children}</h3>
         {description && (
           <p className="mt-2 max-w-4xl text-sm text-secondary">{description}</p>
         )}

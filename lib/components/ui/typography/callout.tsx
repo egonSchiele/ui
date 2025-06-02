@@ -2,15 +2,15 @@ import { cn } from "@/utils";
 import React from "react";
 
 type CalloutProps = {
-  text: string;
+  children: string | React.ReactNode;
   className?: string;
 } & Record<string, any>;
 
 export function Callout(props: CalloutProps) {
-  const { text, className } = props;
+  const { children, className } = props;
   return (
     <p className={cn("text-xl/8 text-primary/90", className || "")} {...props}>
-      {text}
+      {children}
     </p>
   );
 }

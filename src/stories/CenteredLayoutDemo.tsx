@@ -7,9 +7,17 @@ import React from "react";
 export default function CenteredLayoutDemo() {
   return (
     <CenteredLayout className="flex flex-col gap-4">
-      <PageHeading text="Centered Layout Demo" accentText="Accent Text" />
-      <Callout text="This is a callout inside the centered layout." />
-      <Paragraph text="This is a paragraph inside the centered layout." />
+      <PageHeading accentText="accent">This is a heading</PageHeading>
+      <Callout>
+        This is a callout that draws attention to important information. It can
+        be used to highlight key points, warnings, or special notes that the
+        reader should not miss.
+      </Callout>
+      <Paragraph>
+        This is a paragraph that provides additional information about the
+        content of the page. It can be used to explain concepts, provide
+        context, or simply add more detail.
+      </Paragraph>
     </CenteredLayout>
   );
 }

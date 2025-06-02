@@ -1,11 +1,11 @@
 import { cn } from "@/utils";
 import React from "react";
 export function PageHeading2({
-  text,
+  children,
   className,
   actions,
 }: {
-  text: string;
+  children: string | React.ReactNode;
   className?: string;
   actions?: React.ReactNode;
 }) {
@@ -18,7 +18,7 @@ export function PageHeading2({
             className
           )}
         >
-          {text}
+          {children}
         </h2>
       </div>
       <div className="mt-4 flex md:mt-0 md:ml-4">{actions}</div>
