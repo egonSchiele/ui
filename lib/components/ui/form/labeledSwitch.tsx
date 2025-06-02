@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch } from "./switch";
 import { cn } from "@/utils";
-import { Label } from "./form/label";
+import { Label } from "./label";
 
 export type LabeledSwitchProps = {
   id: string;

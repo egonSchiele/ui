@@ -41,6 +41,8 @@ import {
   MenubarSubContent,
 } from "./components/ui/menubar";
 
+import { PageHeading } from "./components/ui/typography/pageHeading";
+
 import {
   Pagination,
   PaginationContent,
@@ -150,6 +152,7 @@ export {
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
+  PageHeading,
   Pagination,
   PaginationContent,
   PaginationEllipsis,
