@@ -1,5 +1,5 @@
 import { Button } from "./components/ui/form/button";
-import { Callout, CalloutProps } from "./components/ui/typography/callout";
+import { Callout } from "./components/ui/typography/callout";
 import {
   Card,
   CardContent,
@@ -56,10 +56,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./components/ui/pagination";
-import {
-  Paragraph,
-  ParagraphProps,
-} from "./components/ui/typography/paragraph";
+import { Paragraph } from "./components/ui/typography/paragraph";
 import { SectionHeading } from "./components/ui/typography/sectionHeading";
 
 import {
@@ -130,7 +127,6 @@ import {
 export {
   Button,
   Callout,
-  CalloutProps,
   Card,
   CardContent,
   CardDescription,
@@ -175,7 +171,6 @@ export {
   PaginationNext,
   PaginationPrevious,
   Paragraph,
-  ParagraphProps,
   SectionHeading,
   Select,
   SelectContent,

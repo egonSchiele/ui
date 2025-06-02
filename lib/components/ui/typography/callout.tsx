@@ -1,6 +1,7 @@
 import { cn } from "@/utils";
 import React from "react";
-export type CalloutProps = {
+
+type CalloutProps = {
   text: string;
   className?: string;
 } & Record<string, any>;
