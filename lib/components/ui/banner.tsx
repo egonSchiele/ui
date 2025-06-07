@@ -29,16 +29,21 @@ export function Banner({
       )}
     >
       <p className={cn("text-sm/6 ", textColor)}>{children}</p>
-      <div className="flex flex-1 justify-end">
-        <button
-          type="button"
-          className="-m-3 p-3 focus-visible:-outline-offset-4"
-          onClick={onDismiss}
-        >
-          <span className="sr-only">Dismiss</span>
-          <XMarkIcon aria-hidden="true" className={cn("size-5 ", textColor)} />
-        </button>
-      </div>
+      {onDismiss && (
+        <div className="flex flex-1 justify-end">
+          <button
+            type="button"
+            className="-m-3 p-3 focus-visible:-outline-offset-4"
+            onClick={onDismiss}
+          >
+            <span className="sr-only">Dismiss</span>
+            <XMarkIcon
+              aria-hidden="true"
+              className={cn("size-5 ", textColor)}
+            />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
