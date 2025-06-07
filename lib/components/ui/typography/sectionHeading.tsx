@@ -12,7 +12,12 @@ export function SectionHeading({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-border pb-5 sm:flex sm:items-center sm:justify-between">
+    <div
+      className={cn(
+        "border-b border-border pb-5 sm:flex sm:items-center sm:justify-between",
+        className
+      )}
+    >
       <div>
         <h3 className="text-base font-semibold text-primary">{children}</h3>
         {description && (
