@@ -13,7 +13,7 @@ import * as React from "react";
 import { cn } from "../../utils";
 function Card(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (<div data-slot="card" className={cn("bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm", className)} {...props}/>);
+    return (<div data-slot="card" className={cn("bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-6 shadow-sm", className)} {...props}/>);
 }
 function CardHeader(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
@@ -35,4 +35,4 @@ function CardFooter(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
     return (<div data-slot="card-footer" className={cn("flex items-center px-6", className)} {...props}/>);
 }
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, };
