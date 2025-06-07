@@ -63,6 +63,8 @@ import { SectionHeading } from "./components/ui/typography/sectionHeading";
 import {
   Select,
   SelectContent,
+  SelectGroup,
+  SelectLabel,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -177,6 +179,8 @@ export {
   SectionHeading,
   Select,
   SelectContent,
+  SelectGroup,
+  SelectLabel,
   SelectItem,
   SelectTrigger,
   SelectValue,
