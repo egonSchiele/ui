@@ -21,7 +21,9 @@ export function SectionHeading({
       <div>
         <h3 className="text-base font-semibold text-primary">{children}</h3>
         {description && (
-          <p className="mt-2 max-w-4xl text-sm text-secondary">{description}</p>
+          <p className="mt-2 max-w-4xl text-sm text-primary/80">
+            {description}
+          </p>
         )}
       </div>
 
