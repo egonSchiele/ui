@@ -1,4 +1,4 @@
-import vgroup from "./templates/vgroup.js";
+import vgroup from "@templates/vgroup.js";
 import * as fs from "fs";
 const sizes = [
   { size: "XS", sizeClass: "gap-xs" },

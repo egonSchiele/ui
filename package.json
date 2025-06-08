@@ -17,7 +17,7 @@
     "shadcn": "shadcn",
     "build-storybook": "storybook build",
     "typestache": "typestache -v templates",
-    "gen": "typestache -v templates && tsc generate.ts && node generate.js"
+    "gen": "node dist/scripts/generate.js"
   },
   "keywords": [],
   "author": "",
