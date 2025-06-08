@@ -114,6 +114,17 @@
   --color-sidebar: var(--sidebar);
 }
 
+@theme {
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 3rem;
+  --spacing-xl: 4rem;
+  --spacing-2xl: 6rem;
+  --spacing-3xl: 8rem;
+  --spacing-4xl: 12rem;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
