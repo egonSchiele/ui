@@ -136,6 +136,11 @@ import {
   TooltipTrigger,
 } from "./components/ui/tooltip";
 
+import {
+  VerticalGroupProps,
+  VerticalGroup,
+} from "./components/ui/layout/verticalGroup";
+
 export {
   Accordion,
   AccordionContent,
@@ -245,4 +250,6 @@ export {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  VerticalGroup,
+  VerticalGroupProps,
 };
