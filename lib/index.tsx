@@ -1,3 +1,10 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/ui/accordion";
+
 import { Banner } from "./components/ui/banner";
 import { Button } from "./components/ui/form/button";
 import { Callout } from "./components/ui/typography/callout";
@@ -128,6 +135,10 @@ import {
 } from "./components/ui/tooltip";
 
 export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Banner,
   Button,
   Callout,

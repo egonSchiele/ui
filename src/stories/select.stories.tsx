@@ -68,5 +68,6 @@ export const Default: Story = {
         </SelectContent>
       </>
     ),
+    onValueChange: console.log,
   },
 };
