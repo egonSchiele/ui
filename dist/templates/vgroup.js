@@ -2,7 +2,6 @@
 // Source: templates/vgroup.mustache
 // Any manual changes will be lost.
 import { apply } from "typestache";
-
 export const template = `import { cn } from "@/utils";
 import React from "react";
 
@@ -25,15 +24,7 @@ export function VGroup{{size:string}}(props: VGroup{{size:string}}Props) {
   );
 }
 `;
-
-export type TemplateType = {
-  size: string;
-  sizeClass: string;
-};
-
-const render = (args: TemplateType) => {
+const render = (args) => {
   return apply(template, args);
-}
-
+};
 export default render;
-    

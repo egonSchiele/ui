@@ -1,23 +1,23 @@
 // THIS FILE WAS AUTO-GENERATED
-// Source: templates/vgroup.mustache
+// Source: templates/hgroup.mustache
 // Any manual changes will be lost.
 import { apply } from "typestache";
 
 export const template = `import { cn } from "@/utils";
 import React from "react";
 
-export type VGroup{{size:string}}Props = {
+export type HGroup{{size:string}}Props = {
   children: React.ReactNode;
   className?: string;
   [key: string]: any;
 };
 
-export function VGroup{{size:string}}(props: VGroup{{size:string}}Props) {
+export function HGroup{{size:string}}(props: HGroup{{size:string}}Props) {
   const { children, className = "" } = props;
   const sizeClass = "{{sizeClass:string}}";
   return (
     <div
-      className={cn(\`flex flex-col\`, sizeClass, className)}
+      className={cn(\`flex flex-row\`, sizeClass, className)}
       {...props}
     >
       {children}

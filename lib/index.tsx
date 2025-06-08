@@ -29,6 +29,18 @@ import {
   DialogTrigger,
 } from "./components/ui/dialog";
 import { Header, NavigationItem } from "./components/ui/layout/header";
+import { HGroupXS, HGroupXSProps } from "./components/ui/layout/hgroupXS";
+import { HGroupSM, HGroupSMProps } from "./components/ui/layout/hgroupSM";
+import { HGroupMD, HGroupMDProps } from "./components/ui/layout/hgroupMD";
+import { HGroupLG, HGroupLGProps } from "./components/ui/layout/hgroupLG";
+import { HGroupXL, HGroupXLProps } from "./components/ui/layout/hgroupXL";
+
+import { VGroupXS, VGroupXSProps } from "./components/ui/layout/vgroupXS";
+import { VGroupSM, VGroupSMProps } from "./components/ui/layout/vgroupSM";
+import { VGroupMD, VGroupMDProps } from "./components/ui/layout/vgroupMD";
+import { VGroupLG, VGroupLGProps } from "./components/ui/layout/vgroupLG";
+import { VGroupXL, VGroupXLProps } from "./components/ui/layout/vgroupXL";
+
 import { Input } from "./components/ui/form/input";
 import { Label } from "./components/ui/form/label";
 import { LabeledSwitch } from "./components/ui/form/labeledSwitch";
@@ -136,11 +148,6 @@ import {
   TooltipTrigger,
 } from "./components/ui/tooltip";
 
-import {
-  VerticalGroupProps,
-  VerticalGroup,
-} from "./components/ui/layout/verticalGroup";
-
 export {
   Accordion,
   AccordionContent,
@@ -164,6 +171,16 @@ export {
   DialogTitle,
   DialogTrigger,
   Header,
+  HGroupXS,
+  HGroupXSProps,
+  HGroupSM,
+  HGroupSMProps,
+  HGroupMD,
+  HGroupMDProps,
+  HGroupLG,
+  HGroupLGProps,
+  HGroupXL,
+  HGroupXLProps,
   Input,
   Label,
   LabeledSwitch,
@@ -250,6 +267,14 @@ export {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  VerticalGroup,
-  VerticalGroupProps,
+  VGroupXS,
+  VGroupXSProps,
+  VGroupSM,
+  VGroupSMProps,
+  VGroupMD,
+  VGroupMDProps,
+  VGroupLG,
+  VGroupLGProps,
+  VGroupXL,
+  VGroupXLProps,
 };
