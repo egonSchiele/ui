@@ -126,6 +126,8 @@ import {
 } from "./components/ui/table";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { Toaster } from "./components/ui/sonner";
+import { toast } from "sonner";
 import { Textarea } from "./components/ui/form/textarea";
 import {
   Tooltip,
@@ -237,6 +239,8 @@ export {
   TabsList,
   TabsTrigger,
   Textarea,
+  Toaster,
+  toast,
   Tooltip,
   TooltipContent,
   TooltipProvider,
