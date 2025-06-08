@@ -15,7 +15,9 @@
     "vite": "vite",
     "storybook": "storybook dev -p 6006",
     "shadcn": "shadcn",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "typestache": "typestache -v templates",
+    "gen": "typestache -v templates && tsc generate.ts && node generate.js"
   },
   "keywords": [],
   "author": "",
@@ -39,6 +41,7 @@
     "tailwindcss": "^4.0.7",
     "tsc-alias": "^1.8.10",
     "typescript": "^5.7.3",
+    "typestache": "^0.4.4",
     "vite": "^6.1.1"
   },
   "dependencies": {
