@@ -2,7 +2,7 @@
 // Source: templates/hgroup.mustache
 // Any manual changes will be lost.
 import { apply } from "typestache";
-export const template = `import { cn } from "@/utils";
+export const template = `import { cn } from "../lib/utils";
 import React from "react";
 
 export type HGroup{{size:string}}Props = {
@@ -25,6 +25,6 @@ export function HGroup{{size:string}}(props: HGroup{{size:string}}Props) {
 }
 `;
 const render = (args) => {
-  return apply(template, args);
+    return apply(template, args);
 };
 export default render;

@@ -1,3 +1,4 @@
+import { cn } from "../../../utils";
 import React from "react";
 export function VGroupXS(props) {
     const { children, className = "" } = props;
