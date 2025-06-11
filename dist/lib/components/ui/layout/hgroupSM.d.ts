@@ -4,4 +4,4 @@ export type HGroupSMProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function HGroupSM(props: HGroupSMProps): React.JSX.Element;
+export declare function HGroupSM({ children, className, ...rest }: HGroupSMProps): React.JSX.Element;

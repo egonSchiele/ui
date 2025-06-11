@@ -4,4 +4,4 @@ export type VGroupMDProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function VGroupMD(props: VGroupMDProps): React.JSX.Element;
+export declare function VGroupMD({ children, className, ...rest }: VGroupMDProps): React.JSX.Element;

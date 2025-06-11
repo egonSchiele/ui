@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type VGroupMDProps = {
@@ -7,11 +7,13 @@ export type VGroupMDProps = {
   [key: string]: any;
 };
 
-export function VGroupMD(props: VGroupMDProps) {
-  const { children, className = "" } = props;
+export function VGroupMD({ children, className = "", ...rest }: VGroupMDProps) {
   const sizeClass = "gap-md";
   return (
-    <div className={cn(`flex flex-col`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-col`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type VGroupXSProps = {
@@ -7,11 +7,13 @@ export type VGroupXSProps = {
   [key: string]: any;
 };
 
-export function VGroupXS(props: VGroupXSProps) {
-  const { children, className = "" } = props;
+export function VGroupXS({ children, className = "", ...rest }: VGroupXSProps) {
   const sizeClass = "gap-xs";
   return (
-    <div className={cn(`flex flex-col`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-col`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

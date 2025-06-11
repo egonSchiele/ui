@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type HGroupSMProps = {
@@ -7,11 +7,13 @@ export type HGroupSMProps = {
   [key: string]: any;
 };
 
-export function HGroupSM(props: HGroupSMProps) {
-  const { children, className = "" } = props;
+export function HGroupSM({ children, className = "", ...rest }: HGroupSMProps) {
   const sizeClass = "gap-sm";
   return (
-    <div className={cn(`flex flex-row`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-row`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

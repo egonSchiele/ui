@@ -4,4 +4,4 @@ export type HGroupMDProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function HGroupMD(props: HGroupMDProps): React.JSX.Element;
+export declare function HGroupMD({ children, className, ...rest }: HGroupMDProps): React.JSX.Element;

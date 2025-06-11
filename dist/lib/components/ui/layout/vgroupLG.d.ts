@@ -4,4 +4,4 @@ export type VGroupLGProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function VGroupLG(props: VGroupLGProps): React.JSX.Element;
+export declare function VGroupLG({ children, className, ...rest }: VGroupLGProps): React.JSX.Element;

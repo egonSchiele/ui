@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type VGroupLGProps = {
@@ -7,11 +7,13 @@ export type VGroupLGProps = {
   [key: string]: any;
 };
 
-export function VGroupLG(props: VGroupLGProps) {
-  const { children, className = "" } = props;
+export function VGroupLG({ children, className = "", ...rest }: VGroupLGProps) {
   const sizeClass = "gap-lg";
   return (
-    <div className={cn(`flex flex-col`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-col`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

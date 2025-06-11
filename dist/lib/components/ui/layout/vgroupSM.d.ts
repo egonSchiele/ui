@@ -4,4 +4,4 @@ export type VGroupSMProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function VGroupSM(props: VGroupSMProps): React.JSX.Element;
+export declare function VGroupSM({ children, className, ...rest }: VGroupSMProps): React.JSX.Element;

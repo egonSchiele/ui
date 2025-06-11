@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type VGroupSMProps = {
@@ -7,11 +7,13 @@ export type VGroupSMProps = {
   [key: string]: any;
 };
 
-export function VGroupSM(props: VGroupSMProps) {
-  const { children, className = "" } = props;
+export function VGroupSM({ children, className = "", ...rest }: VGroupSMProps) {
   const sizeClass = "gap-sm";
   return (
-    <div className={cn(`flex flex-col`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-col`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

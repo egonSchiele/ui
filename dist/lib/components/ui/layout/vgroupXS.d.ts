@@ -4,4 +4,4 @@ export type VGroupXSProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function VGroupXS(props: VGroupXSProps): React.JSX.Element;
+export declare function VGroupXS({ children, className, ...rest }: VGroupXSProps): React.JSX.Element;

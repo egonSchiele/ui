@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type HGroupMDProps = {
@@ -7,11 +7,13 @@ export type HGroupMDProps = {
   [key: string]: any;
 };
 
-export function HGroupMD(props: HGroupMDProps) {
-  const { children, className = "" } = props;
+export function HGroupMD({ children, className = "", ...rest }: HGroupMDProps) {
   const sizeClass = "gap-md";
   return (
-    <div className={cn(`flex flex-row`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-row`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

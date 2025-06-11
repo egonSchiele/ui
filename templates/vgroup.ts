@@ -3,7 +3,7 @@
 // Any manual changes will be lost.
 import { apply } from "typestache";
 
-export const template = `import { cn } from "@/utils";
+export const template = `import { cn } from "../../../utils.js";
 import React from "react";
 
 export type VGroup{{size:string}}Props = {
@@ -12,13 +12,12 @@ export type VGroup{{size:string}}Props = {
   [key: string]: any;
 };
 
-export function VGroup{{size:string}}(props: VGroup{{size:string}}Props) {
-  const { children, className = "" } = props;
+export function VGroup{{size:string}}({ children, className = "", ...rest }: VGroup{{size:string}}Props) {
   const sizeClass = "{{sizeClass:string}}";
   return (
     <div
       className={cn(\`flex flex-col\`, sizeClass, className)}
-      {...props}
+      {...rest}
     >
       {children}
     </div>

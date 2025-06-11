@@ -4,4 +4,4 @@ export type HGroupXSProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function HGroupXS(props: HGroupXSProps): React.JSX.Element;
+export declare function HGroupXS({ children, className, ...rest }: HGroupXSProps): React.JSX.Element;

@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn } from "../../../utils.js";
 import React from "react";
 
 export type HGroupXSProps = {
@@ -7,11 +7,13 @@ export type HGroupXSProps = {
   [key: string]: any;
 };
 
-export function HGroupXS(props: HGroupXSProps) {
-  const { children, className = "" } = props;
+export function HGroupXS({ children, className = "", ...rest }: HGroupXSProps) {
   const sizeClass = "gap-xs";
   return (
-    <div className={cn(`flex flex-row`, sizeClass, className)} {...props}>
+    <div
+      className={cn(`flex flex-row`, sizeClass, className)}
+      {...rest}
+    >
       {children}
     </div>
   );

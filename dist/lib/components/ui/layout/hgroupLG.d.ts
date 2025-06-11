@@ -4,4 +4,4 @@ export type HGroupLGProps = {
     className?: string;
     [key: string]: any;
 };
-export declare function HGroupLG(props: HGroupLGProps): React.JSX.Element;
+export declare function HGroupLG({ children, className, ...rest }: HGroupLGProps): React.JSX.Element;
