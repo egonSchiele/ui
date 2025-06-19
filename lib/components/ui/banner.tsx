@@ -11,7 +11,7 @@ export function Banner({
   onDismiss,
 }: {
   style?: BannerStyle;
-  children?: React.ReactNode;
+  children?: React.ReactNode | string;
   className?: string;
   onDismiss?: () => void;
 }) {
