@@ -3,11 +3,11 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./components/ui/accordion";
+} from "./components/ui/accordion.jsx";
 
-import { Banner } from "./components/ui/banner";
-import { Button } from "./components/ui/form/button";
-import { Callout } from "./components/ui/typography/callout";
+import { Banner } from "./components/ui/banner.jsx";
+import { Button } from "./components/ui/form/button.jsx";
+import { Callout } from "./components/ui/typography/callout.jsx";
 import {
   Card,
   CardContent,
@@ -15,9 +15,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./components/ui/card";
+} from "./components/ui/card.jsx";
 
-import { CenteredLayout } from "./components/ui/layout/centeredLayout";
+import { CenteredLayout } from "./components/ui/layout/centeredLayout.jsx";
 
 import {
   Dialog,
@@ -27,17 +27,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./components/ui/dialog";
-import { Header, NavigationItem } from "./components/ui/layout/header";
-import { HGroupXS, HGroupXSProps } from "./components/ui/layout/hgroupXS";
-import { HGroupSM, HGroupSMProps } from "./components/ui/layout/hgroupSM";
-import { HGroupMD, HGroupMDProps } from "./components/ui/layout/hgroupMD";
-import { HGroupLG, HGroupLGProps } from "./components/ui/layout/hgroupLG";
-import { HGroupXL, HGroupXLProps } from "./components/ui/layout/hgroupXL";
+} from "./components/ui/dialog.jsx";
+import { Header, NavigationItem } from "./components/ui/layout/header.jsx";
+import { HGroupXS, HGroupXSProps } from "./components/ui/layout/hgroupXS.jsx";
+import { HGroupSM, HGroupSMProps } from "./components/ui/layout/hgroupSM.jsx";
+import { HGroupMD, HGroupMDProps } from "./components/ui/layout/hgroupMD.jsx";
+import { HGroupLG, HGroupLGProps } from "./components/ui/layout/hgroupLG.jsx";
+import { HGroupXL, HGroupXLProps } from "./components/ui/layout/hgroupXL.jsx";
 
-import { Input } from "./components/ui/form/input";
-import { Label } from "./components/ui/form/label";
-import { LabeledSwitch } from "./components/ui/form/labeledSwitch";
+import { Input } from "./components/ui/form/input.jsx";
+import { Label } from "./components/ui/form/label.jsx";
+import { LabeledSwitch } from "./components/ui/form/labeledSwitch.jsx";
 
 import {
   SimpleForm,
@@ -52,13 +52,13 @@ import {
   FormInput,
   FormSelect,
   FormTextarea,
-} from "./components/ui/form/simpleForm";
+} from "./components/ui/form/simpleForm.jsx";
 
-import { VGroupXS, VGroupXSProps } from "./components/ui/layout/vgroupXS";
-import { VGroupSM, VGroupSMProps } from "./components/ui/layout/vgroupSM";
-import { VGroupMD, VGroupMDProps } from "./components/ui/layout/vgroupMD";
-import { VGroupLG, VGroupLGProps } from "./components/ui/layout/vgroupLG";
-import { VGroupXL, VGroupXLProps } from "./components/ui/layout/vgroupXL";
+import { VGroupXS, VGroupXSProps } from "./components/ui/layout/vgroupXS.jsx";
+import { VGroupSM, VGroupSMProps } from "./components/ui/layout/vgroupSM.jsx";
+import { VGroupMD, VGroupMDProps } from "./components/ui/layout/vgroupMD.jsx";
+import { VGroupLG, VGroupLGProps } from "./components/ui/layout/vgroupLG.jsx";
+import { VGroupXL, VGroupXLProps } from "./components/ui/layout/vgroupXL.jsx";
 import {
   Menubar,
   MenubarPortal,
@@ -76,10 +76,10 @@ import {
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
-} from "./components/ui/menubar";
+} from "./components/ui/menubar.jsx";
 
-import { PageHeading } from "./components/ui/typography/pageHeading";
-import { PageHeading2 } from "./components/ui/typography/pageHeading2";
+import { PageHeading } from "./components/ui/typography/pageHeading.jsx";
+import { PageHeading2 } from "./components/ui/typography/pageHeading2.jsx";
 
 import {
   Pagination,
@@ -89,9 +89,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./components/ui/pagination";
-import { Paragraph } from "./components/ui/typography/paragraph";
-import { SectionHeading } from "./components/ui/typography/sectionHeading";
+} from "./components/ui/pagination.jsx";
+import { Paragraph } from "./components/ui/typography/paragraph.jsx";
+import { SectionHeading } from "./components/ui/typography/sectionHeading.jsx";
 
 import {
   Select,
@@ -101,11 +101,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./components/ui/form/select";
+} from "./components/ui/form/select.jsx";
 
-import { Separator } from "./components/ui/layout/separator";
+import { Separator } from "./components/ui/layout/separator.jsx";
 
-import { Sheet } from "./components/ui/sheet";
+import { Sheet } from "./components/ui/sheet.jsx";
 
 import {
   Sidebar,
@@ -132,13 +132,13 @@ import {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-} from "./components/ui/sidebar";
+} from "./components/ui/sidebar.jsx";
 
-import { SimpleTooltip } from "./components/ui/simpleTooltip";
+import { SimpleTooltip } from "./components/ui/simpleTooltip.jsx";
 
-import { Skeleton } from "./components/ui/skeleton";
+import { Skeleton } from "./components/ui/skeleton.jsx";
 
-import { Switch } from "./components/ui/form/switch";
+import { Switch } from "./components/ui/form/switch.jsx";
 
 import {
   Table,
@@ -149,18 +149,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./components/ui/table";
+} from "./components/ui/table.jsx";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
-import { Toaster } from "./components/ui/sonner";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "./components/ui/tabs.jsx";
+import { Toaster } from "./components/ui/sonner.jsx";
 import { toast } from "sonner";
-import { Textarea } from "./components/ui/form/textarea";
+import { Textarea } from "./components/ui/form/textarea.jsx";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./components/ui/tooltip";
+} from "./components/ui/tooltip.jsx";
 
 export {
   Accordion,
