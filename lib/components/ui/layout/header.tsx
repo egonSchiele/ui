@@ -7,7 +7,7 @@ import { cn } from "@/utils";
 export type NavigationItem = {
   name: string;
   href: string;
-  selected: boolean;
+  selected?: boolean;
 };
 
 export function Header({
