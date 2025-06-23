@@ -33,6 +33,7 @@ function DialogOverlay(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
     return (<DialogPrimitive.Overlay data-slot="dialog-overlay" className={cn("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80", className)} {...props}/>);
 }
+/** Remember, if you want dark mode, you will need to add `className = "dark" to every DialogContent separately! */
 function DialogContent(_a) {
     var { className, children } = _a, props = __rest(_a, ["className", "children"]);
     return (<DialogPortal data-slot="dialog-portal">
