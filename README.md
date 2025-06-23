@@ -46,3 +46,11 @@ After you add the npm package, you'll also need to manually copy over the CSS. A
 If you see an error related to props, make sure the React version in your app matches the React version in this package, currently React 19.
 
 If you see an error related to `useRef` being `null`, it might be because you're trying to use this package locally instead of pulling it from GitHub. This is a bug in pnpm. Change to pulling it from GitHub and it should now work.
+
+If you see an error like
+
+```
+Indirectly exported binding name
+```
+
+it's happening because you're importing components from the index file instead of `@/components/ui`. Change your imports and it will work.

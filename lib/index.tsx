@@ -36,6 +36,9 @@ import { HGroupLG, HGroupLGProps } from "./components/ui/layout/hgroupLG.jsx";
 import { HGroupXL, HGroupXLProps } from "./components/ui/layout/hgroupXL.jsx";
 
 import { Input } from "./components/ui/form/input.jsx";
+
+import { KVTableItem, KVTable } from "./components/ui/kvTable.jsx";
+
 import { Label } from "./components/ui/form/label.jsx";
 import { LabeledSwitch } from "./components/ui/form/labeledSwitch.jsx";
 
@@ -54,11 +57,6 @@ import {
   FormTextarea,
 } from "./components/ui/form/simpleForm.jsx";
 
-import { VGroupXS, VGroupXSProps } from "./components/ui/layout/vgroupXS.jsx";
-import { VGroupSM, VGroupSMProps } from "./components/ui/layout/vgroupSM.jsx";
-import { VGroupMD, VGroupMDProps } from "./components/ui/layout/vgroupMD.jsx";
-import { VGroupLG, VGroupLGProps } from "./components/ui/layout/vgroupLG.jsx";
-import { VGroupXL, VGroupXLProps } from "./components/ui/layout/vgroupXL.jsx";
 import {
   Menubar,
   MenubarPortal,
@@ -166,6 +164,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./components/ui/tooltip.jsx";
+import { VGroupXS, VGroupXSProps } from "./components/ui/layout/vgroupXS.jsx";
+import { VGroupSM, VGroupSMProps } from "./components/ui/layout/vgroupSM.jsx";
+import { VGroupMD, VGroupMDProps } from "./components/ui/layout/vgroupMD.jsx";
+import { VGroupLG, VGroupLGProps } from "./components/ui/layout/vgroupLG.jsx";
+import { VGroupXL, VGroupXLProps } from "./components/ui/layout/vgroupXL.jsx";
 
 export {
   Accordion,
@@ -211,6 +214,8 @@ export {
   HGroupXS,
   HGroupXSProps,
   Input,
+  KVTableItem,
+  KVTable,
   Label,
   LabeledSwitch,
   Menubar,

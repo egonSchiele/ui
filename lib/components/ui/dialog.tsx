@@ -44,6 +44,7 @@ function DialogOverlay({
   );
 }
 
+/** Remember, if you want dark mode, you will need to add `className = "dark" to every DialogContent separately! */
 function DialogContent({
   className,
   children,
