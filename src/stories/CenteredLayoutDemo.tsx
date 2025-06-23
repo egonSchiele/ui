@@ -1,7 +1,8 @@
 import { CenteredLayout } from "@/components/ui/layout/centeredLayout";
 import { Callout } from "@/components/ui/typography/callout";
+import { PageHeading } from "@/components/ui/typography/pageHeading";
+import { Paragraph } from "@/components/ui/typography/paragraph";
 
-import { PageHeading, Paragraph } from "@/index";
 import React from "react";
 
 export default function CenteredLayoutDemo() {
