@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/form/textarea.jsx";
 import { Switch } from "@/components/ui/form/switch.jsx";
 import { cn } from "@/utils";
 import { VGroupMD } from "../layout/vgroupMD";
+import clsx from "clsx";
 
 export type FormFieldType = "input" | "select" | "textarea" | "checkbox";
 export type FormFieldValue = string | number | boolean;
@@ -60,7 +61,11 @@ export type FormFieldCheckbox = FormFieldBase & {
   initialValue?: boolean; // Override to use boolean for checkbox
 };
 
-export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea | FormFieldCheckbox;
+export type FormField =
+  | FormFieldInput
+  | FormFieldSelect
+  | FormFieldTextarea
+  | FormFieldCheckbox;
 
 function ErrorMessage({ children }: { children: ReactNode }) {
   return <p className="text-red-500 text-sm leading-none">{children}</p>;
@@ -97,7 +102,7 @@ export function FormInput({
         }
         required={field.required}
         disabled={field.disabled}
-        className={field.className}
+        className={clsx(field.className)}
       />
     </VGroupXS>
   );
@@ -237,7 +242,8 @@ export function SimpleForm<const T extends readonly FormField[]>({
   >(
     fields.reduce((acc, field) => {
       if (field.type === "checkbox") {
-        acc[field.name] = field.initialValue !== undefined ? field.initialValue : false;
+        acc[field.name] =
+          field.initialValue !== undefined ? field.initialValue : false;
       } else {
         acc[field.name] = field.initialValue || "";
       }

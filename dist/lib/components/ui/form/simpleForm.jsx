@@ -10,6 +10,7 @@ import { Textarea } from "../../../components/ui/form/textarea.jsx";
 import { Switch } from "../../../components/ui/form/switch.jsx";
 import { cn } from "../../../utils";
 import { VGroupMD } from "../layout/vgroupMD";
+import clsx from "clsx";
 function ErrorMessage({ children }) {
     return <p className="text-red-500 text-sm leading-none">{children}</p>;
 }
@@ -21,7 +22,7 @@ export function FormInput({ field, value, onChange, error, }) {
         </Label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </HGroupXS>
-      <Input type={field.isNumber ? "number" : "text"} name={field.name} value={value} onChange={(e) => onChange(e.target.value)} required={field.required} disabled={field.disabled} className={field.className}/>
+      <Input type={field.isNumber ? "number" : "text"} name={field.name} value={value} onChange={(e) => onChange(e.target.value)} required={field.required} disabled={field.disabled} className={clsx(field.className)}/>
     </VGroupXS>);
 }
 export function FormSelect({ field, value, onChange, error, }) {
@@ -65,7 +66,8 @@ export function FormCheckbox({ field, value, onChange, error, }) {
 export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonText = "Submit", className = "", }) {
     const [formValues, setFormValues] = React.useState(fields.reduce((acc, field) => {
         if (field.type === "checkbox") {
-            acc[field.name] = field.initialValue !== undefined ? field.initialValue : false;
+            acc[field.name] =
+                field.initialValue !== undefined ? field.initialValue : false;
         }
         else {
             acc[field.name] = field.initialValue || "";
