@@ -153,17 +153,57 @@ A comprehensive form builder component that handles multiple field types.
 ```
 
 Properties:
-- `fields`: Array of form field configurations
+- `fields`: Array of form field configurations, of type `FormField[]` (see below)
 - `onSubmit`: Callback with form values when submitted
 - `onChange`: Callback when any field changes
 - `onCancel`: Optional cancel button callback
 - `submitButtonText`: Text for the submit button (default: "Submit")
 - `className`: Additional CSS classes
 
-Field types:
-- `input`: Text or number input
-- `select`: Dropdown selection
-- `textarea`: Multi-line text input
+FormField type:
+
+```ts
+
+export type FormFieldType = "input" | "select" | "textarea";
+export type FormFieldValue = string | number;
+
+export type SelectOption = {
+  key: string;
+  value: string;
+  label: string;
+};
+
+export type FormFieldBase = {
+  name: string;
+  label: string;
+  type: FormFieldType;
+  initialValue?: FormFieldValue;
+  onChange?: (value: FormFieldValue) => void;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string; // Additional class names for styling
+  validate?: (value: FormFieldValue) => string | null; // Validation function returning error message or null
+  placeholder?: string; // Placeholder text for input and textarea fields
+};
+
+export type FormFieldInput = FormFieldBase & {
+  type: "input";
+  isNumber?: boolean; // Indicates if the input should accept numbers
+};
+
+export type FormFieldSelect = FormFieldBase & {
+  type: "select";
+  options: SelectOption[];
+};
+
+export type FormFieldTextarea = FormFieldBase & {
+  type: "textarea";
+  rows?: number; // For textarea fields
+  showCharCount?: boolean; // Whether to show character count
+};
+
+export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea;
+```
 
 ### Layout Components
 
