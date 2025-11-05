@@ -50,6 +50,20 @@ const fields: FormField[] = [
     ],
     placeholder: "Select a color",
   } as const,
+  {
+    name: "newsletter" as const,
+    type: "checkbox",
+    label: "Subscribe to newsletter",
+    required: false,
+    initialValue: false,
+  } as const,
+  {
+    name: "terms" as const,
+    type: "checkbox",
+    label: "I agree to the terms and conditions",
+    required: true,
+    initialValue: true,
+  } as const,
 ] as const;
 
 export default function SimpleFormDemo() {

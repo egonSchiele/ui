@@ -13,11 +13,12 @@ import { VGroupXS } from "@/components/ui/layout/vgroupXS.jsx";
 import { Button } from "@/components/ui/form/button.jsx";
 import { Input } from "@/components/ui/form/input.jsx";
 import { Textarea } from "@/components/ui/form/textarea.jsx";
+import { Switch } from "@/components/ui/form/switch.jsx";
 import { cn } from "@/utils";
 import { VGroupMD } from "../layout/vgroupMD";
 
-export type FormFieldType = "input" | "select" | "textarea";
-export type FormFieldValue = string | number;
+export type FormFieldType = "input" | "select" | "textarea" | "checkbox";
+export type FormFieldValue = string | number | boolean;
 
 export type SelectOption = {
   key: string;
@@ -54,7 +55,12 @@ export type FormFieldTextarea = FormFieldBase & {
   showCharCount?: boolean; // Whether to show character count
 };
 
-export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea;
+export type FormFieldCheckbox = FormFieldBase & {
+  type: "checkbox";
+  initialValue?: boolean; // Override to use boolean for checkbox
+};
+
+export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea | FormFieldCheckbox;
 
 function ErrorMessage({ children }: { children: ReactNode }) {
   return <p className="text-red-500 text-sm leading-none">{children}</p>;
@@ -85,7 +91,7 @@ export function FormInput({
       <Input
         type={field.isNumber ? "number" : "text"}
         name={field.name}
-        value={value}
+        value={value as string | number}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           onChange(e.target.value)
         }
@@ -159,7 +165,7 @@ export function FormTextarea({
       </Label>
       <Textarea
         name={field.name}
-        value={value}
+        value={value as string | number}
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
           onChange(e.target.value)
         }
@@ -172,6 +178,39 @@ export function FormTextarea({
       {field.showCharCount && (
         <p className="text-xs text-primary/70">{`${value}`.length} chars</p>
       )}
+    </VGroupXS>
+  );
+}
+
+export function FormCheckbox({
+  field,
+  value,
+  onChange,
+  error,
+}: {
+  field: FormFieldCheckbox;
+  value: FormFieldValue;
+  onChange: (value: FormFieldValue) => void;
+  error?: string | null;
+}) {
+  return (
+    <VGroupXS>
+      <HGroupXS>
+        <Label
+          htmlFor={field.name}
+          className={cn(field.disabled && "text-primary/70")}
+        >
+          {field.label}
+        </Label>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+      </HGroupXS>
+      <Switch
+        checked={Boolean(value)}
+        onCheckedChange={(checked) => onChange(checked)}
+        required={field.required}
+        disabled={field.disabled}
+        className={field.className}
+      />
     </VGroupXS>
   );
 }
@@ -197,7 +236,11 @@ export function SimpleForm<const T extends readonly FormField[]>({
     Record<FieldsToResult<T>, FormFieldValue>
   >(
     fields.reduce((acc, field) => {
-      acc[field.name] = field.initialValue || "";
+      if (field.type === "checkbox") {
+        acc[field.name] = field.initialValue !== undefined ? field.initialValue : false;
+      } else {
+        acc[field.name] = field.initialValue || "";
+      }
       return acc;
     }, {} as Record<string, FormFieldValue>)
   );
@@ -256,6 +299,16 @@ export function SimpleForm<const T extends readonly FormField[]>({
       case "textarea":
         return (
           <FormTextarea
+            key={field.name}
+            field={field}
+            error={error}
+            value={value}
+            onChange={(val) => handleChange(field.name, val)}
+          />
+        );
+      case "checkbox":
+        return (
+          <FormCheckbox
             key={field.name}
             field={field}
             error={error}

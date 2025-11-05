@@ -164,8 +164,8 @@ FormField type:
 
 ```ts
 
-export type FormFieldType = "input" | "select" | "textarea";
-export type FormFieldValue = string | number;
+export type FormFieldType = "input" | "select" | "textarea" | "checkbox";
+export type FormFieldValue = string | number | boolean;
 
 export type SelectOption = {
   key: string;
@@ -202,7 +202,12 @@ export type FormFieldTextarea = FormFieldBase & {
   showCharCount?: boolean; // Whether to show character count
 };
 
-export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea;
+export type FormFieldCheckbox = FormFieldBase & {
+  type: "checkbox";
+  initialValue?: boolean; // Override to use boolean for checkbox
+};
+
+export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea | FormFieldCheckbox;
 ```
 
 ### Layout Components

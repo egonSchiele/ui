@@ -7,6 +7,7 @@ import { VGroupXS } from "../../../components/ui/layout/vgroupXS.jsx";
 import { Button } from "../../../components/ui/form/button.jsx";
 import { Input } from "../../../components/ui/form/input.jsx";
 import { Textarea } from "../../../components/ui/form/textarea.jsx";
+import { Switch } from "../../../components/ui/form/switch.jsx";
 import { cn } from "../../../utils";
 import { VGroupMD } from "../layout/vgroupMD";
 function ErrorMessage({ children }) {
@@ -50,9 +51,25 @@ export function FormTextarea({ field, value, onChange, error, }) {
       {field.showCharCount && (<p className="text-xs text-primary/70">{`${value}`.length} chars</p>)}
     </VGroupXS>);
 }
+export function FormCheckbox({ field, value, onChange, error, }) {
+    return (<VGroupXS>
+      <HGroupXS>
+        <Label htmlFor={field.name} className={cn(field.disabled && "text-primary/70")}>
+          {field.label}
+        </Label>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+      </HGroupXS>
+      <Switch checked={Boolean(value)} onCheckedChange={(checked) => onChange(checked)} required={field.required} disabled={field.disabled} className={field.className}/>
+    </VGroupXS>);
+}
 export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonText = "Submit", className = "", }) {
     const [formValues, setFormValues] = React.useState(fields.reduce((acc, field) => {
-        acc[field.name] = field.initialValue || "";
+        if (field.type === "checkbox") {
+            acc[field.name] = field.initialValue !== undefined ? field.initialValue : false;
+        }
+        else {
+            acc[field.name] = field.initialValue || "";
+        }
         return acc;
     }, {}));
     const [errors, setErrors] = React.useState({});
@@ -85,6 +102,8 @@ export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonT
                 return (<FormSelect key={field.name} field={field} error={error} value={value} onChange={(val) => handleChange(field.name, val)}/>);
             case "textarea":
                 return (<FormTextarea key={field.name} field={field} error={error} value={value} onChange={(val) => handleChange(field.name, val)}/>);
+            case "checkbox":
+                return (<FormCheckbox key={field.name} field={field} error={error} value={value} onChange={(val) => handleChange(field.name, val)}/>);
             default:
                 return null;
         }

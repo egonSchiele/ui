@@ -1,6 +1,6 @@
 import React from "react";
-export type FormFieldType = "input" | "select" | "textarea";
-export type FormFieldValue = string | number;
+export type FormFieldType = "input" | "select" | "textarea" | "checkbox";
+export type FormFieldValue = string | number | boolean;
 export type SelectOption = {
     key: string;
     value: string;
@@ -31,7 +31,11 @@ export type FormFieldTextarea = FormFieldBase & {
     rows?: number;
     showCharCount?: boolean;
 };
-export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea;
+export type FormFieldCheckbox = FormFieldBase & {
+    type: "checkbox";
+    initialValue?: boolean;
+};
+export type FormField = FormFieldInput | FormFieldSelect | FormFieldTextarea | FormFieldCheckbox;
 export declare function FormInput({ field, value, onChange, error, }: {
     field: FormFieldInput;
     value: FormFieldValue;
@@ -46,6 +50,12 @@ export declare function FormSelect({ field, value, onChange, error, }: {
 }): React.JSX.Element;
 export declare function FormTextarea({ field, value, onChange, error, }: {
     field: FormFieldTextarea;
+    value: FormFieldValue;
+    onChange: (value: FormFieldValue) => void;
+    error?: string | null;
+}): React.JSX.Element;
+export declare function FormCheckbox({ field, value, onChange, error, }: {
+    field: FormFieldCheckbox;
     value: FormFieldValue;
     onChange: (value: FormFieldValue) => void;
     error?: string | null;
