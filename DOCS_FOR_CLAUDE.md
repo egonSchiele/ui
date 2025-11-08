@@ -386,6 +386,31 @@ Properties:
 
 ### Dialog & Modal Components
 
+#### Popover
+
+A floating popover component for displaying content relative to a trigger element.
+
+```jsx
+<Popover>
+  <PopoverTrigger asChild>
+    <Button>Open Popover</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    <p>Popover content goes here</p>
+  </PopoverContent>
+</Popover>
+```
+
+PopoverContent properties:
+- `align`: Alignment relative to trigger: `start | center | end` (default: center)
+- `sideOffset`: Distance from the trigger in pixels (default: 4)
+- `side`: Side to display: `top | right | bottom | left`
+- `className`: Additional CSS classes
+
+Sub-components:
+- `PopoverTrigger`: Element that opens the popover
+- `PopoverContent`: Container for popover content
+
 #### Dialog
 
 A modal dialog component for displaying content in an overlay.
@@ -455,6 +480,45 @@ Sub-components:
 - `SheetOverlay`: Backdrop overlay
 - `SheetPortal`: Portal for rendering
 
+#### Drawer
+
+A bottom drawer component that slides up from the bottom of the screen (mobile-optimized).
+
+```jsx
+<Drawer>
+  <DrawerTrigger asChild>
+    <Button>Open Drawer</Button>
+  </DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Drawer Title</DrawerTitle>
+      <DrawerDescription>Drawer description</DrawerDescription>
+    </DrawerHeader>
+    <p>Drawer content</p>
+    <DrawerFooter>
+      <Button>Submit</Button>
+      <DrawerClose asChild>
+        <Button variant="outline">Cancel</Button>
+      </DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+Drawer properties:
+- `shouldScaleBackground`: Whether to scale the background when open (default: true)
+
+Sub-components:
+- `DrawerTrigger`: Element that opens the drawer
+- `DrawerContent`: Container for drawer content
+- `DrawerHeader`: Header section
+- `DrawerTitle`: Drawer title
+- `DrawerDescription`: Drawer description
+- `DrawerFooter`: Footer section for action buttons
+- `DrawerClose`: Close button
+- `DrawerOverlay`: Backdrop overlay
+- `DrawerPortal`: Portal for rendering
+
 ### Navigation Components
 
 #### Command
@@ -487,6 +551,25 @@ Sub-components:
 - `CommandItem`: Individual command item
 - `CommandSeparator`: Visual separator
 - `CommandShortcut`: Keyboard shortcut display
+
+#### Combobox
+
+A responsive combobox component that combines a searchable command list with a popover (desktop) or drawer (mobile).
+
+```jsx
+<ComboBox emptyState={<p>No results found</p>} />
+```
+
+Properties:
+- `emptyState`: Optional custom React node to display when search returns no results
+
+The component provides:
+- Built-in status selection with predefined options (Backlog, Todo, In Progress, Done, Canceled)
+- Automatic responsive behavior (popover on desktop, drawer on mobile)
+- Searchable/filterable command list
+- Keyboard navigation support
+
+Note: This is a pre-configured component. For custom options, you'll need to create your own implementation using the Command, Popover, and Drawer components.
 
 #### Menubar
 
