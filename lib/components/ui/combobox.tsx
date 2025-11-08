@@ -21,7 +21,6 @@ import {
 
 export type ComboBoxItem = {
   key: string;
-  value: string;
   label: string;
 };
 
@@ -30,6 +29,7 @@ export type ComboBoxProps = {
   placeholder?: string;
   emptyState?: React.ReactNode;
   onSelect?: (item: ComboBoxItem) => void;
+  className?: string;
 };
 
 export function ComboBox({
@@ -37,6 +37,7 @@ export function ComboBox({
   placeholder = "Select an item...",
   emptyState,
   onSelect,
+  className,
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
@@ -116,9 +117,9 @@ function ItemList({
           {items.map((item) => (
             <CommandItem
               key={item.key}
-              value={item.value}
+              value={item.label}
               onSelect={(value) => {
-                setSelectedItem(items.find((i) => i.value === value) || null);
+                setSelectedItem(items.find((i) => i.label === value) || null);
                 setOpen(false);
               }}
             >

@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/form/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "../../components/ui/command";
 import { Drawer, DrawerContent, DrawerTrigger } from "../../components/ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger, } from "../../components/ui/popover";
-export function ComboBox({ items, placeholder = "Select an item...", emptyState, onSelect, }) {
+export function ComboBox({ items, placeholder = "Select an item...", emptyState, onSelect, className, }) {
     const [open, setOpen] = React.useState(false);
     const isMobile = useIsMobile();
     const [selectedItem, setSelectedItem] = React.useState(null);
@@ -47,8 +47,8 @@ function ItemList({ items, placeholder, setOpen, setSelectedItem, emptyState, })
         {emptyState && <CommandEmpty>{emptyState}</CommandEmpty>}
         {!emptyState && <CommandEmpty>No results found.</CommandEmpty>}
         <CommandGroup>
-          {items.map((item) => (<CommandItem key={item.key} value={item.value} onSelect={(value) => {
-                setSelectedItem(items.find((i) => i.value === value) || null);
+          {items.map((item) => (<CommandItem key={item.key} value={item.label} onSelect={(value) => {
+                setSelectedItem(items.find((i) => i.label === value) || null);
                 setOpen(false);
             }}>
               {item.label}

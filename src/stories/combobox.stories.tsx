@@ -5,11 +5,11 @@ import React from "react";
 import "../../globals.css";
 
 const statusItems = [
-  { key: "backlog", value: "backlog", label: "Backlog" },
-  { key: "todo", value: "todo", label: "Todo" },
-  { key: "in-progress", value: "in progress", label: "In Progress" },
-  { key: "done", value: "done", label: "Done" },
-  { key: "canceled", value: "canceled", label: "Canceled" },
+  { key: "backlog", label: "Backlog" },
+  { key: "todo", label: "Todo" },
+  { key: "in-progress", label: "In Progress" },
+  { key: "done", label: "Done" },
+  { key: "canceled", label: "Canceled" },
 ];
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export

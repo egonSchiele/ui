@@ -1,7 +1,6 @@
 import * as React from "react";
 export type ComboBoxItem = {
     key: string;
-    value: string;
     label: string;
 };
 export type ComboBoxProps = {
@@ -9,5 +8,6 @@ export type ComboBoxProps = {
     placeholder?: string;
     emptyState?: React.ReactNode;
     onSelect?: (item: ComboBoxItem) => void;
+    className?: string;
 };
-export declare function ComboBox({ items, placeholder, emptyState, onSelect, }: ComboBoxProps): React.JSX.Element;
+export declare function ComboBox({ items, placeholder, emptyState, onSelect, className, }: ComboBoxProps): React.JSX.Element;
