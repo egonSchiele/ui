@@ -18,7 +18,7 @@ import {
 } from "./components/ui/card.jsx";
 
 import { CenteredLayout } from "./components/ui/layout/centeredLayout.jsx";
-
+import { ComboBox } from "./components/ui/combobox.jsx";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +28,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./components/ui/dialog.jsx";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./components/ui/drawer.jsx";
 import { Header, NavigationItem } from "./components/ui/layout/header.jsx";
 import { HGroupXS, HGroupXSProps } from "./components/ui/layout/hgroupXS.jsx";
 import { HGroupSM, HGroupSMProps } from "./components/ui/layout/hgroupSM.jsx";
@@ -89,6 +101,11 @@ import {
   PaginationPrevious,
 } from "./components/ui/pagination.jsx";
 import { Paragraph } from "./components/ui/typography/paragraph.jsx";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "./components/ui/popover.jsx";
 import { SectionHeading } from "./components/ui/typography/sectionHeading.jsx";
 
 import {
@@ -185,6 +202,7 @@ export {
   CardHeader,
   CardTitle,
   CenteredLayout,
+  ComboBox,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -192,6 +210,16 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerPortal,
+  DrawerTitle,
+  DrawerTrigger,
   FormField,
   FormFieldBase,
   FormFieldInput,
@@ -245,6 +273,9 @@ export {
   PaginationNext,
   PaginationPrevious,
   Paragraph,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   SectionHeading,
   Select,
   SelectContent,
