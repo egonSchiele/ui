@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import "../../globals.css";
 import { ComboBox } from "@/components/ui/combobox";
-
+import { Button } from "@/components/ui/form/button";
+import React from "react";
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {
   title: "Examples/Combobox",
@@ -25,4 +25,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {},
+};
+
+export const WithCustomEmptyState: Story = {
+  args: {
+    emptyState: (
+      <div className="text-center py-4">
+        <p className="text-sm text-muted-foreground">No status found.</p>
+        <Button
+          onClick={() => {
+            alert("Add new status clicked!");
+          }}
+        >
+          Add new status
+        </Button>
+      </div>
+    ),
+  },
 };

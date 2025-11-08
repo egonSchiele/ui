@@ -47,7 +47,7 @@ const statuses: Status[] = [
   },
 ];
 
-export function ComboBox() {
+export function ComboBox({ emptyState }: { emptyState?: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
@@ -67,6 +67,7 @@ export function ComboBox() {
             <StatusList
               setOpen={setOpen}
               setSelectedStatus={setSelectedStatus}
+              emptyState={emptyState}
             />
           </div>
         </DrawerContent>
@@ -81,7 +82,11 @@ export function ComboBox() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
-        <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
+        <StatusList
+          setOpen={setOpen}
+          setSelectedStatus={setSelectedStatus}
+          emptyState={emptyState}
+        />
       </PopoverContent>
     </Popover>
   );
@@ -90,15 +95,18 @@ export function ComboBox() {
 function StatusList({
   setOpen,
   setSelectedStatus,
+  emptyState,
 }: {
   setOpen: (open: boolean) => void;
   setSelectedStatus: (status: Status | null) => void;
+  emptyState?: React.ReactNode;
 }) {
   return (
     <Command>
       <CommandInput placeholder="Filter status..." />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        {emptyState && <CommandEmpty>{emptyState}</CommandEmpty>}
+        {!emptyState && <CommandEmpty>No results found.</CommandEmpty>}
         <CommandGroup>
           {statuses.map((status) => (
             <CommandItem

@@ -27,7 +27,7 @@ const statuses = [
         label: "Canceled",
     },
 ];
-export function ComboBox() {
+export function ComboBox({ emptyState }) {
     const [open, setOpen] = React.useState(false);
     const isMobile = useIsMobile();
     const [selectedStatus, setSelectedStatus] = React.useState(null);
@@ -40,7 +40,7 @@ export function ComboBox() {
         </DrawerTrigger>
         <DrawerContent>
           <div className="mt-4 border-t">
-            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus}/>
+            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} emptyState={emptyState}/>
           </div>
         </DrawerContent>
       </Drawer>);
@@ -52,15 +52,16 @@ export function ComboBox() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
-        <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus}/>
+        <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} emptyState={emptyState}/>
       </PopoverContent>
     </Popover>);
 }
-function StatusList({ setOpen, setSelectedStatus, }) {
+function StatusList({ setOpen, setSelectedStatus, emptyState, }) {
     return (<Command>
       <CommandInput placeholder="Filter status..."/>
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        {emptyState && <CommandEmpty>{emptyState}</CommandEmpty>}
+        {!emptyState && <CommandEmpty>No results found.</CommandEmpty>}
         <CommandGroup>
           {statuses.map((status) => (<CommandItem key={status.value} value={status.value} onSelect={(value) => {
                 setSelectedStatus(statuses.find((priority) => priority.value === value) || null);
