@@ -19,54 +19,53 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-type Status = {
+export type ComboBoxItem = {
+  key: string;
   value: string;
   label: string;
 };
 
-const statuses: Status[] = [
-  {
-    value: "backlog",
-    label: "Backlog",
-  },
-  {
-    value: "todo",
-    label: "Todo",
-  },
-  {
-    value: "in progress",
-    label: "In Progress",
-  },
-  {
-    value: "done",
-    label: "Done",
-  },
-  {
-    value: "canceled",
-    label: "Canceled",
-  },
-];
+export type ComboBoxProps = {
+  items: ComboBoxItem[];
+  placeholder?: string;
+  emptyState?: React.ReactNode;
+  onSelect?: (item: ComboBoxItem) => void;
+};
 
-export function ComboBox({ emptyState }: { emptyState?: React.ReactNode }) {
+export function ComboBox({
+  items,
+  placeholder = "Select an item...",
+  emptyState,
+  onSelect,
+}: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
-  const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
+  const [selectedItem, setSelectedItem] = React.useState<ComboBoxItem | null>(
     null
   );
+
+  const handleSelect = (item: ComboBoxItem | null) => {
+    setSelectedItem(item);
+    if (item && onSelect) {
+      onSelect(item);
+    }
+  };
 
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button variant="outline" className="w-[150px] justify-start">
-            {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
+            {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
           </Button>
         </DrawerTrigger>
         <DrawerContent>
           <div className="mt-4 border-t">
-            <StatusList
+            <ItemList
+              items={items}
+              placeholder={placeholder}
               setOpen={setOpen}
-              setSelectedStatus={setSelectedStatus}
+              setSelectedItem={handleSelect}
               emptyState={emptyState}
             />
           </div>
@@ -78,13 +77,15 @@ export function ComboBox({ emptyState }: { emptyState?: React.ReactNode }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-[150px] justify-start">
-          {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
+          {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
-        <StatusList
+        <ItemList
+          items={items}
+          placeholder={placeholder}
           setOpen={setOpen}
-          setSelectedStatus={setSelectedStatus}
+          setSelectedItem={handleSelect}
           emptyState={emptyState}
         />
       </PopoverContent>
@@ -92,34 +93,36 @@ export function ComboBox({ emptyState }: { emptyState?: React.ReactNode }) {
   );
 }
 
-function StatusList({
+function ItemList({
+  items,
+  placeholder,
   setOpen,
-  setSelectedStatus,
+  setSelectedItem,
   emptyState,
 }: {
+  items: ComboBoxItem[];
+  placeholder: string;
   setOpen: (open: boolean) => void;
-  setSelectedStatus: (status: Status | null) => void;
+  setSelectedItem: (item: ComboBoxItem | null) => void;
   emptyState?: React.ReactNode;
 }) {
   return (
     <Command>
-      <CommandInput placeholder="Filter status..." />
+      <CommandInput placeholder={placeholder} />
       <CommandList>
         {emptyState && <CommandEmpty>{emptyState}</CommandEmpty>}
         {!emptyState && <CommandEmpty>No results found.</CommandEmpty>}
         <CommandGroup>
-          {statuses.map((status) => (
+          {items.map((item) => (
             <CommandItem
-              key={status.value}
-              value={status.value}
+              key={item.key}
+              value={item.value}
               onSelect={(value) => {
-                setSelectedStatus(
-                  statuses.find((priority) => priority.value === value) || null
-                );
+                setSelectedItem(items.find((i) => i.value === value) || null);
                 setOpen(false);
               }}
             >
-              {status.label}
+              {item.label}
             </CommandItem>
           ))}
         </CommandGroup>

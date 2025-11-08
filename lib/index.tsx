@@ -18,7 +18,7 @@ import {
 } from "./components/ui/card.jsx";
 
 import { CenteredLayout } from "./components/ui/layout/centeredLayout.jsx";
-import { ComboBox } from "./components/ui/combobox.jsx";
+import { ComboBox, ComboBoxItem, ComboBoxProps } from "./components/ui/combobox.jsx";
 import {
   Dialog,
   DialogContent,
@@ -203,6 +203,8 @@ export {
   CardTitle,
   CenteredLayout,
   ComboBox,
+  ComboBoxItem,
+  ComboBoxProps,
   Dialog,
   DialogContent,
   DialogDescription,

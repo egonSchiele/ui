@@ -1,8 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ComboBox } from "@/components/ui/combobox";
+import { ComboBox, ComboBoxItem } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/form/button";
 import React from "react";
 import "../../globals.css";
+
+const statusItems = [
+  { key: "backlog", value: "backlog", label: "Backlog" },
+  { key: "todo", value: "todo", label: "Todo" },
+  { key: "in-progress", value: "in progress", label: "In Progress" },
+  { key: "done", value: "done", label: "Done" },
+  { key: "canceled", value: "canceled", label: "Canceled" },
+];
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {
@@ -26,11 +34,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    items: statusItems,
+    placeholder: "Select status...",
+    onSelect: (item: ComboBoxItem) => {
+      console.log("Selected:", item);
+    },
+  },
 };
 
 export const WithCustomEmptyState: Story = {
   args: {
+    items: statusItems,
+    placeholder: "Select status...",
     emptyState: (
       <div className="text-center py-4">
         <p className="text-sm text-muted-foreground">No status found.</p>
@@ -43,5 +59,8 @@ export const WithCustomEmptyState: Story = {
         </Button>
       </div>
     ),
+    onSelect: (item: ComboBoxItem) => {
+      console.log("Selected:", item);
+    },
   },
 };

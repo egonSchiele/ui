@@ -554,22 +554,37 @@ Sub-components:
 
 #### Combobox
 
-A responsive combobox component that combines a searchable command list with a popover (desktop) or drawer (mobile).
+A responsive, generic combobox component that combines a searchable command list with a popover (desktop) or drawer (mobile).
 
 ```jsx
-<ComboBox emptyState={<p>No results found</p>} />
+const items = [
+  { key: "1", value: "option1", label: "Option 1" },
+  { key: "2", value: "option2", label: "Option 2" },
+  { key: "3", value: "option3", label: "Option 3" },
+];
+
+<ComboBox
+  items={items}
+  placeholder="Select an option..."
+  onSelect={(item) => console.log("Selected item is:", item)}
+  emptyState={<p>No results found</p>}
+/>
 ```
 
 Properties:
+- `items`: Array of `ComboBoxItem` objects (required), where each item has:
+  - `key`: Unique identifier for the item
+  - `value`: The value to be returned when selected
+  - `label`: Display text shown in the list and button
+- `placeholder`: Text shown when no item is selected (default: "Select an item...")
+- `onSelect`: Callback function that receives the selected item
 - `emptyState`: Optional custom React node to display when search returns no results
 
 The component provides:
-- Built-in status selection with predefined options (Backlog, Todo, In Progress, Done, Canceled)
 - Automatic responsive behavior (popover on desktop, drawer on mobile)
 - Searchable/filterable command list
 - Keyboard navigation support
-
-Note: This is a pre-configured component. For custom options, you'll need to create your own implementation using the Command, Popover, and Drawer components.
+- Selected item display in trigger button
 
 #### Menubar
 
