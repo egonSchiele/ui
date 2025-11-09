@@ -17,12 +17,12 @@ export function ComboBox({ items, placeholder = "Select an item...", emptyState,
     };
     if (isMobile) {
         return (<Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
+        <DrawerTrigger className={className} asChild>
           <Button variant="outline" className="w-[150px] justify-start">
             {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
           </Button>
         </DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent className={className}>
           <div className="mt-4 border-t">
             <ItemList items={items} placeholder={placeholder} setOpen={setOpen} setSelectedItem={handleSelect} emptyState={emptyState}/>
           </div>
@@ -30,12 +30,12 @@ export function ComboBox({ items, placeholder = "Select an item...", emptyState,
       </Drawer>);
     }
     return (<Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="w-[150px] justify-start">
+      <PopoverTrigger className={className} asChild>
+        <Button variant="outline" className="w-full justify-start">
           {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" align="start">
+      <PopoverContent className={className} align="start">
         <ItemList items={items} placeholder={placeholder} setOpen={setOpen} setSelectedItem={handleSelect} emptyState={emptyState}/>
       </PopoverContent>
     </Popover>);

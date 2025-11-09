@@ -139,7 +139,7 @@ A comprehensive form builder component that handles multiple field types.
 ```jsx
 <SimpleForm
   fields={[
-    { name: "username", label: "Username", type: "input", required: true },
+    { name: "username", label: "Username", type: "input", required: true, initialValue: "foo" },
     { name: "email", label: "Email", type: "input", isNumber: false },
     { name: "role", label: "Role", type: "select", options: [
       { key: "admin", value: "admin", label: "Admin" },
@@ -151,6 +151,8 @@ A comprehensive form builder component that handles multiple field types.
   submitButtonText="Submit"
 />
 ```
+
+Note: to set the initial value of a field, use `initialValue`, not `defaultValue`.
 
 Properties:
 - `fields`: Array of form field configurations, of type `FormField[]` (see below)
