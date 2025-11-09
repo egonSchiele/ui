@@ -1,7 +1,8 @@
 import * as React from "react";
-export type ComboBoxItem = {
+export type ComboBoxItem<T = any> = {
     key: string;
     label: string;
+    metadata?: T;
 };
 export type ComboBoxProps = {
     items: ComboBoxItem[];

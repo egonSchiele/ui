@@ -19,9 +19,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export type ComboBoxItem = {
+export type ComboBoxItem<T = any> = {
   key: string;
   label: string;
+  metadata?: T;
 };
 
 export type ComboBoxProps = {
