@@ -10,5 +10,6 @@ export type ComboBoxProps = {
     emptyState?: React.ReactNode;
     onSelect?: (item: ComboBoxItem) => void;
     className?: string;
+    buttonClassName?: string;
 };
-export declare function ComboBox({ items, placeholder, emptyState, onSelect, className, }: ComboBoxProps): React.JSX.Element;
+export declare function ComboBox({ items, placeholder, emptyState, onSelect, className, buttonClassName, }: ComboBoxProps): React.JSX.Element;

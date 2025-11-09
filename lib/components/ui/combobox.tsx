@@ -18,6 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import clsx from "clsx";
 
 export type ComboBoxItem<T = any> = {
   key: string;
@@ -31,6 +32,7 @@ export type ComboBoxProps = {
   emptyState?: React.ReactNode;
   onSelect?: (item: ComboBoxItem) => void;
   className?: string;
+  buttonClassName?: string;
 };
 
 export function ComboBox({
@@ -39,6 +41,7 @@ export function ComboBox({
   emptyState,
   onSelect,
   className,
+  buttonClassName,
 }: ComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
@@ -78,7 +81,7 @@ export function ComboBox({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={className} asChild>
-        <Button variant="outline" className="w-full justify-start">
+        <Button variant="outline" className={clsx("w-[150px] justify-start", buttonClassName)}>
           {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
         </Button>
       </PopoverTrigger>
