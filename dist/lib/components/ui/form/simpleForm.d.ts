@@ -61,12 +61,13 @@ export declare function FormCheckbox({ field, value, onChange, error, }: {
     error?: string | null;
 }): React.JSX.Element;
 type FieldsToResult<T extends readonly FormField[]> = T[number]["name"];
-export declare function SimpleForm<const T extends readonly FormField[]>({ fields, onSubmit, onChange, onCancel, submitButtonText, className, }: {
+export declare function SimpleForm<const T extends readonly FormField[]>({ fields, onSubmit, onChange, onCancel, submitButtonText, className, children, }: {
     fields: T;
     onSubmit: (values: Record<FieldsToResult<T>, FormFieldValue>) => void;
     onChange?: (values: Record<FieldsToResult<T>, FormFieldValue>) => void;
     onCancel?: () => void;
     submitButtonText?: string;
     className?: string;
+    children?: React.ReactNode;
 }): React.JSX.Element;
 export {};

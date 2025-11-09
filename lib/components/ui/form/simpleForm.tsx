@@ -229,6 +229,7 @@ export function SimpleForm<const T extends readonly FormField[]>({
   onCancel,
   submitButtonText = "Submit",
   className = "",
+  children,
 }: {
   fields: T;
   onSubmit: (values: Record<FieldsToResult<T>, FormFieldValue>) => void;
@@ -236,6 +237,7 @@ export function SimpleForm<const T extends readonly FormField[]>({
   onCancel?: () => void;
   submitButtonText?: string;
   className?: string;
+  children?: React.ReactNode;
 }) {
   const [formValues, setFormValues] = React.useState<
     Record<FieldsToResult<T>, FormFieldValue>
@@ -330,6 +332,7 @@ export function SimpleForm<const T extends readonly FormField[]>({
   return (
     <VGroupMD className={className}>
       <VGroupSM>{fields.map(fieldToComponent)}</VGroupSM>
+      {children && children}
       <HGroupXS>
         {onCancel && (
           <Button onClick={onCancel} variant="secondary">

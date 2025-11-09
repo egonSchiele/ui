@@ -63,7 +63,7 @@ export function FormCheckbox({ field, value, onChange, error, }) {
       <Switch checked={Boolean(value)} onCheckedChange={(checked) => onChange(checked)} required={field.required} disabled={field.disabled} className={field.className}/>
     </VGroupXS>);
 }
-export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonText = "Submit", className = "", }) {
+export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonText = "Submit", className = "", children, }) {
     const [formValues, setFormValues] = React.useState(fields.reduce((acc, field) => {
         if (field.type === "checkbox") {
             acc[field.name] =
@@ -112,6 +112,7 @@ export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonT
     };
     return (<VGroupMD className={className}>
       <VGroupSM>{fields.map(fieldToComponent)}</VGroupSM>
+      {children && children}
       <HGroupXS>
         {onCancel && (<Button onClick={onCancel} variant="secondary">
             Cancel
