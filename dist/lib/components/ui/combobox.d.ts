@@ -4,12 +4,12 @@ export type ComboBoxItem<T = any> = {
     label: string;
     metadata?: T;
 };
-export type ComboBoxProps = {
-    items: ComboBoxItem[];
+export type ComboBoxProps<T = any> = {
+    items: ComboBoxItem<T>[];
     placeholder?: string;
     emptyState?: React.ReactNode;
-    onSelect?: (item: ComboBoxItem) => void;
+    onSelect?: (item: ComboBoxItem<T>) => void;
     className?: string;
     buttonClassName?: string;
 };
-export declare function ComboBox({ items, placeholder, emptyState, onSelect, className, buttonClassName, }: ComboBoxProps): React.JSX.Element;
+export declare function ComboBox<T = any>({ items, placeholder, emptyState, onSelect, className, buttonClassName, }: ComboBoxProps<T>): React.JSX.Element;

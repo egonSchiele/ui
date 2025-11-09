@@ -26,23 +26,23 @@ export type ComboBoxItem<T = any> = {
   metadata?: T;
 };
 
-export type ComboBoxProps = {
-  items: ComboBoxItem[];
+export type ComboBoxProps<T = any> = {
+  items: ComboBoxItem<T>[];
   placeholder?: string;
   emptyState?: React.ReactNode;
-  onSelect?: (item: ComboBoxItem) => void;
+  onSelect?: (item: ComboBoxItem<T>) => void;
   className?: string;
   buttonClassName?: string;
 };
 
-export function ComboBox({
+export function ComboBox<T = any>({
   items,
   placeholder = "Select an item...",
   emptyState,
   onSelect,
   className,
   buttonClassName,
-}: ComboBoxProps) {
+}: ComboBoxProps<T>) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
   const [selectedItem, setSelectedItem] = React.useState<ComboBoxItem | null>(
