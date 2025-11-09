@@ -90,6 +90,7 @@ export function FormInput({
           className={cn(field.disabled && "text-primary/70")}
         >
           {field.label}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </HGroupXS>
@@ -126,6 +127,7 @@ export function FormSelect({
         className={cn(field.disabled && "text-primary/70")}
       >
         {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Select
         value={`${value}`}
@@ -167,6 +169,7 @@ export function FormTextarea({
         className={cn(field.disabled && "text-primary/70")}
       >
         {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Textarea
         name={field.name}
@@ -206,6 +209,7 @@ export function FormCheckbox({
           className={cn(field.disabled && "text-primary/70")}
         >
           {field.label}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </HGroupXS>

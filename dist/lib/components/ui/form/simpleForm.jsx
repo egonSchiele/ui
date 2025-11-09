@@ -19,6 +19,7 @@ export function FormInput({ field, value, onChange, error, }) {
       <HGroupXS>
         <Label htmlFor={field.name} className={cn(field.disabled && "text-primary/70")}>
           {field.label}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </HGroupXS>
@@ -30,6 +31,7 @@ export function FormSelect({ field, value, onChange, error, }) {
     return (<VGroupXS>
       <Label htmlFor={field.name} className={cn(field.disabled && "text-primary/70")}>
         {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Select value={`${value}`} onValueChange={(value) => onChange(value)} required={field.required} disabled={field.disabled} name={field.name}>
         <SelectTrigger className={cn("w-[180px]", field.className)}>
@@ -47,6 +49,7 @@ export function FormTextarea({ field, value, onChange, error, }) {
     return (<VGroupXS>
       <Label htmlFor={field.name} className={cn(field.disabled && "text-primary/70")}>
         {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Textarea name={field.name} value={value} onChange={(e) => onChange(e.target.value)} rows={field.rows || 3} required={field.required} disabled={field.disabled} className={field.className} placeholder={field.placeholder || ""}/>
       {field.showCharCount && (<p className="text-xs text-primary/70">{`${value}`.length} chars</p>)}
@@ -57,6 +60,7 @@ export function FormCheckbox({ field, value, onChange, error, }) {
       <HGroupXS>
         <Label htmlFor={field.name} className={cn(field.disabled && "text-primary/70")}>
           {field.label}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </HGroupXS>

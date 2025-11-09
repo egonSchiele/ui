@@ -6,7 +6,7 @@ const fields: FormField[] = [
     name: "name" as const,
     type: "input",
     label: "Name",
-    required: false,
+    required: true,
     initialValue: "",
   } as const,
   {
@@ -22,7 +22,7 @@ const fields: FormField[] = [
     type: "textarea",
     label: "Bio",
     rows: 3,
-    required: false,
+    required: true,
     initialValue: "text here",
     showCharCount: true,
   } as const,
