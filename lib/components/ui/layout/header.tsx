@@ -27,13 +27,13 @@ export function Header({
         aria-label="Global"
         className="flex w-screen items-center justify-between p-6 lg:px-8"
       >
-        <div className="flex items-center gap-x-12">
+        <div className="flex items-baseline gap-x-12">
           {companyLogo && (
             <img alt="" src={companyLogo} className="h-8 w-auto" />
           )}
 
           {companyName && (
-            <span className="text-sm/6 font-semibold text-primary/80 pb-xl -mt-1.5">
+            <span className="text-sm/6 font-bold text-primary">
               {companyName}
             </span>
           )}
