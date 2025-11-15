@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "../../../utils";
 export function Header({ navigation, companyName, companyLogo, actions, }) {
     return (<header className="bg-background">
-      <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+      <nav aria-label="Global" className="flex w-screen items-center justify-between p-6 lg:px-8">
         <div className="flex items-center gap-x-12">
           {companyLogo && (<img alt="" src={companyLogo} className="h-8 w-auto"/>)}
 
