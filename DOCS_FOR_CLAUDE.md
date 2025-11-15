@@ -6,12 +6,16 @@ This repo contains React components you can use for building UI.
 
 #### Button
 
-A versatile button component with multiple style variants and sizes.
+A versatile button component with multiple style variants and sizes. Can also render as a link when `href` is provided.
 
 ```jsx
 <Button onClick={() => alert('Clicked!')}>Click Me</Button>
 <Button variant="destructive">Delete</Button>
 <Button size="sm">Small Button</Button>
+<Button href="/dashboard">Go to Dashboard</Button>
+<Button href="https://example.com" target="_blank" rel="noopener noreferrer">
+  External Link
+</Button>
 ```
 
 Properties:
@@ -21,6 +25,9 @@ Properties:
 - `size`: Size variant: `default | sm | lg | icon`
 - `asChild`: If true, renders as a Slot component for composition
 - `disabled`: Disables the button
+- `href`: When provided, renders as an `<a>` tag for navigation instead of a `<button>`
+- `target`: Link target (e.g., `_blank` for new tab) - only used when `href` is provided
+- `rel`: Link relationship (e.g., `noopener noreferrer`) - only used when `href` is provided
 
 #### Input
 

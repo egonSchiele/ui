@@ -37,7 +37,7 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 whites
 });
 function Button(_a) {
     var { className, variant, size, asChild = false } = _a, props = __rest(_a, ["className", "variant", "size", "asChild"]);
-    const Comp = asChild ? Slot : "button";
+    const Comp = asChild ? Slot : props.href ? "a" : "button";
     return (<Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}/>);
 }
 export { Button, buttonVariants };

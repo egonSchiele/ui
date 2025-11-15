@@ -91,3 +91,20 @@ export const Link: Story = {
     children: "Submit",
   },
 };
+
+export const WithHref: Story = {
+  args: {
+    href: "/dashboard",
+    children: "Go to Dashboard",
+  },
+};
+
+export const WithHrefExternal: Story = {
+  args: {
+    href: "https://example.com",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    variant: "outline",
+    children: "Visit External Site",
+  },
+};

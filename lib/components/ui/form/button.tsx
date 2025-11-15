@@ -34,23 +34,40 @@ const buttonVariants = cva(
   }
 );
 
+// Render as an anchor tag if an href is provided and as a button otherwise.
+type ButtonBaseProps = VariantProps<typeof buttonVariants> & {
+  asChild?: boolean;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => void;
+};
+
+type ButtonAsButtonProps = ButtonBaseProps &
+  Omit<React.ComponentProps<"button">, "asChild" | "onClick"> & {
+    href?: never;
+  };
+
+type ButtonAsLinkProps = ButtonBaseProps &
+  Omit<React.ComponentProps<"a">, "asChild" | "onClick"> & {
+    href: string;
+  };
+
+type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
+}: ButtonProps) {
+  const Comp = asChild ? Slot : props.href ? "a" : "button";
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
+      {...(props as any)}
     />
   );
 }
