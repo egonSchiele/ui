@@ -18,7 +18,11 @@ import {
 } from "./components/ui/card.jsx";
 
 import { CenteredLayout } from "./components/ui/layout/centeredLayout.jsx";
-import { ComboBox, ComboBoxItem, ComboBoxProps } from "./components/ui/combobox.jsx";
+import {
+  ComboBox,
+  ComboBoxItem,
+  ComboBoxProps,
+} from "./components/ui/combobox.jsx";
 import {
   Dialog,
   DialogContent,
@@ -87,6 +91,18 @@ import {
   MenubarSubTrigger,
   MenubarSubContent,
 } from "./components/ui/menubar.jsx";
+
+import {
+  navigationMenuTriggerStyle,
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+} from "./components/ui/navigation-menu.jsx";
 
 import { PageHeading } from "./components/ui/typography/pageHeading.jsx";
 import { PageHeading2 } from "./components/ui/typography/pageHeading2.jsx";
@@ -265,6 +281,15 @@ export {
   MenubarSubTrigger,
   MenubarTrigger,
   NavigationItem,
+  navigationMenuTriggerStyle,
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
   PageHeading,
   PageHeading2,
   Pagination,

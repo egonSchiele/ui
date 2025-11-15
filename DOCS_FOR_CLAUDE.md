@@ -523,6 +523,51 @@ Sub-components:
 
 ### Navigation Components
 
+#### NavigationMenu
+
+A navigation menu component with dropdown support for creating complex navigation structures.
+
+```jsx
+<NavigationMenu>
+  <NavigationMenuList>
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <ul className="grid gap-3 p-6 md:w-[400px]">
+          <li>
+            <NavigationMenuLink asChild>
+              <a href="/product1">Product 1</a>
+            </NavigationMenuLink>
+          </li>
+        </ul>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+    <NavigationMenuItem>
+      <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+        <a href="/about">About</a>
+      </NavigationMenuLink>
+    </NavigationMenuItem>
+  </NavigationMenuList>
+</NavigationMenu>
+```
+
+Sub-components:
+- `NavigationMenu`: Root container for the navigation menu
+- `NavigationMenuList`: Container for navigation items
+- `NavigationMenuItem`: Individual navigation item
+- `NavigationMenuTrigger`: Button that opens dropdown content (includes chevron icon)
+- `NavigationMenuContent`: Dropdown content container with animations
+- `NavigationMenuLink`: Link element for navigation items
+- `NavigationMenuViewport`: Viewport for dropdown content (automatically included)
+- `NavigationMenuIndicator`: Visual indicator for active menu
+- `navigationMenuTriggerStyle`: Helper function for styling trigger-style links
+
+NavigationMenuContent properties:
+- `className`: Additional CSS classes for styling the dropdown content
+
+NavigationMenuLink properties:
+- `asChild`: Renders as a Slot component for composition with custom elements
+
 #### Command
 
 A command palette component for searchable commands.
