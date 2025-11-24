@@ -152,14 +152,25 @@ A comprehensive form builder component that handles multiple field types.
       { key: "admin", value: "admin", label: "Admin" },
       { key: "user", value: "user", label: "User" }
     ]},
-    { name: "bio", label: "Bio", type: "textarea", rows: 4 }
+    { name: "bio", label: "Bio", type: "textarea", rows: 4 },
+    {
+      name: "price",
+      label: "Price",
+      type: "input",
+      isNumber: true,
+      // transform is called before validation and submission
+      transform: (value) => parseFloat(value).toFixed(2)
+    }
   ]}
   onSubmit={(values) => console.log(values)}
   submitButtonText="Submit"
 />
 ```
 
-Note: to set the initial value of a field, use `initialValue`, not `defaultValue`.
+Notes:
+- To set the initial value of a field, use `initialValue`, not `defaultValue`
+- The `transform` function is applied to field values before validation and submission
+- For input fields with `isNumber: true`, values are automatically converted to numbers using `parseFloat()` if no custom transform is provided
 
 Properties:
 - `fields`: Array of form field configurations, of type `FormField[]` (see below)
@@ -193,6 +204,7 @@ export type FormFieldBase = {
   className?: string; // Additional class names for styling
   validate?: (value: FormFieldValue) => string | null; // Validation function returning error message or null
   placeholder?: string; // Placeholder text for input and textarea fields
+  transform?: (value: FormFieldValue) => FormFieldValue; // Function to transform the value before validation and submission
 };
 
 export type FormFieldInput = FormFieldBase & {

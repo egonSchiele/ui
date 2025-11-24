@@ -38,6 +38,7 @@ export type FormFieldBase = {
   className?: string; // Additional class names for styling
   validate?: (value: FormFieldValue) => string | null; // Validation function returning error message or null
   placeholder?: string; // Placeholder text for input and textarea fields
+  transform?: (value: FormFieldValue) => FormFieldValue; // Function to transform the value before use
 };
 
 export type FormFieldInput = FormFieldBase & {
@@ -269,17 +270,33 @@ export function SimpleForm<const T extends readonly FormField[]>({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string | null> = {};
+    const transformedValues: Record<string, FormFieldValue> = { ...formValues };
+
+    fields.forEach((field) => {
+      const key = field.name as FieldsToResult<T>;
+      if (field.transform) {
+        transformedValues[key] = field.transform(transformedValues[key]);
+      } else if (field.type === "input" && field.isNumber) {
+        // by default, convert input fields with isNumber to float
+        if (typeof transformedValues[key] === "string") {
+          transformedValues[key] = parseFloat(
+            transformedValues[key] as string
+          );
+        }
+      }
+    });
+
+
     fields.forEach((field) => {
       if (field.validate) {
-        newErrors[field.name] = field.validate(
-          formValues[field.name as FieldsToResult<T>]
-        );
+        let value = transformedValues[field.name as FieldsToResult<T>];
+        newErrors[field.name] = field.validate(value);
       }
     });
     setErrors(newErrors);
 
     if (Object.values(newErrors).every((error) => error === null)) {
-      onSubmit(formValues);
+      onSubmit(transformedValues);
     }
   };
 

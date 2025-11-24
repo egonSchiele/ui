@@ -17,6 +17,7 @@ export type FormFieldBase = {
     className?: string;
     validate?: (value: FormFieldValue) => string | null;
     placeholder?: string;
+    transform?: (value: FormFieldValue) => FormFieldValue;
 };
 export type FormFieldInput = FormFieldBase & {
     type: "input";

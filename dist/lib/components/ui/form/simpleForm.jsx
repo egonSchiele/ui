@@ -88,14 +88,28 @@ export function SimpleForm({ fields, onSubmit, onChange, onCancel, submitButtonT
     const handleSubmit = (e) => {
         e.preventDefault();
         const newErrors = {};
+        const transformedValues = Object.assign({}, formValues);
+        fields.forEach((field) => {
+            const key = field.name;
+            if (field.transform) {
+                transformedValues[key] = field.transform(transformedValues[key]);
+            }
+            else if (field.type === "input" && field.isNumber) {
+                // by default, convert input fields with isNumber to float
+                if (typeof transformedValues[key] === "string") {
+                    transformedValues[key] = parseFloat(transformedValues[key]);
+                }
+            }
+        });
         fields.forEach((field) => {
             if (field.validate) {
-                newErrors[field.name] = field.validate(formValues[field.name]);
+                let value = transformedValues[field.name];
+                newErrors[field.name] = field.validate(value);
             }
         });
         setErrors(newErrors);
         if (Object.values(newErrors).every((error) => error === null)) {
-            onSubmit(formValues);
+            onSubmit(transformedValues);
         }
     };
     const fieldToComponent = (field) => {
