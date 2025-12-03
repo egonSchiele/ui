@@ -645,6 +645,7 @@ Properties:
 - `placeholder`: Text shown when no item is selected (default: "Select an item...")
 - `onSelect`: Callback function that receives the selected item
 - `emptyState`: Optional custom React node to display when search returns no results
+- `modal`: If using the combobox in a modal (eg a Dialog), this property must be set to true, otherwise the scrollbar will not work.
 
 The component provides:
 - Automatic responsive behavior (popover on desktop, drawer on mobile)
