@@ -6,7 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Drawer, DrawerContent, DrawerTrigger } from "../../components/ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger, } from "../../components/ui/popover";
 import clsx from "clsx";
-export function ComboBox({ items, placeholder = "Select an item...", emptyState, onSelect, className, buttonClassName, }) {
+export function ComboBox({ items, placeholder = "Select an item...", emptyState, onSelect, className, buttonClassName, modal = false, }) {
     const [open, setOpen] = React.useState(false);
     const isMobile = useIsMobile();
     const [selectedItem, setSelectedItem] = React.useState(null);
@@ -30,7 +30,7 @@ export function ComboBox({ items, placeholder = "Select an item...", emptyState,
         </DrawerContent>
       </Drawer>);
     }
-    return (<Popover open={open} onOpenChange={setOpen}>
+    return (<Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger className={className} asChild>
         <Button variant="outline" className={clsx("w-[150px] justify-start", buttonClassName)}>
           {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}

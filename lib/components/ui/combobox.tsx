@@ -33,6 +33,7 @@ export type ComboBoxProps<T = any> = {
   onSelect?: (item: ComboBoxItem<T>) => void;
   className?: string;
   buttonClassName?: string;
+  modal?: boolean;
 };
 
 export function ComboBox<T = any>({
@@ -42,6 +43,7 @@ export function ComboBox<T = any>({
   onSelect,
   className,
   buttonClassName,
+  modal = false,
 }: ComboBoxProps<T>) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
@@ -79,7 +81,7 @@ export function ComboBox<T = any>({
     );
   }
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger className={className} asChild>
         <Button variant="outline" className={clsx("w-[150px] justify-start", buttonClassName)}>
           {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}

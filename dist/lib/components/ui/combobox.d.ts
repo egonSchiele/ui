@@ -11,5 +11,6 @@ export type ComboBoxProps<T = any> = {
     onSelect?: (item: ComboBoxItem<T>) => void;
     className?: string;
     buttonClassName?: string;
+    modal?: boolean;
 };
-export declare function ComboBox<T = any>({ items, placeholder, emptyState, onSelect, className, buttonClassName, }: ComboBoxProps<T>): React.JSX.Element;
+export declare function ComboBox<T = any>({ items, placeholder, emptyState, onSelect, className, buttonClassName, modal, }: ComboBoxProps<T>): React.JSX.Element;
