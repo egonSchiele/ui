@@ -1,0 +1,20 @@
+import * as React from "react";
+import { type Locale } from "date-fns";
+import { type CalendarProps } from "../../../components/ui/calendar";
+import { Button } from "../../../components/ui/form/button";
+export type DatePickerProps = Omit<React.ComponentProps<"button">, "value" | "defaultValue" | "onChange" | "onClick" | "children" | "type"> & {
+    value?: Date;
+    defaultValue?: Date;
+    onValueChange?: (date: Date | undefined) => void;
+    onClick?: React.ComponentProps<typeof Button>["onClick"];
+    placeholder?: string;
+    disabledDates?: CalendarProps["disabled"];
+    defaultMonth?: Date;
+    startMonth?: Date;
+    endMonth?: Date;
+    captionLayout?: CalendarProps["captionLayout"];
+    locale?: Locale;
+    formatDate?: (date: Date) => string;
+};
+declare function DatePicker(props: DatePickerProps): React.JSX.Element;
+export { DatePicker };

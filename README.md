@@ -31,6 +31,21 @@ pnpm run storybook
 pnpm run shadcn add
 ```
 
+## Test it
+
+Interaction tests live in `tests/`, separately from Storybook's usage examples.
+They check checkbox, radio-group, and date-picker behavior in Chromium without running when
+you browse a story.
+
+```bash
+# Install the test browser once after installing dependencies.
+pnpm exec playwright install chromium
+pnpm test
+```
+
+The tests start Storybook automatically, or reuse an existing server on port
+6006 locally. Run `make` to generate and build the library.
+
 ## Publish it
 
 ```bash

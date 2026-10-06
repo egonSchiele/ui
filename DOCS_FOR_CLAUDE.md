@@ -77,6 +77,137 @@ Properties:
 - `children`: Label text content
 - `className`: Additional CSS classes
 
+#### DatePicker
+
+A single-date picker built from shadcn's Calendar and the existing Popover and Button, with keyboard navigation and themed colors.
+
+```jsx
+import { useState } from "react";
+import { DatePicker, Label } from "egon-ui";
+
+function AppointmentDate() {
+  const [date, setDate] = useState();
+
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="appointment">Appointment date</Label>
+      <DatePicker
+        id="appointment"
+        name="appointment"
+        value={date}
+        onValueChange={setDate}
+        disabledDates={{ dayOfWeek: [0, 6] }}
+      />
+    </div>
+  );
+}
+
+// Uncontrolled usage:
+<DatePicker aria-label="Start date" defaultValue={new Date(2026, 9, 5)} />
+```
+
+Properties (`DatePickerProps` is exported):
+- `value`: Controlled `Date | undefined`; supplying this prop, even as `undefined`, enables controlled mode
+- `defaultValue`: Initial date for uncontrolled usage
+- `onValueChange`: Callback receiving `Date | undefined` when a day is selected or deselected
+- `placeholder`: Text shown without a selected date (default: `"Pick a date"`)
+- `disabled`: Disables the picker and excludes its named value from form submission
+- `disabledDates`: React DayPicker matcher or array of matchers, such as `{ before: date }`, `{ after: date }`, or `{ dayOfWeek: [0, 6] }`
+- `defaultMonth`: Initially displayed month when there is no selected date (default: current month)
+- `startMonth`, `endMonth`: Earliest/latest navigable months; use `disabledDates` to restrict selectable dates within those months
+- `captionLayout`: Calendar heading: `"label" | "dropdown" | "dropdown-months" | "dropdown-years"` (default: `"label"`)
+- `locale`: A date-fns locale used for the calendar and displayed date, e.g. `fr` from `date-fns/locale`
+- `formatDate`: Optional `(date: Date) => string` to customize the trigger's displayed date; otherwise uses date-fns `PPP`
+- `name`: Adds a hidden form input containing the local calendar date as `yyyy-MM-dd`, or an empty string when unselected
+- `id`: Associates an existing `Label` with the trigger via `htmlFor`
+- `className`: Additional classes for the trigger, such as a custom width
+- Also accepts button attributes, event handlers, ARIA attributes, and `ref`; the button type and children are managed internally
+
+Use an associated `Label`, `aria-label`, or `aria-labelledby`. Opening focuses the selected day (or the first available day); arrow keys navigate and Enter/Space selects. Selecting closes the popover and restores focus to the trigger. Escape closes without changing the date. Selecting the already selected day clears it; controlled callers can also clear by setting `value` to `undefined`. Dates use local calendar days, without a UTC conversion. The trigger uses `border-muted-foreground`; calendar selections use `primary` / `primary-foreground`, and muted dates use `muted-foreground` in both themes.
+
+#### Checkbox
+
+A checkbox with checked, unchecked, and indeterminate states for independent selections.
+
+Uses existing theme tokens: `border-muted-foreground` for visible unchecked outlines, `bg-background` for the surface, and `primary` / `primary-foreground` for selected states. Disabled controls use reduced opacity. Colors adapt automatically to light and dark mode.
+
+```jsx
+import { Checkbox, Label } from "egon-ui";
+
+<div className="flex items-center gap-2">
+  <Checkbox id="updates" name="updates" defaultChecked />
+  <Label htmlFor="updates">Email me updates</Label>
+</div>
+
+// Controlled usage, including a partially selected group:
+<Checkbox
+  aria-label="Select all items"
+  checked={allSelected ? true : someSelected ? "indeterminate" : false}
+  onCheckedChange={(checked) => setAllSelected(checked === true)}
+/>
+```
+
+Properties (`CheckboxProps` is exported):
+- `checked`: Controlled state: `boolean | "indeterminate"`
+- `defaultChecked`: Initial uncontrolled state: `boolean | "indeterminate"`
+- `onCheckedChange`: Callback receiving `boolean | "indeterminate"`
+- `disabled`: Disables interaction
+- `required`: Requires selection for native form validation
+- `name`: Field name for form submission
+- `value`: Submitted value when checked (default: `"on"`)
+- `id`: Connects the checkbox to a `Label` using `htmlFor`
+- `className`: Additional Tailwind classes
+- Also accepts Radix Checkbox root props, button attributes, ARIA attributes, and `ref`, except `asChild` and `children` (the check/minus indicator is built in)
+
+Always provide an associated `Label`, `aria-label`, or `aria-labelledby`. Use a native `fieldset` and `legend` to group related checkboxes; each checkbox has its own state. Space toggles the focused checkbox. Within a `form`, only checked, enabled checkboxes contribute their `name`/`value` to `FormData`.
+
+#### RadioGroup and RadioGroupItem
+
+A group of radio buttons for selecting exactly one option at a time, with keyboard navigation.
+
+Uses existing theme tokens: `border-muted-foreground` for visible unselected outlines, `bg-background` for the surface, and `primary` for the selected outline and dot. Disabled options use reduced opacity. Colors adapt automatically to light and dark mode.
+
+```jsx
+import { RadioGroup, RadioGroupItem, Label } from "egon-ui";
+
+<RadioGroup name="shipping" defaultValue="standard" aria-label="Shipping speed">
+  <div className="flex items-center gap-2">
+    <RadioGroupItem id="shipping-standard" value="standard" />
+    <Label htmlFor="shipping-standard">Standard</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem id="shipping-express" value="express" />
+    <Label htmlFor="shipping-express">Express</Label>
+  </div>
+</RadioGroup>
+
+// For controlled usage, pass value={shipping} and onValueChange={setShipping}.
+```
+
+RadioGroup properties (`RadioGroupProps` is exported):
+- `children`: Options composed with `RadioGroupItem` and labels
+- `value`: Controlled selected option value
+- `defaultValue`: Initial uncontrolled selected option value
+- `onValueChange`: Callback receiving the selected string value
+- `name`: Field name for form submission
+- `required`: Requires an option for native form validation
+- `disabled`: Disables all options
+- `orientation`: `"vertical" | "horizontal"`; horizontal also lays options out in a wrapping row
+- `dir`: Text/navigation direction: `"ltr" | "rtl"`
+- `loop`: Whether arrow-key navigation wraps (default: `true`)
+- `className`: Additional Tailwind classes
+- `asChild`: Composes the group onto a child element using Radix Slot
+- Also accepts Radix RadioGroup root props, div attributes, ARIA attributes, and `ref`
+
+RadioGroupItem properties (`RadioGroupItemProps` is exported):
+- `value`: Required, unique string identifying the option
+- `id`: Connects the option to a `Label` using `htmlFor`
+- `disabled`: Disables this option
+- `className`: Additional Tailwind classes
+- Also accepts Radix RadioGroup item props, button attributes, ARIA attributes, and `ref`, except `asChild` and `children` (the selection indicator is built in)
+
+Give the group an accessible name with `aria-label` or `aria-labelledby`, and label each option. Tab enters/leaves the group; arrow keys select and focus enabled options. Within a `form`, the selected enabled option is submitted under the group's `name`.
+
 #### Switch
 
 A toggle switch component for binary choices.
@@ -814,6 +945,47 @@ Content components:
 - `SidebarMenuSubButton`: Submenu button
 
 ### Display Components
+
+#### Calendar
+
+A standalone shadcn calendar powered by React DayPicker, with single-date, multiple-date, and date-range selection.
+
+```jsx
+import { useState } from "react";
+import { Calendar } from "egon-ui";
+
+function InlineCalendar() {
+  const [date, setDate] = useState();
+  return (
+    <Calendar
+      mode="single"
+      selected={date}
+      onSelect={setDate}
+      className="rounded-md border"
+    />
+  );
+}
+```
+
+Properties (`CalendarProps` is exported):
+- `mode`: `"single" | "multiple" | "range"`
+- `selected`, `onSelect`: Selection and callback matching the mode (`Date`, `Date[]`, or `DateRange`, optionally undefined)
+- `required`: Prevents clearing the selection
+- `defaultMonth`: Initial visible month
+- `month`, `onMonthChange`: Controlled visible month and change callback
+- `startMonth`, `endMonth`: Navigation bounds
+- `disabled`: Date matcher or array of matchers for unavailable days
+- `showOutsideDays`: Shows days from adjacent months (default: `true`)
+- `numberOfMonths`: Number of displayed months (default: `1`)
+- `captionLayout`: `"label" | "dropdown" | "dropdown-months" | "dropdown-years"` (default: `"label"`)
+- `buttonVariant`: Existing Button style for month navigation (default: `"ghost"`)
+- `locale`, `weekStartsOn`, `dir`: Calendar locale, first weekday, and layout direction
+- `autoFocus`: Focuses a day on mount
+- `className`, `classNames`: Root classes and overrides for calendar parts
+- `formatters`, `labels`, `components`: React DayPicker formatting, accessibility, and component overrides
+- Also accepts the remaining React DayPicker props for the selected mode
+
+`CalendarDayButton` is exported for custom day rendering. It accepts React DayPicker's `day` and `modifiers` props, plus `className` and native button attributes, and preserves the theme's selected/range styling and focus behavior. See the [shadcn Calendar documentation](https://ui.shadcn.com/docs/components/radix/calendar) for the upstream component pattern.
 
 #### Card
 
