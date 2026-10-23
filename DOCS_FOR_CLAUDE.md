@@ -1249,3 +1249,108 @@ Properties:
 - `disabled`, `name`, `orientation`, `dir`, `loop`, `aria-label`, `aria-labelledby`, `className`: Radix radio-group props. Orientation defaults to horizontal.
 
 Selecting the active segment keeps it selected. Arrow keys select enabled options and skip disabled choices. The root and items use Radix radio primitives directly; the circular RadioGroupItem is not reused. Both controlled and uncontrolled forms require an initial valid selection.
+
+## Slider and LabeledSlider
+
+Slider selects a single number with pointer and keyboard input. LabeledSlider adds an associated label, editable NumberField, optional unit/help, and a caller-defined reset action.
+
+```tsx
+const [value, setValue] = useState<number | null>(null);
+<LabeledSlider label="Strength" value={value} onChange={setValue}
+  onCommit={(next) => console.log(next)} placeholderValue={0.75}
+  min={0} max={1} step={0.05} onReset={() => setValue(null)} />
+<Slider aria-label="Volume" defaultValue={25} min={0} max={100} step={5} />
+```
+
+- Slider: `value: number` plus `onChange(number)`, or `defaultValue?: number` and optional `onChange`. The two modes are mutually exclusive. `min=0`, `max=100`, `step=1`, `disabled`, `orientation`, and remaining Radix Root props are supported. Supply `aria-label` or `aria-labelledby`.
+- `onChange` reports slider movement; `onCommit` reports completed pointer or keyboard interactions. NumberField edits report change/commit when the edit commits.
+- LabeledSlider: `label`, `min`, `max`, and controlled `value: number | null` plus `onChange`, or uncontrolled `defaultValue`. Optional `id`, `step`, `disabled`, `unit`, `help`, `className`, `onCommit`, and `onReset`.
+- A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Reset only calls `onReset`; the caller decides what it means.
+
+## Progress
+
+Progress displays labelled determinate or indeterminate progress without inventing a percentage.
+
+```tsx
+<Progress label="Preparing files" value={45} showValue />
+<Progress label="Waiting for server" value={null} />
+```
+
+Props: required `label`; optional `value: number | null`, `max=100`, `showValue=false`, `className`, and Radix Root props. Missing/null/non-finite values are indeterminate. Finite values clamp to `0..max`.
+
+## ScrollArea and ScrollBar
+
+ScrollArea provides themed scrollbars and a focusable viewport that consumers can measure or scroll through a ref.
+
+```tsx
+const viewportRef = useRef<HTMLDivElement>(null);
+<ScrollArea className="h-64" viewportRef={viewportRef}
+  viewportProps={{ role: "region", "aria-label": "Files" }}>
+  {children}
+</ScrollArea>
+```
+
+Props: Radix Root props/children, `orientation: "vertical" | "horizontal" | "both"` (default vertical), `viewportRef`, and `viewportProps` for viewport styling, labelling, and event handlers. Set a bounded height/width. ScrollBar is also exported and accepts Radix Scrollbar props.
+
+## Kbd
+
+Kbd formats shortcut hints without installing keyboard listeners.
+
+```tsx
+<Kbd aria-label="Command K">⌘ K</Kbd>
+```
+
+Props: native `kbd` props including `children`, `className`, and accessible labels.
+
+## ResizablePanelGroup, ResizablePanel, and ResizableHandle
+
+These wrappers use react-resizable-panels 4.14.8 to arrange bounded, collapsible panels with pointer and keyboard resize handles.
+
+```tsx
+<ResizablePanelGroup orientation="horizontal" defaultLayout={{ sidebar: 30, content: 70 }}
+  onLayoutChanged={(layout, meta) => {
+    if (meta.isUserInteraction) saveLayout(meta.requestedLayout ?? layout);
+  }}>
+  <ResizablePanel id="sidebar" minSize="160px" defaultSize="30%">Sidebar</ResizablePanel>
+  <ResizableHandle aria-label="Resize sidebar" withHandle />
+  <ResizablePanel id="content" minSize="30%">Content</ResizablePanel>
+</ResizablePanelGroup>
+```
+
+- Group accepts v4 Group props, including `orientation`, `defaultLayout`, `onLayoutChanged`, and `disabled`. It owns live layout; there is no controlled layout prop or built-in storage.
+- Panel requires a stable string `id`. Size props (`defaultSize`, `minSize`, `maxSize`, `collapsedSize`, `collapsedThreshold`) require explicit percent or pixel strings. `collapsible`, other Panel props, and the library's refs remain available.
+- Handle requires `aria-label`, and accepts `withHandle` plus v4 Separator props. Keep panels/handles as direct children of the group.
+- `ResizableLayout` maps panel IDs to percentage numbers. `ResizableLayoutChangedMeta` exposes `isUserInteraction` and optional `requestedLayout`. Persist completed user changes with `meta.requestedLayout ?? layout`; ignore mount and constraint changes.
+
+## DropZone
+
+DropZone receives files from a picker, drag and drop, or scoped paste, and can decode a caller-defined internal drag payload.
+
+```tsx
+<DropZone label="Images" accept="image/*,.png" multiple
+  onFiles={(files) => enqueueFiles(files)}
+  onReject={(rejections) => showErrors(rejections)} />
+```
+
+Props: required `label` and `onFiles(File[])`; optional `children`, `className`, `accept` (standard comma-delimited MIME/extension tokens), `multiple=false`, `disabled`, `pasteActive=false`, `onReject(DropZoneRejection[])`, and `internalDrop`.
+
+`internalDrop` contains `mimeType`, `decode(payload): DropZoneDecodeResult<Value>`, and `onDrop(value)`. The result is `{ ok: true, value }` or `{ ok: false, message }`. Hover reads MIME types only; decoding occurs on drop. The component catches thrown decoder failures and reports an invalid-payload rejection. Use lowercase MIME names.
+
+Rejections have `code` (`file-type`, `too-many-files`, or `invalid-payload`), `message`, and optional `file`. For single-file mode the first accepted file is emitted and excess files are rejected. Paste applies inside the focused zone or when `pasteActive` enables outside noneditable targets. Text inputs keep their normal paste behavior. Nested zones own their own drop. Interactive children do not open the picker. The zone and its Choose files button provide keyboard access; the caller owns uploads and domain validation.
+
+## ContextMenu family
+
+ContextMenu supplies themed Radix context menus with keyboard navigation, submenus, disabled actions, and focus restoration.
+
+```tsx
+<ContextMenu>
+  <ContextMenuTrigger asChild><Button>File actions</Button></ContextMenuTrigger>
+  <ContextMenuContent>
+    <ContextMenuItem onSelect={openFile}>Open<ContextMenuShortcut>↵</ContextMenuShortcut></ContextMenuItem>
+    <ContextMenuSeparator />
+    <ContextMenuItem disabled>Unavailable</ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>
+```
+
+All parts accept the corresponding Radix props. Use a focusable trigger for keyboard invocation. Exported parts: ContextMenu, Trigger, Content, Group, Portal, Item, CheckboxItem, RadioGroup, RadioItem, Label, Separator, Shortcut, Sub, SubTrigger, SubContent (all prefixed ContextMenu). Item also supports `inset` and `variant: "default" | "destructive"`. Label and SubTrigger support `inset`. Shortcut accepts Kbd props. Content and SubContent include their portals.

@@ -400,3 +400,12 @@ export {
   VGroupXS,
   VGroupXSProps,
 };
+
+export { Slider, type SliderProps } from "@/components/ui/form/slider";
+export { LabeledSlider, type LabeledSliderProps } from "@/components/ui/form/labeled-slider";
+export { Progress, type ProgressProps } from "@/components/ui/progress";
+export { ScrollArea, ScrollBar, type ScrollAreaProps } from "@/components/ui/scroll-area";
+export { Kbd } from "@/components/ui/kbd";
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle, type ResizableLayout, type ResizableLayoutChangedMeta, type ResizablePanelSize, type ResizablePanelGroupProps, type ResizablePanelProps, type ResizableHandleProps } from "@/components/ui/layout/resizable";
+export { DropZone, type DropZoneProps, type DropZoneRejection, type DropZoneDecodeResult, type DropZoneInternalDrop } from "@/components/ui/drop-zone";
+export { ContextMenu, ContextMenuTrigger, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuRadioGroup, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSubTrigger, ContextMenuSubContent } from "@/components/ui/context-menu";
