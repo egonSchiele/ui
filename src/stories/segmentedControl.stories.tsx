@@ -6,7 +6,8 @@ import {
   SegmentedControlOption,
 } from "@/components/ui/form/segmented-control";
 import "../../globals.css";
-const options: SegmentedControlOption[] = [
+type SettingsTier = "basic" | "advanced" | "expert";
+const options: SegmentedControlOption<SettingsTier>[] = [
   { value: "basic", label: "Basic" },
   { value: "advanced", label: "Advanced" },
   { value: "expert", label: "Expert", disabled: true },
@@ -44,9 +45,9 @@ export const Icons: Story = {
 };
 function ControlledSegments(): React.JSX.Element {
   const [value, setValue]: [
-    string,
-    React.Dispatch<React.SetStateAction<string>>,
-  ] = React.useState<string>("basic");
+    SettingsTier,
+    React.Dispatch<React.SetStateAction<SettingsTier>>,
+  ] = React.useState<SettingsTier>("basic");
   return (
     <div className="flex flex-col gap-3">
       <SegmentedControl

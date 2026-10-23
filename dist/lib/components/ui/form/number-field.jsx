@@ -5,6 +5,8 @@ import { Button } from "../../../components/ui/form/button";
 import { Input } from "../../../components/ui/form/input";
 import { Label } from "../../../components/ui/form/label";
 import { cn } from "../../../utils";
+const SHIFT_STEP_MULTIPLIER = 10;
+const FLOAT_PRECISION_DIGITS = 12;
 function formatValue(value) {
     return value === null ? "" : String(value);
 }
@@ -12,8 +14,13 @@ function normalizeValue(value, { min, max, step }) {
     const base = min !== null && min !== void 0 ? min : 0;
     const bounded = Math.min(max !== null && max !== void 0 ? max : Infinity, Math.max(min !== null && min !== void 0 ? min : -Infinity, value));
     const aligned = base + Math.round((bounded - base) / step) * step;
-    const rounded = Number((Number.isFinite(aligned) ? aligned : bounded).toFixed(12));
+    const rounded = Number((Number.isFinite(aligned) ? aligned : bounded).toFixed(FLOAT_PRECISION_DIGITS));
     return Math.min(max !== null && max !== void 0 ? max : Infinity, Math.max(min !== null && min !== void 0 ? min : -Infinity, rounded));
+}
+function nextSteppedValue({ current, amount, bounds, }) {
+    var _a;
+    const next = current === null ? ((_a = bounds.min) !== null && _a !== void 0 ? _a : 0) : current + amount * bounds.step;
+    return Number.isFinite(next) ? normalizeValue(next, bounds) : current;
 }
 function parseDraft(draft, allowEmpty) {
     const text = draft.trim();
@@ -30,7 +37,7 @@ function parseDraft(draft, allowEmpty) {
     return { valid: true, value: numeric };
 }
 function useNumberField(props) {
-    var _a, _b, _c;
+    var _a, _b;
     const [internalValue, setInternalValue] = React.useState((_a = props.defaultValue) !== null && _a !== void 0 ? _a : null);
     const value = props.value !== undefined ? props.value : internalValue;
     const [draft, setDraft] = React.useState(formatValue(value));
@@ -42,9 +49,13 @@ function useNumberField(props) {
         step: (_b = props.step) !== null && _b !== void 0 ? _b : 1,
     };
     const parsedDraft = parseDraft(draft, true);
-    const steppingValue = parsedDraft.valid && parsedDraft.value !== null
+    const steppingValue = parsedDraft.valid
         ? parsedDraft.value
-        : ((_c = value !== null && value !== void 0 ? value : props.min) !== null && _c !== void 0 ? _c : 0);
+        : value;
+    const canIncrease = nextSteppedValue({ current: steppingValue, amount: 1, bounds }) !==
+        steppingValue;
+    const canDecrease = nextSteppedValue({ current: steppingValue, amount: -1, bounds }) !==
+        steppingValue;
     React.useEffect(() => {
         setDraft(formatValue(value));
         setError(null);
@@ -67,20 +78,24 @@ function useNumberField(props) {
         setCommitVersion((version) => version + 1);
     }
     function commit() {
-        if (draft === formatValue(value) && error === null) {
-            return;
-        }
         const parsed = parseDraft(draft, props.emptyValue !== "reject");
         if (!parsed.valid) {
             setError(parsed.message);
             return;
         }
+        if (draft === formatValue(value) && error === null) {
+            return;
+        }
         emit(parsed.value === null ? null : normalizeValue(parsed.value, bounds));
     }
     function increment(amount) {
-        const next = steppingValue + amount * bounds.step;
-        if (Number.isFinite(next)) {
-            emit(normalizeValue(next, bounds));
+        const next = nextSteppedValue({
+            current: steppingValue,
+            amount,
+            bounds,
+        });
+        if (next !== steppingValue) {
+            emit(next);
         }
     }
     function onKeyDown(event) {
@@ -89,12 +104,16 @@ function useNumberField(props) {
             restore();
         }
         if (event.key === "Enter") {
-            event.preventDefault();
+            const parsed = parseDraft(draft, props.emptyValue !== "reject");
+            if (draft !== formatValue(value) || !parsed.valid) {
+                event.preventDefault();
+            }
             commit();
         }
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
             event.preventDefault();
-            increment((event.key === "ArrowUp" ? 1 : -1) * (event.shiftKey ? 10 : 1));
+            increment((event.key === "ArrowUp" ? 1 : -1) *
+                (event.shiftKey ? SHIFT_STEP_MULTIPLIER : 1));
         }
     }
     function onTextChange(event) {
@@ -104,13 +123,21 @@ function useNumberField(props) {
     return {
         value,
         draft,
-        steppingValue,
+        canIncrease,
+        canDecrease,
         error,
         commit,
         increment,
         onKeyDown,
         onTextChange,
     };
+}
+function StepButton({ direction, label, disabled, onStep, }) {
+    return (<Button type="button" variant="outline" size="icon" aria-label={`${direction === -1 ? "Decrease" : "Increase"} ${label}`} disabled={disabled} onPointerDown={(event) => {
+            event.preventDefault();
+        }} onClick={() => onStep(direction)}>
+      {direction === -1 ? (<MinusIcon aria-hidden="true"/>) : (<PlusIcon aria-hidden="true"/>)}
+    </Button>);
 }
 export function NumberField(props) {
     var _a, _b, _c;
@@ -130,16 +157,10 @@ export function NumberField(props) {
     return (<div className={cn("flex flex-col gap-2", props.className)} data-slot="number-field">
       {props.label && <Label htmlFor={id}>{props.label}</Label>}
       <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" size="icon" aria-label={`Decrease ${actionLabel}`} disabled={props.disabled ||
-            (props.min !== undefined && field.steppingValue <= props.min)} onPointerDown={(event) => event.preventDefault()} onClick={() => field.increment(-1)}>
-          <MinusIcon aria-hidden="true"/>
-        </Button>
+        <StepButton direction={-1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canDecrease} onStep={field.increment}/>
         <Input id={id} name={props.name} type="text" role="spinbutton" inputMode="decimal" autoComplete="off" value={field.draft} placeholder={props.placeholder} disabled={props.disabled} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={describedBy || undefined} aria-invalid={Boolean(field.error)} aria-valuemin={props.min} aria-valuemax={props.max} aria-valuenow={(_c = field.value) !== null && _c !== void 0 ? _c : undefined} onChange={field.onTextChange} onBlur={field.commit} onKeyDown={field.onKeyDown}/>
         {props.unit && (<span className="text-sm text-muted-foreground">{props.unit}</span>)}
-        <Button type="button" variant="outline" size="icon" aria-label={`Increase ${actionLabel}`} disabled={props.disabled ||
-            (props.max !== undefined && field.steppingValue >= props.max)} onPointerDown={(event) => event.preventDefault()} onClick={() => field.increment(1)}>
-          <PlusIcon aria-hidden="true"/>
-        </Button>
+        <StepButton direction={1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canIncrease} onStep={field.increment}/>
       </div>
       {props.help && (<p id={`${id}-help`} className="text-sm text-muted-foreground">
           {props.help}

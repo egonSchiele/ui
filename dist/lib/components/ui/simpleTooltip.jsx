@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, } from "../../components/ui/to
 export function SimpleTooltip(_a) {
     var { children, tooltipContent, asChild = false, triggerProps, contentProps, open, defaultOpen, onOpenChange, delayDuration, disableHoverableContent } = _a, content = __rest(_a, ["children", "tooltipContent", "asChild", "triggerProps", "contentProps", "open", "defaultOpen", "onOpenChange", "delayDuration", "disableHoverableContent"]);
     return (<Tooltip open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={delayDuration} disableHoverableContent={disableHoverableContent}>
-      <TooltipTrigger type="button" {...triggerProps} asChild={asChild}>
+      <TooltipTrigger type={asChild ? undefined : "button"} {...triggerProps} asChild={asChild}>
         {children}
       </TooltipTrigger>
       <TooltipContent {...content} {...contentProps}>

@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/form/input";
 import { Label } from "@/components/ui/form/label";
 import { cn } from "@/utils";
 
+const SHIFT_STEP_MULTIPLIER: number = 10;
+const FLOAT_PRECISION_DIGITS: number = 12;
+
 type NumberValue = number | null;
 type NumberFieldValueProps =
   | {
@@ -42,7 +45,8 @@ export type NumberFieldProps = NumberFieldValueProps & {
 type NumberFieldState = {
   value: NumberValue;
   draft: string;
-  steppingValue: number;
+  canIncrease: boolean;
+  canDecrease: boolean;
   error: string | null;
   commit: () => void;
   increment: (amount: number) => void;
@@ -66,9 +70,25 @@ function normalizeValue(value: number, { min, max, step }: Bounds): number {
   );
   const aligned: number = base + Math.round((bounded - base) / step) * step;
   const rounded: number = Number(
-    (Number.isFinite(aligned) ? aligned : bounded).toFixed(12),
+    (Number.isFinite(aligned) ? aligned : bounded).toFixed(
+      FLOAT_PRECISION_DIGITS,
+    ),
   );
   return Math.min(max ?? Infinity, Math.max(min ?? -Infinity, rounded));
+}
+
+function nextSteppedValue({
+  current,
+  amount,
+  bounds,
+}: {
+  current: NumberValue;
+  amount: number;
+  bounds: Bounds;
+}): NumberValue {
+  const next: number =
+    current === null ? (bounds.min ?? 0) : current + amount * bounds.step;
+  return Number.isFinite(next) ? normalizeValue(next, bounds) : current;
 }
 
 function parseDraft(draft: string, allowEmpty: boolean): ParsedNumber {
@@ -113,10 +133,15 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
     step: props.step ?? 1,
   };
   const parsedDraft: ParsedNumber = parseDraft(draft, true);
-  const steppingValue: number =
-    parsedDraft.valid && parsedDraft.value !== null
-      ? parsedDraft.value
-      : (value ?? props.min ?? 0);
+  const steppingValue: NumberValue = parsedDraft.valid
+    ? parsedDraft.value
+    : value;
+  const canIncrease: boolean =
+    nextSteppedValue({ current: steppingValue, amount: 1, bounds }) !==
+    steppingValue;
+  const canDecrease: boolean =
+    nextSteppedValue({ current: steppingValue, amount: -1, bounds }) !==
+    steppingValue;
 
   React.useEffect((): void => {
     setDraft(formatValue(value));
@@ -142,9 +167,6 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
   }
 
   function commit(): void {
-    if (draft === formatValue(value) && error === null) {
-      return;
-    }
     const parsed: ParsedNumber = parseDraft(
       draft,
       props.emptyValue !== "reject",
@@ -153,13 +175,20 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
       setError(parsed.message);
       return;
     }
+    if (draft === formatValue(value) && error === null) {
+      return;
+    }
     emit(parsed.value === null ? null : normalizeValue(parsed.value, bounds));
   }
 
   function increment(amount: number): void {
-    const next: number = steppingValue + amount * bounds.step;
-    if (Number.isFinite(next)) {
-      emit(normalizeValue(next, bounds));
+    const next: NumberValue = nextSteppedValue({
+      current: steppingValue,
+      amount,
+      bounds,
+    });
+    if (next !== steppingValue) {
+      emit(next);
     }
   }
 
@@ -169,12 +198,21 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
       restore();
     }
     if (event.key === "Enter") {
-      event.preventDefault();
+      const parsed: ParsedNumber = parseDraft(
+        draft,
+        props.emptyValue !== "reject",
+      );
+      if (draft !== formatValue(value) || !parsed.valid) {
+        event.preventDefault();
+      }
       commit();
     }
     if (event.key === "ArrowUp" || event.key === "ArrowDown") {
       event.preventDefault();
-      increment((event.key === "ArrowUp" ? 1 : -1) * (event.shiftKey ? 10 : 1));
+      increment(
+        (event.key === "ArrowUp" ? 1 : -1) *
+          (event.shiftKey ? SHIFT_STEP_MULTIPLIER : 1),
+      );
     }
   }
 
@@ -186,13 +224,48 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
   return {
     value,
     draft,
-    steppingValue,
+    canIncrease,
+    canDecrease,
     error,
     commit,
     increment,
     onKeyDown,
     onTextChange,
   };
+}
+
+type StepButtonProps = {
+  direction: -1 | 1;
+  label: string;
+  disabled: boolean;
+  onStep: (amount: number) => void;
+};
+
+function StepButton({
+  direction,
+  label,
+  disabled,
+  onStep,
+}: StepButtonProps): React.JSX.Element {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="icon"
+      aria-label={`${direction === -1 ? "Decrease" : "Increase"} ${label}`}
+      disabled={disabled}
+      onPointerDown={(event: React.PointerEvent<HTMLButtonElement>): void => {
+        event.preventDefault();
+      }}
+      onClick={(): void => onStep(direction)}
+    >
+      {direction === -1 ? (
+        <MinusIcon aria-hidden="true" />
+      ) : (
+        <PlusIcon aria-hidden="true" />
+      )}
+    </Button>
+  );
 }
 
 export function NumberField(props: NumberFieldProps): React.JSX.Element {
@@ -217,22 +290,12 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
     >
       {props.label && <Label htmlFor={id}>{props.label}</Label>}
       <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label={`Decrease ${actionLabel}`}
-          disabled={
-            props.disabled ||
-            (props.min !== undefined && field.steppingValue <= props.min)
-          }
-          onPointerDown={(event: React.PointerEvent<HTMLButtonElement>): void =>
-            event.preventDefault()
-          }
-          onClick={(): void => field.increment(-1)}
-        >
-          <MinusIcon aria-hidden="true" />
-        </Button>
+        <StepButton
+          direction={-1}
+          label={actionLabel}
+          disabled={Boolean(props.disabled) || !field.canDecrease}
+          onStep={field.increment}
+        />
         <Input
           id={id}
           name={props.name}
@@ -257,22 +320,12 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
         {props.unit && (
           <span className="text-sm text-muted-foreground">{props.unit}</span>
         )}
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label={`Increase ${actionLabel}`}
-          disabled={
-            props.disabled ||
-            (props.max !== undefined && field.steppingValue >= props.max)
-          }
-          onPointerDown={(event: React.PointerEvent<HTMLButtonElement>): void =>
-            event.preventDefault()
-          }
-          onClick={(): void => field.increment(1)}
-        >
-          <PlusIcon aria-hidden="true" />
-        </Button>
+        <StepButton
+          direction={1}
+          label={actionLabel}
+          disabled={Boolean(props.disabled) || !field.canIncrease}
+          onStep={field.increment}
+        />
       </div>
       {props.help && (
         <p id={`${id}-help`} className="text-sm text-muted-foreground">

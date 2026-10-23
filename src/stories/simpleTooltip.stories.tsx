@@ -201,8 +201,20 @@ export const LinkTrigger: Story = {
 export const IconTrigger: Story = {
   args: {
     asChild: true,
-    children: <Button aria-label="Help">?</Button>,
+    children: (
+      <Button type="submit" aria-label="Help">
+        ?
+      </Button>
+    ),
     tooltipContent: "Help with this field",
     side: "top",
+  },
+};
+
+export const TextTrigger: Story = {
+  args: {
+    asChild: false,
+    children: "More information",
+    tooltipContent: "A plain text trigger creates a button.",
   },
 };
