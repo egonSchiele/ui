@@ -116,3 +116,56 @@ export const Loading: Story = {
   args: { items: [], loading: true, "aria-label": "Model" },
 };
 export const Disabled: Story = { args: { items: statusItems, disabled: true } };
+
+export const OpaqueKeys: Story = {
+  args: {
+    "aria-label": "Preset",
+    items: [
+      { key: "7f3a9c1e-2b4d-4e8a-9f1c-ab12cd34ef56", label: "Portrait" },
+      { key: "c0ffee11-5a6b-4c7d-8e9f-0a1b2c3d4e5f", label: "Landscape" },
+    ],
+  },
+};
+
+function TemporarilyDisabledComboBox(): React.JSX.Element {
+  const [scheduled, setScheduled]: [
+    boolean,
+    React.Dispatch<React.SetStateAction<boolean>>,
+  ] = React.useState<boolean>(false);
+  const [disabled, setDisabled]: [
+    boolean,
+    React.Dispatch<React.SetStateAction<boolean>>,
+  ] = React.useState<boolean>(false);
+  React.useEffect((): (() => void) | undefined => {
+    if (!scheduled) {
+      return;
+    }
+    const disableTimer: ReturnType<typeof setTimeout> = setTimeout(
+      (): void => setDisabled(true),
+      1500,
+    );
+    const enableTimer: ReturnType<typeof setTimeout> = setTimeout((): void => {
+      setDisabled(false);
+      setScheduled(false);
+    }, 3000);
+    return (): void => {
+      clearTimeout(disableTimer);
+      clearTimeout(enableTimer);
+    };
+  }, [scheduled]);
+  return (
+    <div className="flex flex-col gap-4">
+      <ComboBox aria-label="Status" items={statusItems} disabled={disabled} />
+      <Button disabled={scheduled} onClick={(): void => setScheduled(true)}>
+        Schedule temporary disable
+      </Button>
+      <p>
+        Schedule a refresh, then open the picker. It closes during the refresh
+        and stays closed afterwards.
+      </p>
+    </div>
+  );
+}
+export const TemporarilyDisabled: Story = {
+  render: (): React.JSX.Element => <TemporarilyDisabledComboBox />,
+};

@@ -10,14 +10,15 @@
     }
   },
   "scripts": {
-    "test": "playwright test",
+    "test": "tsc --project tests/types/tsconfig.json && playwright test",
     "build": "tsc && tsc-alias",
     "vite": "vite",
     "storybook": "storybook dev -p 6006",
     "shadcn": "shadcn",
     "build-storybook": "storybook build",
     "templates": "typestache -v templates",
-    "gen": "node dist/scripts/generate.js"
+    "gen": "node dist/scripts/generate.js",
+    "test:types": "tsc --project tests/types/tsconfig.json"
   },
   "keywords": [],
   "author": "",

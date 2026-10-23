@@ -1,23 +1,23 @@
 import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-export type SegmentedControlOption = {
-    value: string;
+export type SegmentedControlOption<Value extends string = string> = {
+    value: Value;
     label: React.ReactNode;
     ariaLabel?: string;
     disabled?: boolean;
 };
-type SelectionProps = {
-    value: string;
+type SelectionProps<Value extends string> = {
+    value: Value;
     defaultValue?: never;
-    onValueChange: (value: string) => void;
+    onValueChange: (value: Value) => void;
 } | {
     value?: never;
-    defaultValue: string;
-    onValueChange?: (value: string) => void;
+    defaultValue: Value;
+    onValueChange?: (value: Value) => void;
 };
-export type SegmentedControlProps = SelectionProps & Omit<React.ComponentProps<typeof RadioGroupPrimitive.Root>, "value" | "defaultValue" | "onValueChange" | "children" | "required" | "asChild"> & {
-    options: SegmentedControlOption[];
+export type SegmentedControlProps<Value extends string = string> = SelectionProps<Value> & Omit<React.ComponentProps<typeof RadioGroupPrimitive.Root>, "value" | "defaultValue" | "onValueChange" | "children" | "required" | "asChild"> & {
+    options: SegmentedControlOption<Value>[];
     size?: "sm" | "md" | "lg";
 };
-export declare function SegmentedControl({ options, size, className, orientation, ...props }: SegmentedControlProps): React.JSX.Element;
+export declare function SegmentedControl<Value extends string = string>({ options, size, className, orientation, onValueChange, ...props }: SegmentedControlProps<Value>): React.JSX.Element;
 export {};

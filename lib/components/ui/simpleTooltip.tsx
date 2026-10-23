@@ -43,7 +43,11 @@ export function SimpleTooltip({
       delayDuration={delayDuration}
       disableHoverableContent={disableHoverableContent}
     >
-      <TooltipTrigger type="button" {...triggerProps} asChild={asChild}>
+      <TooltipTrigger
+        type={asChild ? undefined : "button"}
+        {...triggerProps}
+        asChild={asChild}
+      >
         {children}
       </TooltipTrigger>
       <TooltipContent {...content} {...contentProps}>

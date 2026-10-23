@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { defaultFilter } from "cmdk";
+import { CheckIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/form/button";
 import {
@@ -53,6 +55,7 @@ export type ComboBoxProps<T = unknown> = SelectionProps & {
 };
 
 type ItemListProps<T> = {
+  selectedKey: string | null;
   items: ComboBoxItem<T>[];
   placeholder: string;
   emptyState?: React.ReactNode;
@@ -79,6 +82,7 @@ function groupItems<T>(items: ComboBoxItem<T>[]): ItemGroup<T>[] {
 }
 
 function ItemList<T>({
+  selectedKey,
   items,
   placeholder,
   emptyState,
@@ -88,7 +92,12 @@ function ItemList<T>({
   onSelect,
 }: ItemListProps<T>): React.JSX.Element {
   return (
-    <Command>
+    <Command
+      defaultValue={selectedKey ?? undefined}
+      filter={(_value: string, search: string, keywords?: string[]): number =>
+        defaultFilter(keywords?.join(" ") ?? "", search)
+      }
+    >
       <CommandInput
         placeholder={placeholder}
         aria-label={placeholder}
@@ -118,6 +127,13 @@ function ItemList<T>({
                         onSelect={(): void => onSelect(item)}
                       >
                         {renderItem ? renderItem(item) : item.label}
+                        {item.key === selectedKey && (
+                          <CheckIcon
+                            aria-hidden="true"
+                            data-slot="combobox-selected"
+                            className="ml-auto shrink-0"
+                          />
+                        )}
                       </CommandItem>
                     ),
                   )}
@@ -161,6 +177,12 @@ export function ComboBox<T = unknown>({
     (item: ComboBoxItem<T>): boolean => item.key === key,
   );
 
+  React.useEffect((): void => {
+    if (disabled) {
+      setOpen(false);
+    }
+  }, [disabled]);
+
   function select(item: ComboBoxItem<T>): void {
     if (disabled || item.disabled) {
       return;
@@ -178,7 +200,11 @@ export function ComboBox<T = unknown>({
       type="button"
       variant="outline"
       disabled={disabled}
-      aria-label={ariaLabel}
+      aria-label={
+        selectedItem && ariaLabel
+          ? `${ariaLabel}: ${selectedItem.label}`
+          : ariaLabel
+      }
       className={cn("w-[150px] justify-start", buttonClassName)}
     >
       {selectedItem?.label ?? placeholder}
@@ -188,6 +214,7 @@ export function ComboBox<T = unknown>({
     <ItemList
       {...listProps}
       items={items}
+      selectedKey={key}
       placeholder={placeholder}
       onSelect={select}
     />

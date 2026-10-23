@@ -11,6 +11,8 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import * as React from "react";
+import { defaultFilter } from "cmdk";
+import { CheckIcon } from "lucide-react";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { Button } from "../../components/ui/form/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "../../components/ui/command";
@@ -30,8 +32,8 @@ function groupItems(items) {
     }
     return groups;
 }
-function ItemList({ items, placeholder, emptyState, loading, loadingState, renderItem, onSelect, }) {
-    return (<Command>
+function ItemList({ selectedKey, items, placeholder, emptyState, loading, loadingState, renderItem, onSelect, }) {
+    return (<Command defaultValue={selectedKey !== null && selectedKey !== void 0 ? selectedKey : undefined} filter={(_value, search, keywords) => { var _a; return defaultFilter((_a = keywords === null || keywords === void 0 ? void 0 : keywords.join(" ")) !== null && _a !== void 0 ? _a : "", search); }}>
       <CommandInput placeholder={placeholder} aria-label={placeholder} disabled={loading}/>
       <CommandList aria-busy={loading}>
         {loading ? (<div role="status" className="p-4 text-sm text-muted-foreground">
@@ -43,6 +45,7 @@ function ItemList({ items, placeholder, emptyState, loading, loadingState, rende
                 return (<CommandGroup key={(_a = group.heading) !== null && _a !== void 0 ? _a : index} heading={group.heading}>
                   {group.items.map((item) => (<CommandItem key={item.key} value={item.key} keywords={[item.label]} disabled={item.disabled} onSelect={() => onSelect(item)}>
                         {renderItem ? renderItem(item) : item.label}
+                        {item.key === selectedKey && (<CheckIcon aria-hidden="true" data-slot="combobox-selected" className="ml-auto shrink-0"/>)}
                       </CommandItem>))}
                 </CommandGroup>);
             })}
@@ -58,6 +61,11 @@ export function ComboBox(_a) {
     const isMobile = useIsMobile();
     const key = selectedKey !== undefined ? selectedKey : internalKey;
     const selectedItem = items.find((item) => item.key === key);
+    React.useEffect(() => {
+        if (disabled) {
+            setOpen(false);
+        }
+    }, [disabled]);
     function select(item) {
         if (disabled || item.disabled) {
             return;
@@ -69,10 +77,12 @@ export function ComboBox(_a) {
         onSelect === null || onSelect === void 0 ? void 0 : onSelect(item);
         setOpen(false);
     }
-    const trigger = (<Button type="button" variant="outline" disabled={disabled} aria-label={ariaLabel} className={cn("w-[150px] justify-start", buttonClassName)}>
+    const trigger = (<Button type="button" variant="outline" disabled={disabled} aria-label={selectedItem && ariaLabel
+            ? `${ariaLabel}: ${selectedItem.label}`
+            : ariaLabel} className={cn("w-[150px] justify-start", buttonClassName)}>
       {(_b = selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.label) !== null && _b !== void 0 ? _b : placeholder}
     </Button>);
-    const list = (<ItemList {...listProps} items={items} placeholder={placeholder} onSelect={select}/>);
+    const list = (<ItemList {...listProps} items={items} selectedKey={key} placeholder={placeholder} onSelect={select}/>);
     if (isMobile) {
         return (<Drawer open={open && !disabled} onOpenChange={setOpen}>
         <DrawerTrigger className={className} asChild>

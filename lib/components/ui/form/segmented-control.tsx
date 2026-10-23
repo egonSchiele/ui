@@ -4,36 +4,37 @@ import * as React from "react";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { cn } from "@/utils";
 
-export type SegmentedControlOption = {
-  value: string;
+export type SegmentedControlOption<Value extends string = string> = {
+  value: Value;
   label: React.ReactNode;
   ariaLabel?: string;
   disabled?: boolean;
 };
-type SelectionProps =
+type SelectionProps<Value extends string> =
   | {
-      value: string;
+      value: Value;
       defaultValue?: never;
-      onValueChange: (value: string) => void;
+      onValueChange: (value: Value) => void;
     }
   | {
       value?: never;
-      defaultValue: string;
-      onValueChange?: (value: string) => void;
+      defaultValue: Value;
+      onValueChange?: (value: Value) => void;
     };
-export type SegmentedControlProps = SelectionProps &
-  Omit<
-    React.ComponentProps<typeof RadioGroupPrimitive.Root>,
-    | "value"
-    | "defaultValue"
-    | "onValueChange"
-    | "children"
-    | "required"
-    | "asChild"
-  > & {
-    options: SegmentedControlOption[];
-    size?: "sm" | "md" | "lg";
-  };
+export type SegmentedControlProps<Value extends string = string> =
+  SelectionProps<Value> &
+    Omit<
+      React.ComponentProps<typeof RadioGroupPrimitive.Root>,
+      | "value"
+      | "defaultValue"
+      | "onValueChange"
+      | "children"
+      | "required"
+      | "asChild"
+    > & {
+      options: SegmentedControlOption<Value>[];
+      size?: "sm" | "md" | "lg";
+    };
 
 const segmentSizes: Record<
   NonNullable<SegmentedControlProps["size"]>,
@@ -44,17 +45,29 @@ const segmentSizes: Record<
   lg: "min-h-11 px-4 text-base",
 };
 
-export function SegmentedControl({
+export function SegmentedControl<Value extends string = string>({
   options,
   size = "md",
   className,
   orientation = "horizontal",
+  onValueChange,
   ...props
-}: SegmentedControlProps): React.JSX.Element {
+}: SegmentedControlProps<Value>): React.JSX.Element {
+  function select(value: string): void {
+    const option: SegmentedControlOption<Value> | undefined = options.find(
+      (candidate: SegmentedControlOption<Value>): boolean =>
+        candidate.value === value,
+    );
+    if (option && !option.disabled) {
+      onValueChange?.(option.value);
+    }
+  }
+
   return (
     <RadioGroupPrimitive.Root
       {...props}
       required
+      onValueChange={select}
       orientation={orientation}
       data-slot="segmented-control"
       className={cn(
@@ -63,7 +76,7 @@ export function SegmentedControl({
       )}
     >
       {options.map(
-        (option: SegmentedControlOption): React.JSX.Element => (
+        (option: SegmentedControlOption<Value>): React.JSX.Element => (
           <RadioGroupPrimitive.Item
             key={option.value}
             value={option.value}
