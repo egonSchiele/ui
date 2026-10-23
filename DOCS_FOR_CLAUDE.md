@@ -751,38 +751,35 @@ Sub-components:
 
 #### Combobox
 
-A responsive, generic combobox component that combines a searchable command list with a popover (desktop) or drawer (mobile).
+A searchable, grouped option picker with controlled selection, responsive popover/drawer presentation, and typed row metadata.
 
-```jsx
-const items = [
-  { key: "1", value: "option1", label: "Option 1" },
-  { key: "2", value: "option2", label: "Option 2" },
-  { key: "3", value: "option3", label: "Option 3" },
-];
-
+```tsx
 <ComboBox
-  items={items}
-  placeholder="Select an option..."
-  onSelect={(item) => console.log("Selected item is:", item)}
-  emptyState={<p>No results found</p>}
+  items={[{ key: "model-a", label: "Model A", group: "Family", metadata: { size: "4 GB" } }]}
+  selectedKey={modelKey}
+  onSelectedKeyChange={setModelKey}
+  aria-label="Model"
+  placeholder="Search models"
+  renderItem={(item) => <span>{item.label} {item.metadata?.size}</span>}
 />
 ```
 
 Properties:
-- `items`: Array of `ComboBoxItem` objects (required), where each item has:
-  - `key`: Unique identifier for the item
-  - `value`: The value to be returned when selected
-  - `label`: Display text shown in the list and button
-- `placeholder`: Text shown when no item is selected (default: "Select an item...")
-- `onSelect`: Callback function that receives the selected item
-- `emptyState`: Optional custom React node to display when search returns no results
-- `modal`: If using the combobox in a modal (eg a Dialog), this property must be set to true, otherwise the scrollbar will not work.
+- `items`: `ComboBoxItem<T>[]`; each item has a unique stable `key`, `label`, optional `metadata`, optional `group` heading, and optional `disabled` state. Metadata defaults to `unknown`.
+- `selectedKey`: Controlled key or `null`. Mutually exclusive with `defaultSelectedKey`.
+- `defaultSelectedKey`: Initial uncontrolled key or `null` (default).
+- `onSelectedKeyChange`: Receives the selected key. Set the controlled key to `null` externally to clear it.
+- `onSelect`: Existing callback receiving the selected item, including typed metadata.
+- `renderItem`: Optional display-only row renderer. Rows must not contain nested interactive controls; the trigger always displays the label.
+- `placeholder`: Search placeholder and unselected trigger text (default: `Select an item...`).
+- `aria-label`: Stable accessible name for the trigger and mobile drawer.
+- `disabled`: Disables the trigger and closes an open picker.
+- `loading` / `loadingState`: Show a status instead of options; default status is `Loading options…`.
+- `emptyState`: Custom content when a search has no matches.
+- `className`: Existing shared trigger/content styles; `buttonClassName` styles the button on both viewport sizes; `contentClassName` styles the popup/drawer.
+- `modal`: Desktop popover modal behavior; use `true` inside a modal dialog.
 
-The component provides:
-- Automatic responsive behavior (popover on desktop, drawer on mobile)
-- Searchable/filterable command list
-- Keyboard navigation support
-- Selected item display in trigger button
+Groups follow their first appearance in `items`. Selection uses keys, while search includes labels through cmdk keywords, so duplicate labels remain distinct. Updating `items` refreshes the displayed label without storing a stale item object. Mobile and desktop use the same list and callbacks.
 
 #### Menubar
 
@@ -1143,24 +1140,23 @@ TooltipContent properties:
 
 #### SimpleTooltip
 
-A simplified tooltip component with built-in provider.
+A tooltip with separate trigger/content props and optional composition onto one existing interactive child.
 
-```jsx
-<SimpleTooltip tooltipContent="This is a tooltip" side="top">
-  <Button>Hover me</Button>
+```tsx
+<SimpleTooltip asChild tooltipContent="Browse images" side="right"
+  triggerProps={{ "aria-label": "Open library" }} contentProps={{ sideOffset: 12 }}>
+  <a href="/library">Library</a>
 </SimpleTooltip>
 ```
 
 Properties:
-- `children`: Trigger element
-- `tooltipContent`: Content to display in tooltip
-- `side`: Position: `top | right | bottom | left`
-- `sideOffset`: Offset from trigger
-- `align`: Alignment: `start | center | end`
-- `open`: Controlled open state
-- `defaultOpen`: Default open state
-- `delayDuration`: Delay before showing (milliseconds)
-- `disableHoverableContent`: Close when hovering content
+- `children`: Trigger content; with `asChild`, supply one element that forwards props and its ref.
+- `asChild`: Compose onto the existing child instead of creating a button (default `false`, preserving plain-text triggers). Use this for links and buttons.
+- `tooltipContent`: Tooltip body.
+- `triggerProps`: Props and event handlers for the trigger, separate from content.
+- `contentProps`: TooltipContent props; override corresponding top-level content props.
+- `side`, `sideOffset`, `align`, `alignOffset`, `arrowPadding`, `avoidCollisions`, `collisionBoundary`, `collisionPadding`, `sticky`, `hideWhenDetached`, `updatePositionStrategy`, `onPlaced`, `forceMount`, `className`: Existing content positioning/styling props remain supported.
+- `open`, `defaultOpen`, `onOpenChange`, `delayDuration`, `disableHoverableContent`: Tooltip root state and timing.
 
 #### Banner
 
@@ -1213,3 +1209,43 @@ function MyComponent() {
 ```
 
 The Toaster component automatically adapts to your theme (light/dark) and provides toast notifications throughout your app.
+
+### NumberField
+
+A labelled numeric input with private text drafts, bounded stepping, and nullable committed values.
+
+```tsx
+<NumberField label="Guidance" value={guidance} onChange={setGuidance}
+  min={0} max={20} step={0.1} placeholder="Model default" />
+```
+
+Properties:
+- `value`: Controlled `number | null`; requires `onChange` and excludes `defaultValue`.
+- `defaultValue`: Initial uncontrolled `number | null`, default `null`.
+- `onChange`: Receives a committed value when it changes, never intermediate text.
+- `onCommit`: Reports accepted commits (blur, Enter, stepping); slider consumers can share their commit callback here.
+- `min`, `max`, `step`: Finite numeric bounds and positive step (default `1`). Commits align to steps relative to `min` or zero, then clamp to bounds.
+- `emptyValue`: `allow` (default) commits empty input as `null`; `reject` retains the previous value and shows an error.
+- `label`, `id`, `name`: Associated visible label, input ID, and form field name.
+- `aria-label`, `aria-labelledby`, `aria-describedby`: Accessible naming and shared descriptions for composed controls.
+- `disabled`, `placeholder`, `unit`, `help`, `className`: Disabled state, placeholder text, unit/help content, and outer styling.
+
+Input uses decimal text so zero, empty text, signs, and incomplete decimal drafts survive editing. Blur or Enter validates a finite number; invalid text leaves the committed value intact and announces an error. Escape restores the committed value. Arrow keys step by one step, Shift-arrow by ten; buttons step by one. External value changes replace obsolete drafts. Controlled callers must update the value in `onChange`; a rejected update restores the previous value.
+
+### SegmentedControl
+
+A required single-choice radio group styled as adjoining text or icon segments.
+
+```tsx
+<SegmentedControl aria-label="Settings tier" value={tier} onValueChange={setTier}
+  options={[{ value: "basic", label: "Basic" }, { value: "advanced", label: "Advanced" }]} />
+```
+
+Properties:
+- `options`: `{ value: string; label: ReactNode; ariaLabel?: string; disabled?: boolean }[]`; values are unique and icon-only labels need `ariaLabel`.
+- `value` / `onValueChange`: Controlled selection and callback, mutually exclusive with `defaultValue`.
+- `defaultValue`: Required initial value for uncontrolled use. Supply a value matching an enabled option.
+- `size`: `sm`, `md` (default), or `lg`.
+- `disabled`, `name`, `orientation`, `dir`, `loop`, `aria-label`, `aria-labelledby`, `className`: Radix radio-group props. Orientation defaults to horizontal.
+
+Selecting the active segment keeps it selected. Arrow keys select enabled options and skip disabled choices. The root and items use Radix radio primitives directly; the circular RadioGroupItem is not reused. Both controlled and uncontrolled forms require an initial valid selection.

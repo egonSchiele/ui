@@ -64,3 +64,55 @@ export const WithCustomEmptyState: Story = {
     },
   },
 };
+
+const groupedItems: ComboBoxItem<{ size: string }>[] = [
+  {
+    key: "one",
+    label: "Shared name",
+    group: "Family A",
+    metadata: { size: "4 GB" },
+  },
+  {
+    key: "two",
+    label: "Shared name",
+    group: "Family B",
+    metadata: { size: "8 GB" },
+  },
+  { key: "disabled", label: "Unavailable", group: "Family B", disabled: true },
+  { key: "third", label: "Third model", group: "Family B" },
+];
+function ControlledComboBox(): React.JSX.Element {
+  const [key, setKey]: [
+    string | null,
+    React.Dispatch<React.SetStateAction<string | null>>,
+  ] = React.useState<string | null>("one");
+  return (
+    <div className="flex flex-col gap-3">
+      <ComboBox
+        items={groupedItems}
+        selectedKey={key}
+        onSelectedKeyChange={setKey}
+        aria-label="Model"
+        placeholder="Search models"
+        buttonClassName="w-64"
+        renderItem={(item: ComboBoxItem<{ size: string }>): React.ReactNode => (
+          <span>
+            {item.label} {item.metadata?.size}
+          </span>
+        )}
+      />
+      <output>Selected key: {key ?? "none"}</output>
+      <Button onClick={(): void => setKey(null)}>Clear selection</Button>
+      <Button onClick={(): void => setKey("third")}>
+        Select third externally
+      </Button>
+    </div>
+  );
+}
+export const ControlledGrouped: Story = {
+  render: (): React.JSX.Element => <ControlledComboBox />,
+};
+export const Loading: Story = {
+  args: { items: [], loading: true, "aria-label": "Model" },
+};
+export const Disabled: Story = { args: { items: statusItems, disabled: true } };
