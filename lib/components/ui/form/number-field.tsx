@@ -34,6 +34,7 @@ export type NumberFieldProps = NumberFieldValueProps & {
   max?: number;
   step?: number;
   emptyValue?: "allow" | "reject";
+  invalid?: boolean;
   disabled?: boolean;
   placeholder?: string;
   unit?: React.ReactNode;
@@ -88,7 +89,15 @@ function nextSteppedValue({
 }): NumberValue {
   const next: number =
     current === null ? (bounds.min ?? 0) : current + amount * bounds.step;
-  return Number.isFinite(next) ? normalizeValue(next, bounds) : current;
+  if (!Number.isFinite(next)) {
+    return current;
+  }
+  const stepped: number = normalizeValue(next, bounds);
+  // Clamping an out-of-range value can move it against the step direction.
+  // A native number input leaves the value alone in that case.
+  const movesBackward: boolean =
+    current !== null && (stepped - current) * amount < 0;
+  return movesBackward ? current : stepped;
 }
 
 function parseDraft(draft: string, allowEmpty: boolean): ParsedNumber {
@@ -167,15 +176,15 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
   }
 
   function commit(): void {
+    if (draft === formatValue(value) && error === null) {
+      return;
+    }
     const parsed: ParsedNumber = parseDraft(
       draft,
       props.emptyValue !== "reject",
     );
     if (!parsed.valid) {
       setError(parsed.message);
-      return;
-    }
-    if (draft === formatValue(value) && error === null) {
       return;
     }
     emit(parsed.value === null ? null : normalizeValue(parsed.value, bounds));
@@ -202,7 +211,12 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
         draft,
         props.emptyValue !== "reject",
       );
-      if (draft !== formatValue(value) || !parsed.valid) {
+      if (!parsed.valid) {
+        event.preventDefault();
+        setError(parsed.message);
+        return;
+      }
+      if (draft !== formatValue(value)) {
         event.preventDefault();
       }
       commit();
@@ -309,7 +323,7 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
           aria-label={props["aria-label"]}
           aria-labelledby={props["aria-labelledby"]}
           aria-describedby={describedBy || undefined}
-          aria-invalid={Boolean(field.error)}
+          aria-invalid={Boolean(field.error) || Boolean(props.invalid)}
           aria-valuemin={props.min}
           aria-valuemax={props.max}
           aria-valuenow={field.value ?? undefined}

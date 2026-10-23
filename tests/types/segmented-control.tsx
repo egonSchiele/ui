@@ -40,3 +40,21 @@ export const defaultString: SegmentedControlProps = {
   options: [{ value: "custom", label: "Custom" }],
   defaultValue: "custom",
 };
+
+export const inferredTypo: React.JSX.Element = (
+  // @ts-expect-error The default value must be one of the options.
+  <SegmentedControl options={options} defaultValue="other" />
+);
+
+export function InferredControlledTypo(): React.JSX.Element {
+  return (
+    <SegmentedControl
+      options={options}
+      // @ts-expect-error The controlled value must be one of the options.
+      value="randm"
+      onValueChange={(mode): void => {
+        void mode;
+      }}
+    />
+  );
+}
