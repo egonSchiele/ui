@@ -134,6 +134,8 @@ for (const width of [1100, 390]) {
     await expect(
       selectedRow.locator('[data-slot="combobox-selected"]'),
     ).toBeVisible();
+    await expect(selectedRow).toHaveAttribute("aria-selected", "false");
+    await expect(selectedRow).toHaveAccessibleName(/\(current\)$/);
     await page.getByRole("combobox").press("Escape");
     await page.getByRole("button", { name: "Clear selection" }).click();
     await expect(trigger).toHaveText("Search models");
@@ -307,3 +309,52 @@ for (const width of [1100, 390]) {
     await expect(page.getByRole("listbox")).toBeVisible();
   });
 }
+
+test("stepping never moves an out-of-range draft against the step direction", async ({
+  page,
+}) => {
+  await page.goto(
+    "/iframe.html?id=ui-numberfield--empty-minimum&viewMode=story",
+  );
+  const field: Locator = page.getByRole("spinbutton", { name: "Steps" });
+  const increase: Locator = page.getByRole("button", { name: "Increase Steps" });
+  const decrease: Locator = page.getByRole("button", { name: "Decrease Steps" });
+  await field.fill("60");
+  await expect(increase).toBeDisabled();
+  await field.press("ArrowUp");
+  await expect(field).toHaveValue("60");
+  await decrease.click();
+  await expect(field).toHaveValue("50");
+  await field.fill("0");
+  await expect(decrease).toBeDisabled();
+  await field.press("ArrowDown");
+  await expect(field).toHaveValue("0");
+  await increase.click();
+  await expect(field).toHaveValue("1");
+});
+
+test("blur leaves an untouched empty required field quiet, and Enter still rejects it", async ({
+  page,
+}) => {
+  await page.goto(
+    "/iframe.html?id=ui-numberfield--empty-minimum&viewMode=story&args=emptyValue:reject",
+  );
+  const field: Locator = page.getByRole("spinbutton", { name: "Steps" });
+  await field.focus();
+  await field.press("Tab");
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(field).toHaveAttribute("aria-invalid", "false");
+  await field.press("Enter");
+  await expect(page.getByRole("alert")).toHaveText("Enter a number.");
+});
+
+test("invalid marks the input for a caller-owned validation problem", async ({
+  page,
+}) => {
+  await page.goto(
+    "/iframe.html?id=ui-numberfield--empty-minimum&viewMode=story&args=invalid:!true",
+  );
+  await expect(
+    page.getByRole("spinbutton", { name: "Steps" }),
+  ).toHaveAttribute("aria-invalid", "true");
+});

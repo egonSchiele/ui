@@ -62,13 +62,14 @@ Properties:
 - `onCommit`: Reports accepted commits (blur, Enter, stepping); slider consumers can share their commit callback here.
 - `min`, `max`, `step`: Finite numeric bounds and positive step (default `1`). Commits align to steps relative to `min` or zero, then clamp to bounds.
 - `emptyValue`: `allow` (default) commits empty input as `null`; `reject` retains the previous value and shows an error.
+- `invalid`: Marks the input `aria-invalid` for a validation problem the caller owns, such as a required value. Pair it with `aria-describedby` that points at the caller's message.
 - `label`, `id`, `name`: Associated visible label, input ID, and form field name.
 - `aria-label`, `aria-labelledby`, `aria-describedby`: Accessible naming and shared descriptions for composed controls.
 - `disabled`, `placeholder`, `unit`, `help`, `className`: Disabled state, placeholder text, unit/help content, and outer styling.
 
-Input uses decimal text so zero, empty text, signs, and incomplete decimal drafts survive editing. Blur or Enter validates a finite number; invalid text leaves the committed value intact and announces an error. Escape restores the committed value.
+Input uses decimal text so zero, empty text, signs, and incomplete decimal drafts survive editing. Blur or Enter validates a changed draft; invalid text leaves the committed value intact and announces an error. Blur on an untouched field does not validate it. Enter on an invalid draft shows the error and blocks form submission. Escape restores the committed value.
 
-Arrow keys step by one step, Shift-arrow by ten; buttons step by one. The first step from empty text initializes to `min` or zero, normalized to the bounds. Step buttons disable when another step cannot change the value; unchanged keyboard steps do not fire `onCommit`.
+Arrow keys step by one step, Shift-arrow by ten; buttons step by one. The first step from empty text initializes to `min` or zero, normalized to the bounds. Step buttons disable when another step cannot change the value, or would move it against the step direction. A draft above `max` cannot step up, and a draft below `min` cannot step down. Unchanged keyboard steps do not fire `onCommit`.
 
 Enter commits a changed draft and prevents form submission on that keystroke; Enter on an unchanged valid value allows the surrounding form to submit. External value changes replace obsolete drafts. Controlled callers must update the value in `onChange`; a rejected update restores the previous value.
 
@@ -83,7 +84,7 @@ A required single-choice radio group styled as adjoining text or icon segments.
 
 Properties:
 - `options`: `SegmentedControlOption<Value>[]` (`value`, `label`, optional `ariaLabel` and `disabled`); values are unique and icon-only labels need `ariaLabel`.
-- `value` / `onValueChange`: Controlled selection and callback, mutually exclusive with `defaultValue`. `SegmentedControl<Value>` preserves the option value string union in both props and the callback; the generic defaults to `string`.
+- `value` / `onValueChange`: Controlled selection and callback, mutually exclusive with `defaultValue`. `SegmentedControl<Value>` infers `Value` from `options` only, so a `value` or `defaultValue` outside the options fails to compile. The callback receives the same union. The generic defaults to `string`.
 - `defaultValue`: Required initial value for uncontrolled use. Supply a value matching an enabled option.
 - `size`: `sm`, `md` (default), or `lg`.
 - `disabled`, `name`, `orientation`, `dir`, `loop`, `aria-label`, `aria-labelledby`, `className`: Radix radio-group props. Orientation defaults to horizontal.

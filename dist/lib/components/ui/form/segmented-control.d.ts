@@ -7,13 +7,13 @@ export type SegmentedControlOption<Value extends string = string> = {
     disabled?: boolean;
 };
 type SelectionProps<Value extends string> = {
-    value: Value;
+    value: NoInfer<Value>;
     defaultValue?: never;
-    onValueChange: (value: Value) => void;
+    onValueChange: (value: NoInfer<Value>) => void;
 } | {
     value?: never;
-    defaultValue: Value;
-    onValueChange?: (value: Value) => void;
+    defaultValue: NoInfer<Value>;
+    onValueChange?: (value: NoInfer<Value>) => void;
 };
 export type SegmentedControlProps<Value extends string = string> = SelectionProps<Value> & Omit<React.ComponentProps<typeof RadioGroupPrimitive.Root>, "value" | "defaultValue" | "onValueChange" | "children" | "required" | "asChild"> & {
     options: SegmentedControlOption<Value>[];

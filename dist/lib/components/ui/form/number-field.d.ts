@@ -20,6 +20,7 @@ export type NumberFieldProps = NumberFieldValueProps & {
     max?: number;
     step?: number;
     emptyValue?: "allow" | "reject";
+    invalid?: boolean;
     disabled?: boolean;
     placeholder?: string;
     unit?: React.ReactNode;

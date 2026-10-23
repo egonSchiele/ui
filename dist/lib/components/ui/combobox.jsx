@@ -45,7 +45,10 @@ function ItemList({ selectedKey, items, placeholder, emptyState, loading, loadin
                 return (<CommandGroup key={(_a = group.heading) !== null && _a !== void 0 ? _a : index} heading={group.heading}>
                   {group.items.map((item) => (<CommandItem key={item.key} value={item.key} keywords={[item.label]} disabled={item.disabled} onSelect={() => onSelect(item)}>
                         {renderItem ? renderItem(item) : item.label}
-                        {item.key === selectedKey && (<CheckIcon aria-hidden="true" data-slot="combobox-selected" className="ml-auto shrink-0"/>)}
+                        {item.key === selectedKey && (<>
+                            <CheckIcon aria-hidden="true" data-slot="combobox-selected" className="ml-auto shrink-0"/>
+                            <span className="sr-only">(current)</span>
+                          </>)}
                       </CommandItem>))}
                 </CommandGroup>);
             })}

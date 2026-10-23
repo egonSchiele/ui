@@ -128,11 +128,14 @@ function ItemList<T>({
                       >
                         {renderItem ? renderItem(item) : item.label}
                         {item.key === selectedKey && (
-                          <CheckIcon
-                            aria-hidden="true"
-                            data-slot="combobox-selected"
-                            className="ml-auto shrink-0"
-                          />
+                          <>
+                            <CheckIcon
+                              aria-hidden="true"
+                              data-slot="combobox-selected"
+                              className="ml-auto shrink-0"
+                            />
+                            <span className="sr-only">(current)</span>
+                          </>
                         )}
                       </CommandItem>
                     ),

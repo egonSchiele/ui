@@ -20,7 +20,14 @@ function normalizeValue(value, { min, max, step }) {
 function nextSteppedValue({ current, amount, bounds, }) {
     var _a;
     const next = current === null ? ((_a = bounds.min) !== null && _a !== void 0 ? _a : 0) : current + amount * bounds.step;
-    return Number.isFinite(next) ? normalizeValue(next, bounds) : current;
+    if (!Number.isFinite(next)) {
+        return current;
+    }
+    const stepped = normalizeValue(next, bounds);
+    // Clamping an out-of-range value can move it against the step direction.
+    // A native number input leaves the value alone in that case.
+    const movesBackward = current !== null && (stepped - current) * amount < 0;
+    return movesBackward ? current : stepped;
 }
 function parseDraft(draft, allowEmpty) {
     const text = draft.trim();
@@ -78,12 +85,12 @@ function useNumberField(props) {
         setCommitVersion((version) => version + 1);
     }
     function commit() {
+        if (draft === formatValue(value) && error === null) {
+            return;
+        }
         const parsed = parseDraft(draft, props.emptyValue !== "reject");
         if (!parsed.valid) {
             setError(parsed.message);
-            return;
-        }
-        if (draft === formatValue(value) && error === null) {
             return;
         }
         emit(parsed.value === null ? null : normalizeValue(parsed.value, bounds));
@@ -105,7 +112,12 @@ function useNumberField(props) {
         }
         if (event.key === "Enter") {
             const parsed = parseDraft(draft, props.emptyValue !== "reject");
-            if (draft !== formatValue(value) || !parsed.valid) {
+            if (!parsed.valid) {
+                event.preventDefault();
+                setError(parsed.message);
+                return;
+            }
+            if (draft !== formatValue(value)) {
                 event.preventDefault();
             }
             commit();
@@ -158,7 +170,7 @@ export function NumberField(props) {
       {props.label && <Label htmlFor={id}>{props.label}</Label>}
       <div className="flex items-center gap-2">
         <StepButton direction={-1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canDecrease} onStep={field.increment}/>
-        <Input id={id} name={props.name} type="text" role="spinbutton" inputMode="decimal" autoComplete="off" value={field.draft} placeholder={props.placeholder} disabled={props.disabled} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={describedBy || undefined} aria-invalid={Boolean(field.error)} aria-valuemin={props.min} aria-valuemax={props.max} aria-valuenow={(_c = field.value) !== null && _c !== void 0 ? _c : undefined} onChange={field.onTextChange} onBlur={field.commit} onKeyDown={field.onKeyDown}/>
+        <Input id={id} name={props.name} type="text" role="spinbutton" inputMode="decimal" autoComplete="off" value={field.draft} placeholder={props.placeholder} disabled={props.disabled} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={describedBy || undefined} aria-invalid={Boolean(field.error) || Boolean(props.invalid)} aria-valuemin={props.min} aria-valuemax={props.max} aria-valuenow={(_c = field.value) !== null && _c !== void 0 ? _c : undefined} onChange={field.onTextChange} onBlur={field.commit} onKeyDown={field.onKeyDown}/>
         {props.unit && (<span className="text-sm text-muted-foreground">{props.unit}</span>)}
         <StepButton direction={1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canIncrease} onStep={field.increment}/>
       </div>

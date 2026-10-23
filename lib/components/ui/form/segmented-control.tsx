@@ -10,16 +10,18 @@ export type SegmentedControlOption<Value extends string = string> = {
   ariaLabel?: string;
   disabled?: boolean;
 };
+// NoInfer makes TypeScript infer Value from options alone, so a value that is
+// not one of the options fails to compile.
 type SelectionProps<Value extends string> =
   | {
-      value: Value;
+      value: NoInfer<Value>;
       defaultValue?: never;
-      onValueChange: (value: Value) => void;
+      onValueChange: (value: NoInfer<Value>) => void;
     }
   | {
       value?: never;
-      defaultValue: Value;
-      onValueChange?: (value: Value) => void;
+      defaultValue: NoInfer<Value>;
+      onValueChange?: (value: NoInfer<Value>) => void;
     };
 export type SegmentedControlProps<Value extends string = string> =
   SelectionProps<Value> &
