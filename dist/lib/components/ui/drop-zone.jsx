@@ -126,8 +126,8 @@ function useDropHover({ rootRef, disabled, mimeType, }) {
             clear();
         }
     }, [disabled]);
-    function eligible(event) {
-        if (disabled || !ownsTarget(rootRef.current, event.target)) {
+    function ownsTransfer(event) {
+        if (!ownsTarget(rootRef.current, event.target)) {
             return false;
         }
         const types = event.dataTransfer.types;
@@ -135,7 +135,7 @@ function useDropHover({ rootRef, disabled, mimeType, }) {
             Boolean(mimeType && types.includes(mimeType.toLowerCase())));
     }
     function onDragEnter(event) {
-        if (!eligible(event)) {
+        if (disabled || !ownsTransfer(event)) {
             return;
         }
         event.preventDefault();
@@ -153,7 +153,7 @@ function useDropHover({ rootRef, disabled, mimeType, }) {
             setDragActive(false);
         }
     }
-    return { dragActive, eligible, onDragEnter, onDragLeave, clear };
+    return { dragActive, ownsTransfer, onDragEnter, onDragLeave, clear };
 }
 function decodeInternal(payload, decoder) {
     try {
@@ -180,14 +180,25 @@ function useDropZone(props) {
         disabled: props.disabled,
         mimeType: (_a = props.internalDrop) === null || _a === void 0 ? void 0 : _a.mimeType,
     });
+    function onDragOver(event) {
+        if (!hover.ownsTransfer(event)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = props.disabled ? "none" : "copy";
+    }
     function onDrop(event) {
         var _a;
-        if (!hover.eligible(event)) {
+        if (!hover.ownsTransfer(event)) {
             return;
         }
         event.preventDefault();
         event.stopPropagation();
         hover.clear();
+        if (props.disabled) {
+            return;
+        }
         if (event.dataTransfer.files.length > 0) {
             receiveFiles(Array.from(event.dataTransfer.files));
             return;
@@ -211,21 +222,23 @@ function useDropZone(props) {
     }
     return Object.assign(Object.assign({ rootRef,
         inputRef }, hover), { receiveFiles,
+        onDragOver,
         onDrop,
         onPaste,
         openPicker });
 }
+function defaultDescription({ multiple, pasteActive, }) {
+    const files = multiple ? "files" : "a file";
+    return pasteActive
+        ? `Drop ${files} here, or paste ${files}.`
+        : `Drop ${files} here, or paste while this area is focused.`;
+}
 export function DropZone(props) {
-    var _a;
+    var _a, _b, _c;
     const zone = useDropZone(props);
     const descriptionId = React.useId();
-    return (<div ref={zone.rootRef} role="group" aria-label={props.label} aria-describedby={descriptionId} aria-disabled={props.disabled} tabIndex={props.disabled ? -1 : 0} data-slot="drop-zone" data-drag-active={zone.dragActive || undefined} className={cn("border-input bg-background flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring", zone.dragActive && "border-primary bg-accent", props.disabled && "opacity-50", props.className)} onDragEnter={zone.onDragEnter} onDragLeave={zone.onDragLeave} onDrop={zone.onDrop} onPaste={zone.onPaste} onDragOver={(event) => {
-            if (zone.eligible(event)) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.dataTransfer.dropEffect = "copy";
-            }
-        }} onClick={(event) => {
+    const pickerLabel = (_a = props.pickerLabel) !== null && _a !== void 0 ? _a : (props.multiple ? "Choose files" : "Choose file");
+    return (<div ref={zone.rootRef} role="group" aria-label={props.label} aria-describedby={descriptionId} aria-disabled={props.disabled} tabIndex={props.disabled ? -1 : 0} data-slot="drop-zone" data-drag-active={zone.dragActive || undefined} className={cn("border-input bg-background flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring", zone.dragActive && "border-primary bg-accent", props.disabled && "opacity-50", props.className)} onDragEnter={zone.onDragEnter} onDragLeave={zone.onDragLeave} onDrop={zone.onDrop} onPaste={zone.onPaste} onDragOver={zone.onDragOver} onClick={(event) => {
             if (event.target === event.currentTarget) {
                 zone.openPicker();
             }
@@ -236,12 +249,12 @@ export function DropZone(props) {
                 zone.openPicker();
             }
         }}>
-      {(_a = props.children) !== null && _a !== void 0 ? _a : <span className="font-medium">{props.label}</span>}
+      {(_b = props.children) !== null && _b !== void 0 ? _b : <span className="font-medium">{props.label}</span>}
       <span id={descriptionId} className="text-muted-foreground text-sm">
-        Drop files here, or paste while this area is focused.
+        {(_c = props.description) !== null && _c !== void 0 ? _c : defaultDescription(props)}
       </span>
-      <Button type="button" variant="outline" disabled={props.disabled} onClick={zone.openPicker} aria-label={`Choose files for ${props.label}`}>
-        Choose files
+      <Button type="button" variant="outline" disabled={props.disabled} onClick={zone.openPicker} aria-label={`${pickerLabel} for ${props.label}`}>
+        {pickerLabel}
       </Button>
       <input ref={zone.inputRef} type="file" hidden accept={props.accept} multiple={props.multiple} disabled={props.disabled} aria-label={`Files for ${props.label}`} onChange={(event) => {
             var _a;

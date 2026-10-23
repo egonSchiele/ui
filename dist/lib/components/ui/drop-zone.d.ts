@@ -18,6 +18,8 @@ export type DropZoneInternalDrop<Value> = {
 };
 export type DropZoneProps<Value = never> = {
     label: string;
+    description?: React.ReactNode;
+    pickerLabel?: string;
     children?: React.ReactNode;
     className?: string;
     accept?: string;

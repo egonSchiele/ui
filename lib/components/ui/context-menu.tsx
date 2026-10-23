@@ -11,7 +11,8 @@ export const ContextMenu = ContextMenuPrimitive.Root;
 export function ContextMenuTrigger({
   onKeyDown,
   disabled,
-  tabIndex = 0,
+  asChild,
+  tabIndex,
   ...props
 }: React.ComponentProps<
   typeof ContextMenuPrimitive.Trigger
@@ -41,7 +42,8 @@ export function ContextMenuTrigger({
     <ContextMenuPrimitive.Trigger
       {...props}
       disabled={disabled}
-      tabIndex={disabled ? -1 : tabIndex}
+      asChild={asChild}
+      tabIndex={asChild ? tabIndex : (tabIndex ?? (disabled ? -1 : 0))}
       onKeyDown={handleKeyDown}
     />
   );

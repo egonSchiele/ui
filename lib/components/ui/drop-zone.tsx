@@ -28,6 +28,8 @@ export type DropZoneInternalDrop<Value> = {
 
 export type DropZoneProps<Value = never> = {
   label: string;
+  description?: React.ReactNode;
+  pickerLabel?: string;
   children?: React.ReactNode;
   className?: string;
   accept?: string;
@@ -121,7 +123,7 @@ type DropZoneState = {
   inputRef: React.RefObject<HTMLInputElement | null>;
   dragActive: boolean;
   receiveFiles: (files: File[]) => void;
-  eligible: (event: React.DragEvent<HTMLDivElement>) => boolean;
+  onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragEnter: (event: React.DragEvent<HTMLDivElement>) => void;
   onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -221,8 +223,11 @@ type HoverOptions = {
 
 type DropHoverState = Pick<
   DropZoneState,
-  "dragActive" | "eligible" | "onDragEnter" | "onDragLeave"
-> & { clear: () => void };
+  "dragActive" | "onDragEnter" | "onDragLeave"
+> & {
+  ownsTransfer: (event: React.DragEvent<HTMLDivElement>) => boolean;
+  clear: () => void;
+};
 
 function useDropHover({
   rootRef,
@@ -245,8 +250,8 @@ function useDropHover({
     }
   }, [disabled]);
 
-  function eligible(event: React.DragEvent<HTMLDivElement>): boolean {
-    if (disabled || !ownsTarget(rootRef.current, event.target)) {
+  function ownsTransfer(event: React.DragEvent<HTMLDivElement>): boolean {
+    if (!ownsTarget(rootRef.current, event.target)) {
       return false;
     }
     const types: readonly string[] = event.dataTransfer.types;
@@ -256,7 +261,7 @@ function useDropHover({
     );
   }
   function onDragEnter(event: React.DragEvent<HTMLDivElement>): void {
-    if (!eligible(event)) {
+    if (disabled || !ownsTransfer(event)) {
       return;
     }
     event.preventDefault();
@@ -274,7 +279,7 @@ function useDropHover({
       setDragActive(false);
     }
   }
-  return { dragActive, eligible, onDragEnter, onDragLeave, clear };
+  return { dragActive, ownsTransfer, onDragEnter, onDragLeave, clear };
 }
 
 function decodeInternal<Value>(
@@ -307,13 +312,24 @@ function useDropZone<Value>(props: DropZoneProps<Value>): DropZoneState {
     mimeType: props.internalDrop?.mimeType,
   });
 
+  function onDragOver(event: React.DragEvent<HTMLDivElement>): void {
+    if (!hover.ownsTransfer(event)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = props.disabled ? "none" : "copy";
+  }
   function onDrop(event: React.DragEvent<HTMLDivElement>): void {
-    if (!hover.eligible(event)) {
+    if (!hover.ownsTransfer(event)) {
       return;
     }
     event.preventDefault();
     event.stopPropagation();
     hover.clear();
+    if (props.disabled) {
+      return;
+    }
     if (event.dataTransfer.files.length > 0) {
       receiveFiles(Array.from(event.dataTransfer.files));
       return;
@@ -341,10 +357,21 @@ function useDropZone<Value>(props: DropZoneProps<Value>): DropZoneState {
     inputRef,
     ...hover,
     receiveFiles,
+    onDragOver,
     onDrop,
     onPaste,
     openPicker,
   };
+}
+
+function defaultDescription({
+  multiple,
+  pasteActive,
+}: Pick<DropZoneProps, "multiple" | "pasteActive">): string {
+  const files: string = multiple ? "files" : "a file";
+  return pasteActive
+    ? `Drop ${files} here, or paste ${files}.`
+    : `Drop ${files} here, or paste while this area is focused.`;
 }
 
 export function DropZone<Value = never>(
@@ -352,6 +379,8 @@ export function DropZone<Value = never>(
 ): React.JSX.Element {
   const zone: DropZoneState = useDropZone(props);
   const descriptionId: string = React.useId();
+  const pickerLabel: string =
+    props.pickerLabel ?? (props.multiple ? "Choose files" : "Choose file");
   return (
     <div
       ref={zone.rootRef}
@@ -372,13 +401,7 @@ export function DropZone<Value = never>(
       onDragLeave={zone.onDragLeave}
       onDrop={zone.onDrop}
       onPaste={zone.onPaste}
-      onDragOver={(event: React.DragEvent<HTMLDivElement>): void => {
-        if (zone.eligible(event)) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.dataTransfer.dropEffect = "copy";
-        }
-      }}
+      onDragOver={zone.onDragOver}
       onClick={(event: React.MouseEvent<HTMLDivElement>): void => {
         if (event.target === event.currentTarget) {
           zone.openPicker();
@@ -396,16 +419,16 @@ export function DropZone<Value = never>(
     >
       {props.children ?? <span className="font-medium">{props.label}</span>}
       <span id={descriptionId} className="text-muted-foreground text-sm">
-        Drop files here, or paste while this area is focused.
+        {props.description ?? defaultDescription(props)}
       </span>
       <Button
         type="button"
         variant="outline"
         disabled={props.disabled}
         onClick={zone.openPicker}
-        aria-label={`Choose files for ${props.label}`}
+        aria-label={`${pickerLabel} for ${props.label}`}
       >
-        Choose files
+        {pickerLabel}
       </Button>
       <input
         ref={zone.inputRef}

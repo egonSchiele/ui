@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Kbd } from "../../components/ui/kbd";
 export declare const ContextMenu: React.FC<ContextMenuPrimitive.ContextMenuProps>;
-export declare function ContextMenuTrigger({ onKeyDown, disabled, tabIndex, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>): React.JSX.Element;
+export declare function ContextMenuTrigger({ onKeyDown, disabled, asChild, tabIndex, ...props }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>): React.JSX.Element;
 export declare const ContextMenuGroup: React.ForwardRefExoticComponent<ContextMenuPrimitive.ContextMenuGroupProps & React.RefAttributes<HTMLDivElement>>;
 export declare const ContextMenuPortal: React.FC<ContextMenuPrimitive.ContextMenuPortalProps>;
 export declare const ContextMenuSub: React.FC<ContextMenuPrimitive.ContextMenuSubProps>;

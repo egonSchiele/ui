@@ -17,7 +17,7 @@ import { Kbd } from "../../components/ui/kbd";
 import { cn } from "../../utils";
 export const ContextMenu = ContextMenuPrimitive.Root;
 export function ContextMenuTrigger(_a) {
-    var { onKeyDown, disabled, tabIndex = 0 } = _a, props = __rest(_a, ["onKeyDown", "disabled", "tabIndex"]);
+    var { onKeyDown, disabled, asChild, tabIndex } = _a, props = __rest(_a, ["onKeyDown", "disabled", "asChild", "tabIndex"]);
     function handleKeyDown(event) {
         onKeyDown === null || onKeyDown === void 0 ? void 0 : onKeyDown(event);
         if (event.defaultPrevented ||
@@ -35,7 +35,7 @@ export function ContextMenuTrigger(_a) {
             clientY: bounds.top + bounds.height / 2,
         }));
     }
-    return (<ContextMenuPrimitive.Trigger {...props} disabled={disabled} tabIndex={disabled ? -1 : tabIndex} onKeyDown={handleKeyDown}/>);
+    return (<ContextMenuPrimitive.Trigger {...props} disabled={disabled} asChild={asChild} tabIndex={asChild ? tabIndex : (tabIndex !== null && tabIndex !== void 0 ? tabIndex : (disabled ? -1 : 0))} onKeyDown={handleKeyDown}/>);
 }
 export const ContextMenuGroup = ContextMenuPrimitive.Group;
 export const ContextMenuPortal = ContextMenuPrimitive.Portal;

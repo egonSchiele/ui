@@ -74,3 +74,39 @@ export const Decimal: Story = {
 export const Disabled: Story = {
   render: (): React.JSX.Element => <LabeledSliderDemo disabled />,
 };
+
+function UncontrolledResetDemo({
+  defaultValue,
+}: {
+  defaultValue: number | null;
+}): React.JSX.Element {
+  const [resets, setResets]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = React.useState<number>(0);
+  return (
+    <div className="flex w-96 max-w-full flex-col gap-3">
+      <LabeledSlider
+        label="Steps"
+        defaultValue={defaultValue}
+        placeholderValue={3}
+        min={1}
+        max={10}
+        onReset={(): void => {
+          setResets((count: number): number => count + 1);
+        }}
+      />
+      <output>Resets: {resets}</output>
+    </div>
+  );
+}
+
+export const UncontrolledReset: Story = {
+  render: (): React.JSX.Element => <UncontrolledResetDemo defaultValue={5} />,
+};
+
+export const UncontrolledNullableReset: Story = {
+  render: (): React.JSX.Element => (
+    <UncontrolledResetDemo defaultValue={null} />
+  ),
+};

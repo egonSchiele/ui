@@ -38,6 +38,10 @@ export function Slider({
   min = 0,
   max = 100,
   step = 1,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  "aria-valuetext": ariaValueText,
   ...props
 }: SliderProps): React.JSX.Element {
   return (
@@ -64,10 +68,10 @@ export function Slider({
         <SliderPrimitive.Range className="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
-        aria-label={props["aria-label"]}
-        aria-labelledby={props["aria-labelledby"]}
-        aria-describedby={props["aria-describedby"]}
-        aria-valuetext={props["aria-valuetext"]}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        aria-valuetext={ariaValueText}
         className="border-primary bg-background block size-4 shrink-0 rounded-full border shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none"
       />
     </SliderPrimitive.Root>

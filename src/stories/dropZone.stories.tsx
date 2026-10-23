@@ -91,7 +91,11 @@ function DropZoneDemo({
   );
 }
 
-function NestedDropZoneDemo(): React.JSX.Element {
+function NestedDropZoneDemo({
+  innerDisabled = false,
+}: {
+  innerDisabled?: boolean;
+}): React.JSX.Element {
   const [outerCount, setOuterCount]: [
     number,
     React.Dispatch<React.SetStateAction<number>>,
@@ -110,6 +114,7 @@ function NestedDropZoneDemo(): React.JSX.Element {
       >
         <DropZone
           label="Inner"
+          disabled={innerDisabled}
           onFiles={(): void => {
             setInnerCount((count: number): number => count + 1);
           }}
@@ -136,4 +141,30 @@ export const ActivePaste: Story = {
 
 export const Nested: Story = {
   render: (): React.JSX.Element => <NestedDropZoneDemo />,
+};
+
+export const NestedDisabled: Story = {
+  render: (): React.JSX.Element => <NestedDropZoneDemo innerDisabled />,
+};
+
+export const MultipleFiles: Story = {
+  args: {
+    label: "Images",
+    multiple: true,
+    onFiles: (files: File[]): void => {
+      console.info("Selected images", files);
+    },
+  },
+};
+
+export const CustomInstructions: Story = {
+  args: {
+    label: "Reference image",
+    description: "Drag an image from the gallery, paste an image, or browse.",
+    pickerLabel: "Browse image",
+    pasteActive: true,
+    onFiles: (files: File[]): void => {
+      console.info("Selected reference image", files);
+    },
+  },
 };

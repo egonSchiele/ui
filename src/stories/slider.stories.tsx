@@ -68,3 +68,19 @@ export const Vertical: Story = {
     className: "h-48",
   },
 };
+
+export const Described: Story = {
+  render: (): React.JSX.Element => (
+    <div className="flex w-72 flex-col gap-3">
+      <span id="volume-label">Volume</span>
+      <Slider
+        aria-label="Volume"
+        aria-labelledby="volume-label"
+        aria-describedby="volume-help"
+        aria-valuetext="Quiet"
+        defaultValue={25}
+      />
+      <p id="volume-help">Use the arrow keys to adjust the volume.</p>
+    </div>
+  ),
+};

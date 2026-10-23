@@ -1252,7 +1252,7 @@ Selecting the active segment keeps it selected. Arrow keys select enabled option
 
 ## Slider and LabeledSlider
 
-Slider selects a single number with pointer and keyboard input. LabeledSlider adds an associated label, editable NumberField, optional unit/help, and a caller-defined reset action.
+Slider selects a single number with pointer and keyboard input. LabeledSlider adds an associated label, editable NumberField, optional unit/help, and an optional reset action.
 
 ```tsx
 const [value, setValue] = useState<number | null>(null);
@@ -1262,21 +1262,22 @@ const [value, setValue] = useState<number | null>(null);
 <Slider aria-label="Volume" defaultValue={25} min={0} max={100} step={5} />
 ```
 
-- Slider: `value: number` plus `onChange(number)`, or `defaultValue?: number` and optional `onChange`. The two modes are mutually exclusive. `min=0`, `max=100`, `step=1`, `disabled`, `orientation`, and remaining Radix Root props are supported. Supply `aria-label` or `aria-labelledby`.
+- Slider: `value: number` plus `onChange(number)`, or `defaultValue?: number` and optional `onChange`. The two modes are mutually exclusive. `min=0`, `max=100`, `step=1`, `disabled`, `orientation`, and remaining Radix Root props are supported. Supply `aria-label` or `aria-labelledby`. Accessible labels, descriptions, and `aria-valuetext` apply to the thumb.
 - `onChange` reports slider movement; `onCommit` reports completed pointer or keyboard interactions. NumberField edits report change/commit when the edit commits.
 - LabeledSlider: `label`, `min`, `max`, and controlled `value: number | null` plus `onChange`, or uncontrolled `defaultValue`. Optional `id`, `step`, `disabled`, `unit`, `help`, `className`, `onCommit`, and `onReset`.
-- A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Reset only calls `onReset`; the caller decides what it means.
+- A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Providing `onReset` shows the Reset button. In uncontrolled mode, Reset restores `defaultValue` (or null) before calling `onReset`. In controlled mode, `onReset` is responsible for updating `value`. Reset does not emit `onChange` or `onCommit`.
 
 ## Progress
 
 Progress displays labelled determinate or indeterminate progress without inventing a percentage.
 
 ```tsx
-<Progress label="Preparing files" value={45} showValue />
+<Progress label="Preparing files" value={45} showValue
+  className="h-1" indicatorClassName="bg-emerald-600" />
 <Progress label="Waiting for server" value={null} />
 ```
 
-Props: required `label`; optional `value: number | null`, `max=100`, `showValue=false`, `className`, and Radix Root props. Missing/null/non-finite values are indeterminate. Finite values clamp to `0..max`.
+Props: required `label`; optional `value: number | null`, `max=100`, `showValue=false`, `className`, `indicatorClassName`, and Radix Root props. `className` and `style` apply to the progress bar; `indicatorClassName` styles the filled portion. Missing/null/non-finite values are indeterminate. Finite values clamp to `0..max`.
 
 ## ScrollArea and ScrollBar
 
@@ -1329,14 +1330,18 @@ DropZone receives files from a picker, drag and drop, or scoped paste, and can d
 ```tsx
 <DropZone label="Images" accept="image/*,.png" multiple
   onFiles={(files) => enqueueFiles(files)}
-  onReject={(rejections) => showErrors(rejections)} />
+  onReject={(rejections) => showErrors(rejections)}
+  description="Drop images from your computer or paste them here."
+  pickerLabel="Browse images" />
 ```
 
-Props: required `label` and `onFiles(File[])`; optional `children`, `className`, `accept` (standard comma-delimited MIME/extension tokens), `multiple=false`, `disabled`, `pasteActive=false`, `onReject(DropZoneRejection[])`, and `internalDrop`.
+Props: required `label` and `onFiles(File[])`; optional `children`, `className`, `description: ReactNode`, `pickerLabel: string`, `accept` (standard comma-delimited MIME/extension tokens), `multiple=false`, `disabled`, `pasteActive=false`, `onReject(DropZoneRejection[])`, and `internalDrop`.
+
+The default description reflects `multiple` and whether `pasteActive` allows paste outside the focused zone. The picker says "Choose file" or "Choose files" by default; `pickerLabel` sets both its visible text and the start of its accessible name. `description` replaces the instructions associated with the zone.
 
 `internalDrop` contains `mimeType`, `decode(payload): DropZoneDecodeResult<Value>`, and `onDrop(value)`. The result is `{ ok: true, value }` or `{ ok: false, message }`. Hover reads MIME types only; decoding occurs on drop. The component catches thrown decoder failures and reports an invalid-payload rejection. Use lowercase MIME names.
 
-Rejections have `code` (`file-type`, `too-many-files`, or `invalid-payload`), `message`, and optional `file`. For single-file mode the first accepted file is emitted and excess files are rejected. Paste applies inside the focused zone or when `pasteActive` enables outside noneditable targets. Text inputs keep their normal paste behavior. Nested zones own their own drop. Interactive children do not open the picker. The zone and its Choose files button provide keyboard access; the caller owns uploads and domain validation.
+Rejections have `code` (`file-type`, `too-many-files`, or `invalid-payload`), `message`, and optional `file`. For single-file mode the first accepted file is emitted and excess files are rejected. Paste applies inside the focused zone or when `pasteActive` enables outside noneditable targets. Text inputs keep their normal paste behavior. Nested zones own their own drop. Disabled zones prevent native file navigation without accepting files or forwarding them to an outer zone. Interactive children do not open the picker. The zone and its picker button provide keyboard access; the caller owns uploads and domain validation.
 
 ## ContextMenu family
 
@@ -1353,4 +1358,4 @@ ContextMenu supplies themed Radix context menus with keyboard navigation, submen
 </ContextMenu>
 ```
 
-All parts accept the corresponding Radix props. Use a focusable trigger for keyboard invocation. Exported parts: ContextMenu, Trigger, Content, Group, Portal, Item, CheckboxItem, RadioGroup, RadioItem, Label, Separator, Shortcut, Sub, SubTrigger, SubContent (all prefixed ContextMenu). Item also supports `inset` and `variant: "default" | "destructive"`. Label and SubTrigger support `inset`. Shortcut accepts Kbd props. Content and SubContent include their portals.
+All parts accept the corresponding Radix props. Use a focusable trigger for keyboard invocation. `ContextMenuTrigger asChild` preserves the child’s tab order, including when the menu is disabled; disabling the menu does not disable the child’s primary action. A plain span trigger defaults to tabIndex 0 when enabled and -1 when disabled; an explicit `tabIndex` is preserved. Exported parts: ContextMenu, Trigger, Content, Group, Portal, Item, CheckboxItem, RadioGroup, RadioItem, Label, Separator, Shortcut, Sub, SubTrigger, SubContent (all prefixed ContextMenu). Item also supports `inset` and `variant: "default" | "destructive"`. Label and SubTrigger support `inset`. Shortcut accepts Kbd props. Content and SubContent include their portals.

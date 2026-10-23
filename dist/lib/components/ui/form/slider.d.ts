@@ -12,5 +12,5 @@ type SliderValueProps = {
 export type SliderProps = Omit<React.ComponentProps<typeof SliderPrimitive.Root>, "value" | "defaultValue" | "onValueChange" | "onValueCommit" | "onChange" | "children"> & SliderValueProps & {
     onCommit?: (value: number) => void;
 };
-export declare function Slider({ value, defaultValue, onChange, onCommit, className, min, max, step, ...props }: SliderProps): React.JSX.Element;
+export declare function Slider({ value, defaultValue, onChange, onCommit, className, min, max, step, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, "aria-valuetext": ariaValueText, ...props }: SliderProps): React.JSX.Element;
 export {};

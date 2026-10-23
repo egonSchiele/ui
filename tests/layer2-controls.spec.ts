@@ -180,6 +180,9 @@ test("context menu supports keyboard invocation, disabled entries, submenus, and
   await page.keyboard.press("ArrowDown");
   await expect(page.getByRole("menuitem", { name: "Move to" })).toBeFocused();
   await page.keyboard.press("Home");
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByText("Action: Opened")).toBeVisible();
   await expect(trigger).toBeFocused();
@@ -187,4 +190,92 @@ test("context menu supports keyboard invocation, disabled entries, submenus, and
   await page.getByRole("menuitem", { name: "Move to" }).hover();
   await page.getByRole("menuitem", { name: "Archive", exact: true }).click();
   await expect(page.getByText("Action: Archived")).toBeVisible();
+});
+
+test("Slider places accessible labels and value text only on its thumb", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-slider--described&viewMode=story");
+  const slider: Locator = page.getByRole("slider", { name: "Volume" });
+  await expect(slider).toHaveAttribute("aria-label", "Volume");
+  await expect(slider).toHaveAttribute("aria-labelledby", "volume-label");
+  await expect(slider).toHaveAttribute("aria-describedby", "volume-help");
+  await expect(slider).toHaveAttribute("aria-valuetext", "Quiet");
+  const root: Locator = page.locator('[data-slot="slider"]');
+  for (const attribute of [
+    "aria-label",
+    "aria-labelledby",
+    "aria-describedby",
+    "aria-valuetext",
+  ]) {
+    await expect(root).not.toHaveAttribute(attribute);
+  }
+});
+
+test("uncontrolled LabeledSlider resets to its numeric or nullable default", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  for (const example of [
+    { story: "uncontrolled-reset", input: "5", thumb: "5" },
+    { story: "uncontrolled-nullable-reset", input: "", thumb: "3" },
+  ]) {
+    await page.goto(
+      `/iframe.html?id=ui-labeledslider--${example.story}&viewMode=story`,
+    );
+    const input: Locator = page.getByRole("spinbutton", { name: "Steps" });
+    const slider: Locator = page.getByRole("slider", { name: "Steps" });
+    await input.fill("8");
+    await input.press("Enter");
+    await expect(slider).toHaveAttribute("aria-valuenow", "8");
+    await page.getByRole("button", { name: "Reset Steps" }).click();
+    await expect(input).toHaveValue(example.input);
+    await expect(slider).toHaveAttribute("aria-valuenow", example.thumb);
+    await expect(page.getByText("Resets: 1")).toBeVisible();
+  }
+});
+
+test("disabled context menu preserves the child button's keyboard access", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto(
+    "/iframe.html?id=ui-contextmenu--disabled-trigger&viewMode=story",
+  );
+  const trigger: Locator = page.getByRole("button", { name: "Tile" });
+  await page.getByRole("button", { name: "Before" }).focus();
+  await page.keyboard.press("Tab");
+  await expect(trigger).toBeFocused();
+  await trigger.press("Shift+F10");
+  await expect(page.getByRole("menu")).not.toBeVisible();
+  await trigger.press("Enter");
+  await expect(page.getByText("Clicks: 1")).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "After" })).toBeFocused();
+});
+
+test("Progress applies dimensions and styles to the bar and customizes its indicator", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto(
+    "/iframe.html?id=ui-progress--custom-appearance&viewMode=story",
+  );
+  const progress: Locator = page.getByRole("progressbar", {
+    name: "Preparing files",
+  });
+  await expect(progress).toHaveCSS("height", "4px");
+  await expect(progress).toHaveCSS("border-radius", "0px");
+  await expect(progress).toHaveClass(/h-1/);
+  await expect(
+    progress.locator('[data-slot="progress-indicator"]'),
+  ).toHaveClass(/bg-emerald-600/);
+  await expect(
+    page.locator('[data-slot="progress-container"]'),
+  ).not.toHaveClass(/h-1/);
 });

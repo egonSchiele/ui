@@ -82,3 +82,35 @@ function ContextMenuDemo(): React.JSX.Element {
 export const Default: Story = {
   render: (): React.JSX.Element => <ContextMenuDemo />,
 };
+
+function DisabledTriggerDemo(): React.JSX.Element {
+  const [clicks, setClicks]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = React.useState<number>(0);
+  return (
+    <div className="flex flex-col gap-3">
+      <Button>Before</Button>
+      <ContextMenu>
+        <ContextMenuTrigger asChild disabled>
+          <Button
+            onClick={(): void => {
+              setClicks((count: number): number => count + 1);
+            }}
+          >
+            Tile
+          </Button>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Open</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <Button>After</Button>
+      <output>Clicks: {clicks}</output>
+    </div>
+  );
+}
+
+export const DisabledTrigger: Story = {
+  render: (): React.JSX.Element => <DisabledTriggerDemo />,
+};

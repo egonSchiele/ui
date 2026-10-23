@@ -127,7 +127,7 @@ test("file drops reject excess files and disabled zones ignore them", async ({
     .dispatchEvent("drop", { dataTransfer: disabledTransfer });
   await expect(page.getByText("Received: none")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Choose files for Images" }),
+    page.getByRole("button", { name: "Choose file for Images" }),
   ).toBeDisabled();
 });
 test("paste is scoped to the focused zone and leaves text editing alone", async ({
@@ -183,4 +183,108 @@ test("interactive children do not open the picker; zone keyboard access does", a
   await (await chooser).setFiles(image);
   await expect(page.getByText("Received: image.png")).toBeVisible();
   expect(pickerCount).toBe(1);
+});
+
+test("drag activity survives movement over a child until the final leave", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropzone--default&viewMode=story");
+  const zone: Locator = page.getByRole("group", {
+    name: "Images",
+    exact: true,
+  });
+  const child: Locator = page.getByRole("button", { name: "Child action" });
+  const transfer: JSHandle<DataTransfer> = await fileTransfer(page);
+  await zone.dispatchEvent("dragenter", { dataTransfer: transfer });
+  await child.dispatchEvent("dragenter", { dataTransfer: transfer });
+  await zone.dispatchEvent("dragleave", { dataTransfer: transfer });
+  await expect(zone).toHaveAttribute("data-drag-active", "true");
+  await child.dispatchEvent("dragleave", { dataTransfer: transfer });
+  await expect(zone).not.toHaveAttribute("data-drag-active");
+});
+
+test("disabled zones prevent native file navigation without accepting nested drops", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  for (const example of [
+    { story: "disabled", label: "Images", result: "Received: none" },
+    { story: "nested-disabled", label: "Inner", result: "Outer: 0; inner: 0" },
+  ]) {
+    await page.goto(
+      `/iframe.html?id=ui-dropzone--${example.story}&viewMode=story`,
+    );
+    const zone: Locator = page.getByRole("group", {
+      name: example.label,
+      exact: true,
+    });
+    await expect(zone).toBeVisible();
+    const prevented: boolean[] = await zone.evaluate(
+      (element: Element): boolean[] => {
+        const dataTransfer: DataTransfer = new DataTransfer();
+        dataTransfer.items.add(
+          new File(["test"], "drop.png", { type: "image/png" }),
+        );
+        return ["dragover", "drop"].map((type: string): boolean => {
+          const event: DragEvent = new DragEvent(type, {
+            dataTransfer,
+            bubbles: true,
+            cancelable: true,
+          });
+          element.dispatchEvent(event);
+          return event.defaultPrevented;
+        });
+      },
+    );
+    await expect(zone).not.toHaveAttribute("data-drag-active");
+    expect(prevented).toEqual([true, true]);
+    await expect(page.getByText(example.result)).toBeVisible();
+  }
+});
+
+test("DropZone instructions match file count, paste scope, and caller labels", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropzone--default&viewMode=story");
+  await expect(
+    page.getByRole("group", { name: "Images", exact: true }),
+  ).toHaveAccessibleDescription(
+    "Drop a file here, or paste while this area is focused.",
+  );
+  await expect(
+    page.getByRole("button", { name: "Choose file for Images" }),
+  ).toHaveText("Choose file");
+  await page.goto("/iframe.html?id=ui-dropzone--multiple-files&viewMode=story");
+  await expect(
+    page.getByRole("group", { name: "Images", exact: true }),
+  ).toHaveAccessibleDescription(
+    "Drop files here, or paste while this area is focused.",
+  );
+  await expect(
+    page.getByRole("button", { name: "Choose files for Images" }),
+  ).toHaveText("Choose files");
+  await page.goto("/iframe.html?id=ui-dropzone--active-paste&viewMode=story");
+  await expect(
+    page.getByRole("group", { name: "Images", exact: true }),
+  ).toHaveAccessibleDescription("Drop a file here, or paste a file.");
+  await page.goto(
+    "/iframe.html?id=ui-dropzone--custom-instructions&viewMode=story",
+  );
+  await expect(
+    page.getByRole("group", { name: "Reference image", exact: true }),
+  ).toHaveAccessibleDescription(
+    "Drag an image from the gallery, paste an image, or browse.",
+  );
+  const picker: Locator = page.getByRole("button", {
+    name: "Browse image for Reference image",
+  });
+  await expect(picker).toHaveText("Browse image");
+  const chooser: Promise<FileChooser> = page.waitForEvent("filechooser");
+  await picker.click();
+  await (await chooser).setFiles(image);
 });
