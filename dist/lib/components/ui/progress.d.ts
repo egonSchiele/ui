@@ -6,5 +6,6 @@ export type ProgressProps = Omit<React.ComponentProps<typeof ProgressPrimitive.R
     max?: number;
     showValue?: boolean;
     indicatorClassName?: string;
+    containerClassName?: string;
 };
-export declare function Progress({ label, value, max, showValue, className, indicatorClassName, ...props }: ProgressProps): React.JSX.Element;
+export declare function Progress({ label, value, max, showValue, className, indicatorClassName, containerClassName, ...props }: ProgressProps): React.JSX.Element;

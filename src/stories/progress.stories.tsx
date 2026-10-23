@@ -24,8 +24,10 @@ export const Complete: Story = { args: { value: 100 } };
 export const CustomAppearance: Story = {
   args: {
     value: 40,
-    className: "h-1 w-72",
+    className: "h-1",
+    containerClassName: "w-72",
     indicatorClassName: "bg-emerald-600",
+    showValue: true,
     style: { borderRadius: 0 },
   },
 };

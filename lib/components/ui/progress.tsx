@@ -11,6 +11,7 @@ export type ProgressProps = Omit<
   max?: number;
   showValue?: boolean;
   indicatorClassName?: string;
+  containerClassName?: string;
 };
 
 export function Progress({
@@ -20,6 +21,7 @@ export function Progress({
   showValue = false,
   className,
   indicatorClassName,
+  containerClassName,
   ...props
 }: ProgressProps): React.JSX.Element {
   const maximum: number = Number.isFinite(max) && max > 0 ? max : 100;
@@ -30,7 +32,10 @@ export function Progress({
   const percentage: number | null =
     current === null ? null : (current / maximum) * 100;
   return (
-    <div className="w-full" data-slot="progress-container">
+    <div
+      className={cn("w-full", containerClassName)}
+      data-slot="progress-container"
+    >
       <ProgressPrimitive.Root
         {...props}
         data-slot="progress"

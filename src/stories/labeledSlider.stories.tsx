@@ -84,6 +84,10 @@ function UncontrolledResetDemo({
     number,
     React.Dispatch<React.SetStateAction<number>>,
   ] = React.useState<number>(0);
+  const [lastChange, setLastChange]: [
+    string,
+    React.Dispatch<React.SetStateAction<string>>,
+  ] = React.useState<string>("none");
   return (
     <div className="flex w-96 max-w-full flex-col gap-3">
       <LabeledSlider
@@ -92,11 +96,15 @@ function UncontrolledResetDemo({
         placeholderValue={3}
         min={1}
         max={10}
+        onChange={(value: number | null): void => {
+          setLastChange(String(value));
+        }}
         onReset={(): void => {
           setResets((count: number): number => count + 1);
         }}
       />
       <output>Resets: {resets}</output>
+      <output>Last change: {lastChange}</output>
     </div>
   );
 }

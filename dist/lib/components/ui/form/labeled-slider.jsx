@@ -8,6 +8,7 @@ import { cn } from "../../../utils";
 function useLabeledSliderValue(props) {
     var _a, _b;
     const [internalValue, setInternalValue] = React.useState((_a = props.defaultValue) !== null && _a !== void 0 ? _a : null);
+    const [resetCount, setResetCount] = React.useState(0);
     const value = props.value === undefined ? internalValue : props.value;
     const placeholderValid = props.placeholderValue !== undefined &&
         Number.isFinite(props.placeholderValue) &&
@@ -24,11 +25,18 @@ function useLabeledSliderValue(props) {
         (_a = props.onChange) === null || _a === void 0 ? void 0 : _a.call(props, nextValue);
     }
     function reset() {
-        var _a, _b;
+        var _a, _b, _c;
         if (props.value === undefined) {
-            setInternalValue((_a = props.defaultValue) !== null && _a !== void 0 ? _a : null);
+            const restored = (_a = props.defaultValue) !== null && _a !== void 0 ? _a : null;
+            setInternalValue(restored);
+            if (restored !== internalValue) {
+                (_b = props.onChange) === null || _b === void 0 ? void 0 : _b.call(props, restored);
+            }
         }
-        (_b = props.onReset) === null || _b === void 0 ? void 0 : _b.call(props);
+        // The count keys the NumberField, so Reset also clears an invalid draft
+        // when the value itself does not change.
+        setResetCount((count) => count + 1);
+        (_c = props.onReset) === null || _c === void 0 ? void 0 : _c.call(props);
     }
     return {
         value,
@@ -36,6 +44,7 @@ function useLabeledSliderValue(props) {
         missingDefault,
         disabled,
         thumbValue,
+        resetCount,
         change,
         reset,
     };
@@ -60,7 +69,7 @@ export function LabeledSlider(props) {
       <LabeledSliderHeader id={id} label={props.label} disabled={props.disabled} onReset={props.onReset ? slider.reset : undefined}/>
       <div className="flex items-center gap-4">
         <Slider value={slider.thumbValue} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} disabled={slider.disabled} aria-labelledby={`${id}-label`} aria-describedby={descriptionId} className="min-w-12 flex-1"/>
-        <NumberField id={id} value={slider.value} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} emptyValue={slider.placeholderValid ? "allow" : "reject"} placeholder={slider.placeholderValid ? String(props.placeholderValue) : undefined} disabled={slider.disabled} unit={props.unit} aria-label={props.label} aria-describedby={descriptionId} className="w-40 shrink-0"/>
+        <NumberField key={slider.resetCount} id={id} value={slider.value} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} emptyValue={slider.placeholderValid ? "allow" : "reject"} placeholder={slider.placeholderValid ? String(props.placeholderValue) : undefined} disabled={slider.disabled} unit={props.unit} aria-label={props.label} aria-describedby={descriptionId} className="w-40 shrink-0"/>
       </div>
       {descriptionId && (<p id={descriptionId} className={cn("text-sm", slider.missingDefault
                 ? "text-destructive"

@@ -220,8 +220,13 @@ test("uncontrolled LabeledSlider resets to its numeric or nullable default", asy
   page: Page;
 }): Promise<void> => {
   for (const example of [
-    { story: "uncontrolled-reset", input: "5", thumb: "5" },
-    { story: "uncontrolled-nullable-reset", input: "", thumb: "3" },
+    { story: "uncontrolled-reset", input: "5", thumb: "5", restored: "5" },
+    {
+      story: "uncontrolled-nullable-reset",
+      input: "",
+      thumb: "3",
+      restored: "null",
+    },
   ]) {
     await page.goto(
       `/iframe.html?id=ui-labeledslider--${example.story}&viewMode=story`,
@@ -235,6 +240,16 @@ test("uncontrolled LabeledSlider resets to its numeric or nullable default", asy
     await expect(input).toHaveValue(example.input);
     await expect(slider).toHaveAttribute("aria-valuenow", example.thumb);
     await expect(page.getByText("Resets: 1")).toBeVisible();
+    await expect(
+      page.getByText(`Last change: ${example.restored}`),
+    ).toBeVisible();
+    await input.fill("1-");
+    await input.press("Tab");
+    await expect(page.getByRole("alert")).toHaveText("Enter a finite number.");
+    await page.getByRole("button", { name: "Reset Steps" }).click();
+    await expect(input).toHaveValue(example.input);
+    await expect(page.getByRole("alert")).toHaveCount(0);
+    await expect(page.getByText("Resets: 2")).toBeVisible();
   }
 });
 
@@ -275,7 +290,16 @@ test("Progress applies dimensions and styles to the bar and customizes its indic
   await expect(
     progress.locator('[data-slot="progress-indicator"]'),
   ).toHaveClass(/bg-emerald-600/);
-  await expect(
-    page.locator('[data-slot="progress-container"]'),
-  ).not.toHaveClass(/h-1/);
+  const container: Locator = page.locator('[data-slot="progress-container"]');
+  await expect(container).not.toHaveClass(/h-1/);
+  await expect(container).toHaveClass(/w-72/);
+  const bar: { x: number; width: number } | null = await progress.boundingBox();
+  const valueText: { x: number; width: number } | null = await container
+    .getByText("40%")
+    .boundingBox();
+  expect(bar).not.toBeNull();
+  expect(valueText).not.toBeNull();
+  const barRight: number = (bar?.x ?? 0) + (bar?.width ?? 0);
+  const valueRight: number = (valueText?.x ?? 0) + (valueText?.width ?? 0);
+  expect(Math.abs(barRight - valueRight)).toBeLessThanOrEqual(1);
 });

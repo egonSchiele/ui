@@ -57,6 +57,7 @@ type LabeledSliderValue = {
   missingDefault: boolean;
   disabled: boolean;
   thumbValue: number;
+  resetCount: number;
   change: (value: SliderValue) => void;
   reset: () => void;
 };
@@ -66,6 +67,10 @@ function useLabeledSliderValue(props: LabeledSliderProps): LabeledSliderValue {
     SliderValue,
     React.Dispatch<React.SetStateAction<SliderValue>>,
   ] = React.useState<SliderValue>(props.defaultValue ?? null);
+  const [resetCount, setResetCount]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = React.useState<number>(0);
   const value: SliderValue =
     props.value === undefined ? internalValue : props.value;
   const placeholderValid: boolean =
@@ -86,8 +91,15 @@ function useLabeledSliderValue(props: LabeledSliderProps): LabeledSliderValue {
   }
   function reset(): void {
     if (props.value === undefined) {
-      setInternalValue(props.defaultValue ?? null);
+      const restored: SliderValue = props.defaultValue ?? null;
+      setInternalValue(restored);
+      if (restored !== internalValue) {
+        props.onChange?.(restored);
+      }
     }
+    // The count keys the NumberField, so Reset also clears an invalid draft
+    // when the value itself does not change.
+    setResetCount((count: number): number => count + 1);
     props.onReset?.();
   }
   return {
@@ -96,6 +108,7 @@ function useLabeledSliderValue(props: LabeledSliderProps): LabeledSliderValue {
     missingDefault,
     disabled,
     thumbValue,
+    resetCount,
     change,
     reset,
   };
@@ -164,6 +177,7 @@ export function LabeledSlider(props: LabeledSliderProps): React.JSX.Element {
           className="min-w-12 flex-1"
         />
         <NumberField
+          key={slider.resetCount}
           id={id}
           value={slider.value}
           onChange={slider.change}

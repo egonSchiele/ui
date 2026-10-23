@@ -1270,7 +1270,7 @@ const [value, setValue] = useState<number | null>(null);
 - Slider: `value: number` plus `onChange(number)`, or `defaultValue?: number` and optional `onChange`. The two modes are mutually exclusive. `min=0`, `max=100`, `step=1`, `disabled`, `orientation`, and remaining Radix Root props are supported. Supply `aria-label` or `aria-labelledby`. Accessible labels, descriptions, and `aria-valuetext` apply to the thumb.
 - `onChange` reports slider movement; `onCommit` reports completed pointer or keyboard interactions. NumberField edits report change/commit when the edit commits.
 - LabeledSlider: `label`, `min`, `max`, and controlled `value: number | null` plus `onChange`, or uncontrolled `defaultValue`. Optional `id`, `step`, `disabled`, `unit`, `help`, `className`, `onCommit`, and `onReset`.
-- A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Providing `onReset` shows the Reset button. In uncontrolled mode, Reset restores `defaultValue` (or null) before calling `onReset`. In controlled mode, `onReset` is responsible for updating `value`. Reset does not emit `onChange` or `onCommit`.
+- A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Providing `onReset` shows the Reset button. In uncontrolled mode, Reset restores `defaultValue` (or null) and emits `onChange` when that changes the value, then calls `onReset`. In controlled mode, `onReset` is responsible for updating `value`. Reset never emits `onCommit`. Reset also clears any invalid text and its error from the input.
 
 ## Progress
 
@@ -1278,11 +1278,11 @@ Progress displays labelled determinate or indeterminate progress without inventi
 
 ```tsx
 <Progress label="Preparing files" value={45} showValue
-  className="h-1" indicatorClassName="bg-emerald-600" />
+  className="h-1" containerClassName="w-72" indicatorClassName="bg-emerald-600" />
 <Progress label="Waiting for server" value={null} />
 ```
 
-Props: required `label`; optional `value: number | null`, `max=100`, `showValue=false`, `className`, `indicatorClassName`, and Radix Root props. `className` and `style` apply to the progress bar; `indicatorClassName` styles the filled portion. Missing/null/non-finite values are indeterminate. Finite values clamp to `0..max`.
+Props: required `label`; optional `value: number | null`, `max=100`, `showValue=false`, `className`, `indicatorClassName`, `containerClassName`, and Radix Root props. `className` and `style` apply to the progress bar; `indicatorClassName` styles the filled portion. `containerClassName` applies to the wrapper that holds the bar and the value text. Put width and margin classes there, so the value text stays aligned with the bar. Missing/null/non-finite values are indeterminate. Finite values clamp to `0..max`.
 
 ## ScrollArea and ScrollBar
 

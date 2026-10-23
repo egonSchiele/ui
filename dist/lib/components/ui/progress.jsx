@@ -13,13 +13,13 @@ import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "../../utils";
 export function Progress(_a) {
-    var { label, value, max = 100, showValue = false, className, indicatorClassName } = _a, props = __rest(_a, ["label", "value", "max", "showValue", "className", "indicatorClassName"]);
+    var { label, value, max = 100, showValue = false, className, indicatorClassName, containerClassName } = _a, props = __rest(_a, ["label", "value", "max", "showValue", "className", "indicatorClassName", "containerClassName"]);
     const maximum = Number.isFinite(max) && max > 0 ? max : 100;
     const current = typeof value === "number" && Number.isFinite(value)
         ? Math.min(maximum, Math.max(0, value))
         : null;
     const percentage = current === null ? null : (current / maximum) * 100;
-    return (<div className="w-full" data-slot="progress-container">
+    return (<div className={cn("w-full", containerClassName)} data-slot="progress-container">
       <ProgressPrimitive.Root {...props} data-slot="progress" aria-label={label} value={current} max={maximum} className={cn("bg-secondary relative h-2 w-full overflow-hidden rounded-full", className)}>
         <ProgressPrimitive.Indicator data-slot="progress-indicator" className={cn("bg-primary h-full transition-[width] motion-reduce:transition-none", current === null &&
             "w-1/3 animate-pulse motion-reduce:animate-none", indicatorClassName)} style={percentage === null ? undefined : { width: `${percentage}%` }}/>
