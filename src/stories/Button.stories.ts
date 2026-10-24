@@ -30,7 +30,7 @@ const meta: Meta = {
       control: { type: "select" },
     },
     size: {
-      options: ["default", "sm", "lg", "icon"],
+      options: ["default", "sm", "lg", "icon", "icon-sm"],
       control: { type: "select" },
     },
     asChild: {
@@ -107,4 +107,11 @@ export const WithHrefExternal: Story = {
     variant: "outline",
     children: "Visit External Site",
   },
+};
+
+export const Pending: Story = {
+  args: { children: "Generate", pending: true, pendingLabel: "Generating…" },
+};
+export const SmallIcon: Story = {
+  args: { size: "icon-sm", "aria-label": "Add image", children: "+" },
 };

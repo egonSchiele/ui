@@ -1,5 +1,11 @@
 This repo contains React components you can use for building UI.
 
+`pnpm test` rebuilds the package before type checks and browser tests. Stories importing `egon-ui` exercise the public `dist` entry point, so rebuild with `pnpm run build` after source changes when running Storybook directly.
+
+Keep the exact `@radix-ui/react-dialog` and `@radix-ui/react-popover` versions paired: both must resolve the same `@radix-ui/react-dismissable-layer` version. Separate layer contexts cause Escape to close both a nested popup and its parent Sheet. When updating these dependencies, update both together and run the nested Sheet/ComboBox browser tests.
+
+`--input-background` controls Input, Textarea, and NumberField input fills independently of their borders. If it is unset, the fill falls back to `--input`, preserving existing themes. `--input` continues to set the border color. Set the optional token on the app root or a containing element; no descendant selectors are needed.
+
 ## Components
 
 ### Form Components
@@ -12,6 +18,8 @@ A versatile button component with multiple style variants and sizes. Can also re
 <Button onClick={() => alert('Clicked!')}>Click Me</Button>
 <Button variant="destructive">Delete</Button>
 <Button size="sm">Small Button</Button>
+<Button pending={saving} pendingLabel="Saving…">Save</Button>
+<Button size="icon-sm" aria-label="Add image">+</Button>
 <Button href="/dashboard">Go to Dashboard</Button>
 <Button href="https://example.com" target="_blank" rel="noopener noreferrer">
   External Link
@@ -22,9 +30,11 @@ Properties:
 - `onClick`: Function to call when the button is clicked
 - `children`: The content inside the button
 - `variant`: Style variant: `default | destructive | outline | secondary | ghost | link`
-- `size`: Size variant: `default | sm | lg | icon`
+- `size`: Size variant: `default | sm | lg | icon | icon-sm`; `icon-sm` is 32px square
 - `asChild`: If true, renders as a Slot component for composition
-- `disabled`: Disables the button
+- `disabled`: Disables a native button; it stays disabled when pending ends
+- `pending`: Defaults to `false`. Marks the action `aria-busy` and disables native buttons. Links and composed children receive `aria-disabled`, leave the tab order, and block click activation while pending.
+- `pendingLabel`: Optional replacement content during pending; without it the label stays unchanged. With `asChild`, replaces the child's contents while preserving its element and props.
 - `href`: When provided, renders as an `<a>` tag for navigation instead of a `<button>`
 - `target`: Link target (e.g., `_blank` for new tab) - only used when `href` is provided
 - `rel`: Link relationship (e.g., `noopener noreferrer`) - only used when `href` is provided
@@ -91,6 +101,7 @@ Properties:
 - `value` / `onValueChange`: Controlled selection and callback, mutually exclusive with `defaultValue`. `SegmentedControl<Value>` infers `Value` from `options` only, so a `value` or `defaultValue` outside the options fails to compile. The callback receives the same union. The generic defaults to `string`.
 - `defaultValue`: Required initial value for uncontrolled use. Supply a value matching an enabled option.
 - `size`: `sm`, `md` (default), or `lg`.
+- `fullWidth`: Defaults to `false`. Fills the parent width and gives horizontal options equal widths; vertical options fill the group width.
 - `disabled`, `name`, `orientation`, `dir`, `loop`, `aria-label`, `aria-labelledby`, `className`: Radix radio-group props. Orientation defaults to horizontal.
 
 Selecting the active segment keeps it selected. Arrow keys select enabled options and skip disabled choices. The root and items use Radix radio primitives directly; the circular RadioGroupItem is not reused. Both controlled and uncontrolled forms require an initial valid selection.
@@ -568,22 +579,39 @@ Properties:
 
 #### SectionHeading
 
-A section heading with optional description and actions.
+A section heading with optional description and actions, in bordered or compact presentation.
 
 ```jsx
-<SectionHeading
-  description="Manage your team members"
-  actions={<Button>Add Member</Button>}
->
+<SectionHeading description="Manage your team members" actions={<Button>Add Member</Button>}>
   Team
+</SectionHeading>
+<SectionHeading variant="compact" level="h2" headingId="preview-heading"
+  headingRef={previewHeadingRef} tabIndex={-1} actions={<Button size="sm">Download</Button>}>
+  Preview
 </SectionHeading>
 ```
 
 Properties:
-- `children`: Heading text
-- `description`: Optional description text
-- `actions`: Optional action buttons or elements
-- `className`: Additional CSS classes
+- `children`: Heading content.
+- `description`: Optional description text.
+- `actions`: Optional action buttons or elements; compact actions wrap when space is limited.
+- `variant`: `default` (bordered, existing presentation) or `compact` (normal-case, small medium-weight heading without a border).
+- `level`: Semantic `h2` or `h3` (default), independent of presentation.
+- `headingId`, `headingRef`, `tabIndex`: Applied to the heading itself for `aria-labelledby` and explicit focus management.
+- `className`: Additional classes on the outer layout.
+
+#### HelperText
+
+Static muted help text for fields and other concise descriptions.
+
+```jsx
+<Input aria-label="Image title" aria-describedby="title-help" />
+<HelperText id="title-help">A short title helps you find the image later.</HelperText>
+```
+
+Properties:
+- All native paragraph props, including `children`, `id`, `ref`, and `className`.
+- No alert role or live announcement is added automatically. Dynamic statuses and errors should use their own explicit semantics.
 
 ### Dialog & Modal Components
 
@@ -1219,14 +1247,16 @@ A notification banner component for alerts and messages.
 <Banner style="info" onDismiss={() => console.log('dismissed')}>
   This is an informational message
 </Banner>
-<Banner style="error">
-  An error occurred
+<Banner style="error" role="alert">
+  <p>The image could not be saved.</p>
+  <Button>Try again</Button>
 </Banner>
 ```
 
 Properties:
 - `style`: Banner style: `info | error`
-- `children`: Banner message content (string or React nodes)
+- `children`: Banner message content, including paragraphs and action controls, rendered in a div
+- Native div props such as `role`, `aria-live`, `aria-labelledby`, `id`, and `ref` are forwarded to the outer banner. Announcements are opt-in. Native CSS `style` is excluded because the existing `style` prop selects the banner variant.
 - `onDismiss`: Optional callback when dismiss button is clicked
 - `className`: Additional CSS classes
 

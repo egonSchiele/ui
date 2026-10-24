@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { Button } from "@/components/ui/form/button";
 import "../../globals.css";
 import { SectionHeading } from "@/components/ui/typography/sectionHeading";
 
@@ -23,34 +23,24 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    text: "Default Page Heading",
+    children: "Default Section Heading",
   },
 };
 
 export const DefaultWithDescription: Story = {
   args: {
-    text: "Default Page Heading",
+    children: "Default Section Heading",
     description: "This is a description for the section heading.",
   },
 };
 
 export const DefaultWithButtons: Story = {
   args: {
-    text: "Default Page Heading",
+    children: "Default Section Heading",
     actions: (
       <>
-        <button
-          type="button"
-          className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50"
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Publish
-        </button>
+        <Button variant="outline">Edit</Button>
+        <Button className="ml-3">Publish</Button>
       </>
     ),
   },
@@ -58,23 +48,46 @@ export const DefaultWithButtons: Story = {
 
 export const DefaultWithButtonsAndDescription: Story = {
   args: {
-    text: "Default Page Heading",
+    children: "Default Section Heading",
     description: "This is a description for the section heading.",
     actions: (
       <>
-        <button
-          type="button"
-          className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset hover:bg-gray-50"
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Publish
-        </button>
+        <Button variant="outline">Edit</Button>
+        <Button className="ml-3">Publish</Button>
       </>
     ),
   },
+};
+
+function CompactHeading(): React.JSX.Element {
+  const headingRef: React.RefObject<HTMLHeadingElement | null> =
+    React.useRef<HTMLHeadingElement>(null);
+  return (
+    <section aria-labelledby="preview-heading" className="w-[280px] space-y-4">
+      <SectionHeading
+        variant="compact"
+        level="h2"
+        headingId="preview-heading"
+        headingRef={headingRef}
+        tabIndex={-1}
+        description="Review the selected image."
+        actions={
+          <>
+            <Button size="sm" variant="outline">
+              Download image
+            </Button>
+            <Button size="sm">Save to library</Button>
+          </>
+        }
+      >
+        Preview
+      </SectionHeading>
+      <Button onClick={(): void => headingRef.current?.focus()}>
+        Focus preview heading
+      </Button>
+    </section>
+  );
+}
+export const Compact: Story = {
+  render: (): React.JSX.Element => <CompactHeading />,
 };

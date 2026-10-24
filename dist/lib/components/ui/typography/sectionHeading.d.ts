@@ -1,7 +1,13 @@
 import React from "react";
-export declare function SectionHeading({ children, description, className, actions, }: {
-    children: string | React.ReactNode;
+export type SectionHeadingProps = {
+    children: React.ReactNode;
     description?: string;
     className?: string;
     actions?: React.ReactNode;
-}): React.JSX.Element;
+    variant?: "default" | "compact";
+    level?: "h2" | "h3";
+    headingId?: string;
+    headingRef?: React.Ref<HTMLHeadingElement>;
+    tabIndex?: number;
+};
+export declare function SectionHeading({ children, description, className, actions, variant, level: Heading, headingId, headingRef, tabIndex, }: SectionHeadingProps): React.JSX.Element;

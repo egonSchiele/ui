@@ -255,3 +255,19 @@ export const InSheetModal: Story = {
 export const InSheetNonModal: Story = {
   render: (): React.JSX.Element => <ComboBoxInSheet modal={false} />,
 };
+
+export const LongSelectedLabel: Story = {
+  args: {
+    "aria-label": "Model",
+    items: [
+      {
+        key: "long-model",
+        label:
+          "Long repository name / illustration-model-version-with-detailed-configuration",
+      },
+    ],
+    defaultSelectedKey: "long-model",
+    buttonClassName: "w-[220px]",
+    showChevron: true,
+  },
+};

@@ -92,7 +92,7 @@ export function ComboBox(_a) {
         setOpen(false);
     }
     const trigger = (<Button type="button" variant="outline" disabled={disabled} aria-label={triggerLabel({ item: selectedItem, label: ariaLabel })} className={cn("w-[150px] justify-start", buttonClassName)}>
-      <span className="min-w-0 flex-1 text-left">
+          <span className="min-w-0 flex-1 truncate text-left">
         <SelectedContent item={selectedItem} placeholder={placeholder} renderSelected={renderSelected}/>
       </span>
       {showChevron && (<ChevronDownIcon aria-hidden="true" className="ml-auto size-4 shrink-0"/>)}

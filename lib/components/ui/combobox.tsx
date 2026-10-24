@@ -238,7 +238,7 @@ export function ComboBox<T = unknown>({
       aria-label={triggerLabel({ item: selectedItem, label: ariaLabel })}
       className={cn("w-[150px] justify-start", buttonClassName)}
     >
-      <span className="min-w-0 flex-1 text-left">
+          <span className="min-w-0 flex-1 truncate text-left">
         <SelectedContent
           item={selectedItem}
           placeholder={placeholder}

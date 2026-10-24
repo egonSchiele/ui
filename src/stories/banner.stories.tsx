@@ -2,6 +2,7 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import "../../globals.css";
+import { Button } from "@/components/ui/form/button";
 import { Banner } from "@/components/ui/banner";
 
 const meta: Meta = {
@@ -14,9 +15,7 @@ const meta: Meta = {
     },
   },
   tags: ["autodocs"],
-  argTypes: {},
-  args: {
-    // @ts-ignore
+  argTypes: {
     style: {
       options: ["info", "error"],
       control: { type: "select" },
@@ -40,5 +39,19 @@ export const Error: Story = {
     style: "error",
     children: <p>This is an error banner.</p>,
     onDismiss: fn(),
+  },
+};
+
+export const RichContent: Story = {
+  args: {
+    style: "error",
+    role: "alert",
+    "aria-labelledby": "banner-title",
+    children: (
+      <div>
+        <p id="banner-title">The image could not be saved.</p>
+        <Button variant="outline">Try again</Button>
+      </div>
+    ),
   },
 };

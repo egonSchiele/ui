@@ -19,15 +19,15 @@ const segmentSizes = {
     lg: "min-h-11 px-4 text-base",
 };
 export function SegmentedControl(_a) {
-    var { options, size = "md", className, orientation = "horizontal", onValueChange } = _a, props = __rest(_a, ["options", "size", "className", "orientation", "onValueChange"]);
+    var { options, size = "md", fullWidth = false, className, orientation = "horizontal", onValueChange } = _a, props = __rest(_a, ["options", "size", "fullWidth", "className", "orientation", "onValueChange"]);
     function select(value) {
         const option = options.find((candidate) => candidate.value === value);
         if (option && !option.disabled) {
             onValueChange === null || onValueChange === void 0 ? void 0 : onValueChange(option.value);
         }
     }
-    return (<RadioGroupPrimitive.Root {...props} required onValueChange={select} orientation={orientation} data-slot="segmented-control" className={cn("inline-flex w-fit gap-1 rounded-lg bg-muted p-1 data-[orientation=vertical]:flex-col", className)}>
-      {options.map((option) => (<RadioGroupPrimitive.Item key={option.value} value={option.value} disabled={option.disabled} aria-label={option.ariaLabel} className={cn("inline-flex items-center justify-center gap-2 rounded-md font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-sm disabled:pointer-events-none disabled:opacity-50", segmentSizes[size])}>
+    return (<RadioGroupPrimitive.Root {...props} required onValueChange={select} orientation={orientation} data-slot="segmented-control" className={cn("inline-flex w-fit gap-1 rounded-lg bg-muted p-1 data-[orientation=vertical]:flex-col", fullWidth && "w-full", className)}>
+      {options.map((option) => (<RadioGroupPrimitive.Item key={option.value} value={option.value} disabled={option.disabled} aria-label={option.ariaLabel} className={cn("inline-flex items-center justify-center gap-2 rounded-md font-medium text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-[state=checked]:bg-background data-[state=checked]:text-foreground data-[state=checked]:shadow-sm disabled:pointer-events-none disabled:opacity-50", segmentSizes[size], fullWidth && "min-w-0 flex-1")}>
             {option.label}
           </RadioGroupPrimitive.Item>))}
     </RadioGroupPrimitive.Root>);

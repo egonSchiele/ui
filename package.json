@@ -10,7 +10,7 @@
     }
   },
   "scripts": {
-    "test": "tsc --project tests/types/tsconfig.json && playwright test",
+    "test": "pnpm run build && tsc --project tests/types/tsconfig.json && playwright test",
     "build": "tsc && tsc-alias",
     "vite": "vite",
     "storybook": "storybook dev -p 6006",

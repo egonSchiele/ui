@@ -18,6 +18,7 @@ type SelectionProps<Value extends string> = {
 export type SegmentedControlProps<Value extends string = string> = SelectionProps<Value> & Omit<React.ComponentProps<typeof RadioGroupPrimitive.Root>, "value" | "defaultValue" | "onValueChange" | "children" | "required" | "asChild"> & {
     options: SegmentedControlOption<Value>[];
     size?: "sm" | "md" | "lg";
+    fullWidth?: boolean;
 };
-export declare function SegmentedControl<Value extends string = string>({ options, size, className, orientation, onValueChange, ...props }: SegmentedControlProps<Value>): React.JSX.Element;
+export declare function SegmentedControl<Value extends string = string>({ options, size, fullWidth, className, orientation, onValueChange, ...props }: SegmentedControlProps<Value>): React.JSX.Element;
 export {};
