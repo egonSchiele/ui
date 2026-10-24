@@ -12,13 +12,25 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 import * as React from "react";
 import { defaultFilter } from "cmdk";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { Button } from "../../components/ui/form/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "../../components/ui/command";
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger, } from "../../components/ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger, } from "../../components/ui/popover";
 import { cn } from "../../utils";
+function triggerLabel({ item, label, }) {
+    if (item === undefined) {
+        return label;
+    }
+    return label ? `${label}: ${item.label}` : item.label;
+}
+function SelectedContent({ item, placeholder, renderSelected, }) {
+    if (item === undefined) {
+        return placeholder;
+    }
+    return renderSelected ? renderSelected(item) : item.label;
+}
 function groupItems(items) {
     const groups = [];
     for (const item of items) {
@@ -57,8 +69,7 @@ function ItemList({ selectedKey, items, placeholder, emptyState, loading, loadin
     </Command>);
 }
 export function ComboBox(_a) {
-    var _b;
-    var { items, placeholder = "Select an item...", selectedKey, defaultSelectedKey = null, onSelect, onSelectedKeyChange, disabled, className, buttonClassName, contentClassName, modal = false, "aria-label": ariaLabel } = _a, listProps = __rest(_a, ["items", "placeholder", "selectedKey", "defaultSelectedKey", "onSelect", "onSelectedKeyChange", "disabled", "className", "buttonClassName", "contentClassName", "modal", "aria-label"]);
+    var { items, placeholder = "Select an item...", selectedKey, defaultSelectedKey = null, onSelect, onSelectedKeyChange, disabled, className, buttonClassName, contentClassName, modal = false, renderSelected, showChevron = false, "aria-label": ariaLabel } = _a, listProps = __rest(_a, ["items", "placeholder", "selectedKey", "defaultSelectedKey", "onSelect", "onSelectedKeyChange", "disabled", "className", "buttonClassName", "contentClassName", "modal", "renderSelected", "showChevron", "aria-label"]);
     const [open, setOpen] = React.useState(false);
     const [internalKey, setInternalKey] = React.useState(defaultSelectedKey);
     const isMobile = useIsMobile();
@@ -80,10 +91,11 @@ export function ComboBox(_a) {
         onSelect === null || onSelect === void 0 ? void 0 : onSelect(item);
         setOpen(false);
     }
-    const trigger = (<Button type="button" variant="outline" disabled={disabled} aria-label={selectedItem && ariaLabel
-            ? `${ariaLabel}: ${selectedItem.label}`
-            : ariaLabel} className={cn("w-[150px] justify-start", buttonClassName)}>
-      {(_b = selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.label) !== null && _b !== void 0 ? _b : placeholder}
+    const trigger = (<Button type="button" variant="outline" disabled={disabled} aria-label={triggerLabel({ item: selectedItem, label: ariaLabel })} className={cn("w-[150px] justify-start", buttonClassName)}>
+      <span className="min-w-0 flex-1 text-left">
+        <SelectedContent item={selectedItem} placeholder={placeholder} renderSelected={renderSelected}/>
+      </span>
+      {showChevron && (<ChevronDownIcon aria-hidden="true" className="ml-auto size-4 shrink-0"/>)}
     </Button>);
     const list = (<ItemList {...listProps} items={items} selectedKey={key} placeholder={placeholder} onSelect={select}/>);
     if (isMobile) {

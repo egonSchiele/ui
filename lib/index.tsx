@@ -147,7 +147,16 @@ import {
 
 import { Separator } from "./components/ui/layout/separator.jsx";
 
-import { Sheet } from "./components/ui/sheet.jsx";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./components/ui/sheet.jsx";
 
 import {
   Sidebar,
@@ -341,6 +350,13 @@ export {
   SelectValue,
   Separator,
   Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   Sidebar,
   SidebarContent,
   SidebarFooter,

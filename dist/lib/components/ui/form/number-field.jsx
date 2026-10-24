@@ -105,6 +105,14 @@ function useNumberField(props) {
             emit(next);
         }
     }
+    function onBlur() {
+        const parsed = parseDraft(draft, props.emptyValue !== "reject");
+        if (!parsed.valid && props.invalidBlur === "restore") {
+            restore();
+            return;
+        }
+        commit();
+    }
     function onKeyDown(event) {
         if (event.key === "Escape") {
             event.preventDefault();
@@ -139,13 +147,14 @@ function useNumberField(props) {
         canDecrease,
         error,
         commit,
+        onBlur,
         increment,
         onKeyDown,
         onTextChange,
     };
 }
-function StepButton({ direction, label, disabled, onStep, }) {
-    return (<Button type="button" variant="outline" size="icon" aria-label={`${direction === -1 ? "Decrease" : "Increase"} ${label}`} disabled={disabled} onPointerDown={(event) => {
+function StepButton({ direction, label, disabled, compact, onStep, }) {
+    return (<Button type="button" variant="outline" size="icon" className={compact ? "size-8" : undefined} aria-label={`${direction === -1 ? "Decrease" : "Increase"} ${label}`} disabled={disabled} onPointerDown={(event) => {
             event.preventDefault();
         }} onClick={() => onStep(direction)}>
       {direction === -1 ? (<MinusIcon aria-hidden="true"/>) : (<PlusIcon aria-hidden="true"/>)}
@@ -156,6 +165,7 @@ export function NumberField(props) {
     const generatedId = React.useId();
     const id = (_a = props.id) !== null && _a !== void 0 ? _a : generatedId;
     const field = useNumberField(props);
+    const compact = props.density === "compact";
     const describedBy = [
         props["aria-describedby"],
         props.help ? `${id}-help` : null,
@@ -166,13 +176,13 @@ export function NumberField(props) {
     const actionLabel = typeof props.label === "string"
         ? props.label
         : ((_b = props["aria-label"]) !== null && _b !== void 0 ? _b : "value");
-    return (<div className={cn("flex flex-col gap-2", props.className)} data-slot="number-field">
+    return (<div className={cn("flex flex-col", compact ? "gap-1" : "gap-2", props.className)} data-slot="number-field">
       {props.label && <Label htmlFor={id}>{props.label}</Label>}
-      <div className="flex items-center gap-2">
-        <StepButton direction={-1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canDecrease} onStep={field.increment}/>
-        <Input id={id} name={props.name} type="text" role="spinbutton" inputMode="decimal" autoComplete="off" value={field.draft} placeholder={props.placeholder} disabled={props.disabled} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={describedBy || undefined} aria-invalid={Boolean(field.error) || Boolean(props.invalid)} aria-valuemin={props.min} aria-valuemax={props.max} aria-valuenow={(_c = field.value) !== null && _c !== void 0 ? _c : undefined} onChange={field.onTextChange} onBlur={field.commit} onKeyDown={field.onKeyDown}/>
+      <div className={cn("flex items-center", compact ? "gap-1" : "gap-2")}>
+        {props.showSteppers !== false && (<StepButton direction={-1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canDecrease} compact={compact} onStep={field.increment}/>)}
+        <Input id={id} name={props.name} type="text" role="spinbutton" inputMode="decimal" autoComplete="off" className={compact ? "h-8 px-2" : undefined} value={field.draft} placeholder={props.placeholder} disabled={props.disabled} aria-label={props["aria-label"]} aria-labelledby={props["aria-labelledby"]} aria-describedby={describedBy || undefined} aria-invalid={Boolean(field.error) || Boolean(props.invalid)} aria-valuemin={props.min} aria-valuemax={props.max} aria-valuenow={(_c = field.value) !== null && _c !== void 0 ? _c : undefined} onChange={field.onTextChange} onBlur={field.onBlur} onKeyDown={field.onKeyDown}/>
         {props.unit && (<span className="text-sm text-muted-foreground">{props.unit}</span>)}
-        <StepButton direction={1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canIncrease} onStep={field.increment}/>
+        {props.showSteppers !== false && (<StepButton direction={1} label={actionLabel} disabled={Boolean(props.disabled) || !field.canIncrease} compact={compact} onStep={field.increment}/>)}
       </div>
       {props.help && (<p id={`${id}-help`} className="text-sm text-muted-foreground">
           {props.help}

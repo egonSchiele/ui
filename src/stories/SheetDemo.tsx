@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "egon-ui";
 
 export function SheetDemo({
   side,
@@ -23,8 +23,13 @@ export function SheetDemo({
       <SheetTrigger asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
-      <SheetContent side={side}>
-        <SheetHeader>
+      <SheetContent
+        side={side}
+        className={
+          side === "left" || side === "right" ? "sm:max-w-[24rem]" : undefined
+        }
+      >
+        <SheetHeader className="pr-12">
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>
             Make changes to your profile here. Click save when you're done.
@@ -35,13 +40,21 @@ export function SheetDemo({
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3" />
+            <Input
+              id="name"
+              defaultValue="Pedro Duarte"
+              className="col-span-3"
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               Username
             </Label>
-            <Input id="username" value="@peduarte" className="col-span-3" />
+            <Input
+              id="username"
+              defaultValue="@peduarte"
+              className="col-span-3"
+            />
           </div>
         </div>
         <SheetFooter>

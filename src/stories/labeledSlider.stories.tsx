@@ -16,9 +16,15 @@ type Story = StoryObj<typeof meta>;
 function LabeledSliderDemo({
   initial = null,
   disabled = false,
+  density = "default",
+  invalidBlur = "keep",
+  width = 384,
 }: {
   initial?: number | null;
   disabled?: boolean;
+  density?: "default" | "compact";
+  invalidBlur?: "keep" | "restore";
+  width?: number;
 }): React.JSX.Element {
   const [value, setValue]: [
     number | null,
@@ -29,7 +35,7 @@ function LabeledSliderDemo({
     React.Dispatch<React.SetStateAction<number | null>>,
   ] = React.useState<number | null>(initial);
   return (
-    <div className="flex w-96 max-w-full flex-col gap-3">
+    <div className="flex max-w-full flex-col gap-3" style={{ width }}>
       <LabeledSlider
         label="Strength"
         value={value}
@@ -40,6 +46,8 @@ function LabeledSliderDemo({
         max={1}
         step={0.05}
         disabled={disabled}
+        density={density}
+        invalidBlur={invalidBlur}
         help="Leave empty to use the default."
         onReset={(): void => {
           setValue(null);
@@ -73,6 +81,23 @@ export const Decimal: Story = {
 
 export const Disabled: Story = {
   render: (): React.JSX.Element => <LabeledSliderDemo disabled />,
+};
+
+export const Compact: Story = {
+  render: (): React.JSX.Element => (
+    <LabeledSliderDemo
+      initial={0.25}
+      density="compact"
+      invalidBlur="restore"
+      width={320}
+    />
+  ),
+};
+
+export const CompactNullable: Story = {
+  render: (): React.JSX.Element => (
+    <LabeledSliderDemo density="compact" invalidBlur="restore" width={240} />
+  ),
 };
 
 function UncontrolledResetDemo({

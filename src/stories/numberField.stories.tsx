@@ -94,3 +94,90 @@ function NumberForm(): React.JSX.Element {
 export const InForm: Story = {
   render: (): React.JSX.Element => <NumberForm />,
 };
+
+function CompactRestoreNumber(): React.JSX.Element {
+  const [value, setValue]: [
+    number | null,
+    React.Dispatch<React.SetStateAction<number | null>>,
+  ] = React.useState<number | null>(42);
+  const [changes, setChanges]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = React.useState<number>(0);
+  return (
+    <div className="flex w-60 flex-col gap-4">
+      <NumberField
+        label="Width"
+        density="compact"
+        showSteppers={false}
+        invalidBlur="restore"
+        value={value}
+        onChange={(next: number | null): void => {
+          setValue(next);
+          setChanges((count: number): number => count + 1);
+        }}
+        min={0}
+        max={100}
+        emptyValue="reject"
+        unit="px"
+        help="Invalid text restores the last value when focus leaves."
+      />
+      <output>
+        Value: {value}; changes: {changes}
+      </output>
+      <Button>Leave field</Button>
+    </div>
+  );
+}
+
+export const CompactRestore: Story = {
+  render: (): React.JSX.Element => <CompactRestoreNumber />,
+};
+
+export const CompactNullable: Story = {
+  args: {
+    label: "Guidance",
+    defaultValue: null,
+    min: 0,
+    max: 10,
+    step: 0.1,
+    density: "compact",
+    showSteppers: false,
+    invalidBlur: "restore",
+    placeholder: "Model default",
+  },
+};
+
+export const CompactWithSteppers: Story = {
+  args: {
+    label: "Steps",
+    defaultValue: 4,
+    min: 1,
+    max: 50,
+    density: "compact",
+    emptyValue: "reject",
+  },
+};
+
+export const CompactDisabled: Story = {
+  args: {
+    label: "Steps",
+    defaultValue: 4,
+    density: "compact",
+    showSteppers: false,
+    disabled: true,
+  },
+};
+
+export const CompactInvalid: Story = {
+  args: {
+    label: "Width",
+    defaultValue: null,
+    density: "compact",
+    showSteppers: false,
+    invalid: true,
+    emptyValue: "reject",
+    unit: "px",
+    help: "Choose an image width.",
+  },
+};

@@ -26,6 +26,8 @@ export type LabeledSliderProps = LabeledSliderValueProps & {
     max: number;
     step?: number;
     disabled?: boolean;
+    density?: "default" | "compact";
+    invalidBlur?: "keep" | "restore";
     unit?: React.ReactNode;
     help?: React.ReactNode;
     className?: string;

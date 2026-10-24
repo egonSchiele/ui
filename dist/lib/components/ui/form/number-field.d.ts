@@ -20,6 +20,9 @@ export type NumberFieldProps = NumberFieldValueProps & {
     max?: number;
     step?: number;
     emptyValue?: "allow" | "reject";
+    invalidBlur?: "keep" | "restore";
+    density?: "default" | "compact";
+    showSteppers?: boolean;
     invalid?: boolean;
     disabled?: boolean;
     placeholder?: string;
