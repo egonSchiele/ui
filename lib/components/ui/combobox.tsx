@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-
+import { defaultFilter } from "cmdk";
+import { CheckIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/form/button";
 import {
@@ -12,128 +13,242 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import clsx from "clsx";
+import { cn } from "@/utils";
 
-export type ComboBoxItem<T = any> = {
+export type ComboBoxItem<T = unknown> = {
   key: string;
   label: string;
   metadata?: T;
+  group?: string;
+  disabled?: boolean;
 };
-
-export type ComboBoxProps<T = any> = {
+type SelectionProps =
+  | { selectedKey: string | null; defaultSelectedKey?: never }
+  | { selectedKey?: never; defaultSelectedKey?: string | null };
+export type ComboBoxProps<T = unknown> = SelectionProps & {
   items: ComboBoxItem<T>[];
   placeholder?: string;
+  "aria-label"?: string;
   emptyState?: React.ReactNode;
+  loading?: boolean;
+  loadingState?: React.ReactNode;
+  disabled?: boolean;
   onSelect?: (item: ComboBoxItem<T>) => void;
+  onSelectedKeyChange?: (key: string | null) => void;
+  renderItem?: (item: ComboBoxItem<T>) => React.ReactNode;
   className?: string;
   buttonClassName?: string;
+  contentClassName?: string;
   modal?: boolean;
 };
 
-export function ComboBox<T = any>({
+type ItemListProps<T> = {
+  selectedKey: string | null;
+  items: ComboBoxItem<T>[];
+  placeholder: string;
+  emptyState?: React.ReactNode;
+  loading?: boolean;
+  loadingState?: React.ReactNode;
+  renderItem?: (item: ComboBoxItem<T>) => React.ReactNode;
+  onSelect: (item: ComboBoxItem<T>) => void;
+};
+type ItemGroup<T> = { heading: string | undefined; items: ComboBoxItem<T>[] };
+
+function groupItems<T>(items: ComboBoxItem<T>[]): ItemGroup<T>[] {
+  const groups: ItemGroup<T>[] = [];
+  for (const item of items) {
+    const existing: ItemGroup<T> | undefined = groups.find(
+      (group: ItemGroup<T>): boolean => group.heading === item.group,
+    );
+    if (existing) {
+      existing.items.push(item);
+    } else {
+      groups.push({ heading: item.group, items: [item] });
+    }
+  }
+  return groups;
+}
+
+function ItemList<T>({
+  selectedKey,
+  items,
+  placeholder,
+  emptyState,
+  loading,
+  loadingState,
+  renderItem,
+  onSelect,
+}: ItemListProps<T>): React.JSX.Element {
+  return (
+    <Command
+      defaultValue={selectedKey ?? undefined}
+      filter={(_value: string, search: string, keywords?: string[]): number =>
+        defaultFilter(keywords?.join(" ") ?? "", search)
+      }
+    >
+      <CommandInput
+        placeholder={placeholder}
+        aria-label={placeholder}
+        disabled={loading}
+      />
+      <CommandList aria-busy={loading}>
+        {loading ? (
+          <div role="status" className="p-4 text-sm text-muted-foreground">
+            {loadingState ?? "Loading options…"}
+          </div>
+        ) : (
+          <>
+            <CommandEmpty>{emptyState ?? "No results found."}</CommandEmpty>
+            {groupItems(items).map(
+              (group: ItemGroup<T>, index: number): React.JSX.Element => (
+                <CommandGroup
+                  key={group.heading ?? index}
+                  heading={group.heading}
+                >
+                  {group.items.map(
+                    (item: ComboBoxItem<T>): React.JSX.Element => (
+                      <CommandItem
+                        key={item.key}
+                        value={item.key}
+                        keywords={[item.label]}
+                        disabled={item.disabled}
+                        onSelect={(): void => onSelect(item)}
+                      >
+                        {renderItem ? renderItem(item) : item.label}
+                        {item.key === selectedKey && (
+                          <>
+                            <CheckIcon
+                              aria-hidden="true"
+                              data-slot="combobox-selected"
+                              className="ml-auto shrink-0"
+                            />
+                            <span className="sr-only">(current)</span>
+                          </>
+                        )}
+                      </CommandItem>
+                    ),
+                  )}
+                </CommandGroup>
+              ),
+            )}
+          </>
+        )}
+      </CommandList>
+    </Command>
+  );
+}
+
+export function ComboBox<T = unknown>({
   items,
   placeholder = "Select an item...",
-  emptyState,
+  selectedKey,
+  defaultSelectedKey = null,
   onSelect,
+  onSelectedKeyChange,
+  disabled,
   className,
   buttonClassName,
+  contentClassName,
   modal = false,
-}: ComboBoxProps<T>) {
-  const [open, setOpen] = React.useState(false);
-  const isMobile = useIsMobile();
-  const [selectedItem, setSelectedItem] = React.useState<ComboBoxItem | null>(
-    null
+  "aria-label": ariaLabel,
+  ...listProps
+}: ComboBoxProps<T>): React.JSX.Element {
+  const [open, setOpen]: [
+    boolean,
+    React.Dispatch<React.SetStateAction<boolean>>,
+  ] = React.useState<boolean>(false);
+  const [internalKey, setInternalKey]: [
+    string | null,
+    React.Dispatch<React.SetStateAction<string | null>>,
+  ] = React.useState<string | null>(defaultSelectedKey);
+  const isMobile: boolean = useIsMobile();
+  const key: string | null =
+    selectedKey !== undefined ? selectedKey : internalKey;
+  const selectedItem: ComboBoxItem<T> | undefined = items.find(
+    (item: ComboBoxItem<T>): boolean => item.key === key,
   );
 
-  const handleSelect = (item: ComboBoxItem | null) => {
-    setSelectedItem(item);
-    if (item && onSelect) {
-      onSelect(item);
+  React.useEffect((): void => {
+    if (disabled) {
+      setOpen(false);
     }
-  };
+  }, [disabled]);
+
+  function select(item: ComboBoxItem<T>): void {
+    if (disabled || item.disabled) {
+      return;
+    }
+    if (selectedKey === undefined) {
+      setInternalKey(item.key);
+    }
+    onSelectedKeyChange?.(item.key);
+    onSelect?.(item);
+    setOpen(false);
+  }
+
+  const trigger: React.JSX.Element = (
+    <Button
+      type="button"
+      variant="outline"
+      disabled={disabled}
+      aria-label={
+        selectedItem && ariaLabel
+          ? `${ariaLabel}: ${selectedItem.label}`
+          : ariaLabel
+      }
+      className={cn("w-[150px] justify-start", buttonClassName)}
+    >
+      {selectedItem?.label ?? placeholder}
+    </Button>
+  );
+  const list: React.JSX.Element = (
+    <ItemList
+      {...listProps}
+      items={items}
+      selectedKey={key}
+      placeholder={placeholder}
+      onSelect={select}
+    />
+  );
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={setOpen} >
+      <Drawer open={open && !disabled} onOpenChange={setOpen}>
         <DrawerTrigger className={className} asChild>
-          <Button variant="outline" className="w-[150px] justify-start">
-            {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
-          </Button>
+          {trigger}
         </DrawerTrigger>
-        <DrawerContent className={className}>
-          <div className="mt-4 border-t">
-            <ItemList
-              items={items}
-              placeholder={placeholder}
-              setOpen={setOpen}
-              setSelectedItem={handleSelect}
-              emptyState={emptyState}
-            />
-          </div>
+        <DrawerContent className={cn(className, contentClassName)}>
+          <DrawerTitle className="sr-only">
+            {ariaLabel ?? placeholder}
+          </DrawerTitle>
+          <DrawerDescription className="sr-only">
+            Search and select an option.
+          </DrawerDescription>
+          <div className="mt-4 border-t">{list}</div>
         </DrawerContent>
       </Drawer>
     );
   }
   return (
-    <Popover open={open} onOpenChange={setOpen} modal={modal}>
+    <Popover open={open && !disabled} onOpenChange={setOpen} modal={modal}>
       <PopoverTrigger className={className} asChild>
-        <Button variant="outline" className={clsx("w-[150px] justify-start", buttonClassName)}>
-          {selectedItem ? <>{selectedItem.label}</> : <>{placeholder}</>}
-        </Button>
+        {trigger}
       </PopoverTrigger>
-      <PopoverContent className={className} align="start">
-        <ItemList
-          items={items}
-          placeholder={placeholder}
-          setOpen={setOpen}
-          setSelectedItem={handleSelect}
-          emptyState={emptyState}
-        />
+      <PopoverContent className={cn(className, contentClassName)} align="start">
+        {list}
       </PopoverContent>
     </Popover>
-  );
-}
-
-function ItemList({
-  items,
-  placeholder,
-  setOpen,
-  setSelectedItem,
-  emptyState,
-}: {
-  items: ComboBoxItem[];
-  placeholder: string;
-  setOpen: (open: boolean) => void;
-  setSelectedItem: (item: ComboBoxItem | null) => void;
-  emptyState?: React.ReactNode;
-}) {
-  return (
-    <Command>
-      <CommandInput placeholder={placeholder} />
-      <CommandList>
-        {emptyState && <CommandEmpty>{emptyState}</CommandEmpty>}
-        {!emptyState && <CommandEmpty>No results found.</CommandEmpty>}
-        <CommandGroup>
-          {items.map((item) => (
-            <CommandItem
-              key={item.key}
-              value={item.label}
-              onSelect={(value) => {
-                setSelectedItem(items.find((i) => i.label === value) || null);
-                setOpen(false);
-              }}
-            >
-              {item.label}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
-    </Command>
   );
 }

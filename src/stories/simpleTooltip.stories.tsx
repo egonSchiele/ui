@@ -117,7 +117,7 @@ const meta: Meta = {
     },
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
-  args: {},
+  args: { asChild: true },
 } satisfies Meta<typeof SimpleTooltip>;
 
 export default meta;
@@ -185,5 +185,36 @@ export const DisableHoverableContent: Story = {
     tooltipContent: <p>You can hover over this without it closing</p>,
     side: "right",
     disableHoverableContent: true,
+  },
+};
+
+export const LinkTrigger: Story = {
+  args: {
+    asChild: true,
+    children: <a href="#library">Library</a>,
+    tooltipContent: "Browse images",
+    side: "bottom",
+    triggerProps: { "aria-label": "Open library" },
+    contentProps: { className: "font-medium" },
+  },
+};
+export const IconTrigger: Story = {
+  args: {
+    asChild: true,
+    children: (
+      <Button type="submit" aria-label="Help">
+        ?
+      </Button>
+    ),
+    tooltipContent: "Help with this field",
+    side: "top",
+  },
+};
+
+export const TextTrigger: Story = {
+  args: {
+    asChild: false,
+    children: "More information",
+    tooltipContent: "A plain text trigger creates a button.",
   },
 };

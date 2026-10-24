@@ -61,6 +61,8 @@ import { HGroupLG, HGroupLGProps } from "./components/ui/layout/hgroupLG.jsx";
 import { HGroupXL, HGroupXLProps } from "./components/ui/layout/hgroupXL.jsx";
 
 import { Input } from "./components/ui/form/input.jsx";
+import { NumberField, NumberFieldProps } from "./components/ui/form/number-field.jsx";
+import { SegmentedControl, SegmentedControlProps, SegmentedControlOption } from "./components/ui/form/segmented-control.jsx";
 
 import { KVTableItem, KVTable } from "./components/ui/kvTable.jsx";
 
@@ -174,7 +176,7 @@ import {
   useSidebar,
 } from "./components/ui/sidebar.jsx";
 
-import { SimpleTooltip } from "./components/ui/simpleTooltip.jsx";
+import { SimpleTooltip, SimpleTooltipProps } from "./components/ui/simpleTooltip.jsx";
 
 import { Skeleton } from "./components/ui/skeleton.jsx";
 
@@ -280,6 +282,11 @@ export {
   HGroupXS,
   HGroupXSProps,
   Input,
+  NumberField,
+  NumberFieldProps,
+  SegmentedControl,
+  SegmentedControlProps,
+  SegmentedControlOption,
   KVTableItem,
   KVTable,
   Label,
@@ -359,6 +366,7 @@ export {
   SidebarTrigger,
   SimpleForm,
   SimpleTooltip,
+  SimpleTooltipProps,
   Skeleton,
   Switch,
   Table,
