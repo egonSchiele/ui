@@ -28,6 +28,7 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 whites
             sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
             lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
             icon: "size-9",
+            "icon-sm": "size-8",
         },
     },
     defaultVariants: {
@@ -35,9 +36,43 @@ const buttonVariants = cva("inline-flex items-center justify-center gap-2 whites
         size: "default",
     },
 });
+function preventPendingActivation(event) {
+    event.preventDefault();
+    event.stopPropagation();
+}
+function getPendingChild({ children, pendingLabel, }) {
+    if (!React.isValidElement(children)) {
+        return children;
+    }
+    return React.cloneElement(children, Object.assign(Object.assign({ "aria-busy": true, "aria-disabled": true, tabIndex: -1, onClickCapture: preventPendingActivation }, (pendingLabel != null ? { children: pendingLabel } : {})), (children.type === "button" ? { disabled: true } : {})));
+}
 function Button(_a) {
-    var { className, variant, size, asChild = false } = _a, props = __rest(_a, ["className", "variant", "size", "asChild"]);
-    const Comp = asChild ? Slot : props.href ? "a" : "button";
-    return (<Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }))} {...props}/>);
+    var { className, variant, size, asChild = false, pending = false, pendingLabel, children } = _a, props = __rest(_a, ["className", "variant", "size", "asChild", "pending", "pendingLabel", "children"]);
+    const sharedProps = {
+        "data-slot": "button",
+        "aria-busy": pending || props["aria-busy"],
+        className: cn(buttonVariants({ variant, size, className }), pending && "pointer-events-none opacity-50"),
+    };
+    const content = pending
+        ? (pendingLabel !== null && pendingLabel !== void 0 ? pendingLabel : children)
+        : children;
+    if (asChild) {
+        const child = pending
+            ? getPendingChild({ children, pendingLabel })
+            : children;
+        return (<Slot {...props} {...sharedProps} aria-disabled={pending || props["aria-disabled"]} tabIndex={pending ? -1 : props.tabIndex} onClickCapture={pending ? preventPendingActivation : props.onClickCapture}>
+        {child}
+      </Slot>);
+    }
+    if (typeof props.href === "string") {
+        return (<a {...props} {...sharedProps} aria-disabled={pending || props["aria-disabled"]} tabIndex={pending ? -1 : props.tabIndex} onClickCapture={pending ? preventPendingActivation : props.onClickCapture}>
+        {content}
+      </a>);
+    }
+    // A pending button stays enabled so it keeps keyboard focus. Disabling a
+    // focused button moves focus to the page body.
+    return (<button {...props} {...sharedProps} aria-disabled={pending || props["aria-disabled"]} onClickCapture={pending ? preventPendingActivation : props.onClickCapture}>
+      {content}
+    </button>);
 }
 export { Button, buttonVariants };

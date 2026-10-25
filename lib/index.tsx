@@ -133,6 +133,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "./components/ui/popover.jsx";
+import { HelperText } from "./components/ui/typography/helperText.jsx";
 import { SectionHeading } from "./components/ui/typography/sectionHeading.jsx";
 
 import {
@@ -147,7 +148,16 @@ import {
 
 import { Separator } from "./components/ui/layout/separator.jsx";
 
-import { Sheet } from "./components/ui/sheet.jsx";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./components/ui/sheet.jsx";
 
 import {
   Sidebar,
@@ -331,6 +341,7 @@ export {
   PopoverContent,
   PopoverTrigger,
   SectionHeading,
+  HelperText,
   Select,
   SelectContent,
   SelectGroup,
@@ -341,6 +352,13 @@ export {
   SelectValue,
   Separator,
   Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -409,3 +427,8 @@ export { Kbd } from "@/components/ui/kbd";
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle, type ResizableLayout, type ResizableLayoutChangedMeta, type ResizablePanelSize, type ResizablePanelGroupProps, type ResizablePanelProps, type ResizableHandleProps } from "@/components/ui/layout/resizable";
 export { DropZone, type DropZoneProps, type DropZoneRejection, type DropZoneDecodeResult, type DropZoneInternalDrop } from "@/components/ui/drop-zone";
 export { ContextMenu, ContextMenuTrigger, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuRadioGroup, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSubTrigger, ContextMenuSubContent } from "@/components/ui/context-menu";
+
+export type { HelperTextProps } from "./components/ui/typography/helperText.jsx";
+export type { SectionHeadingProps } from "./components/ui/typography/sectionHeading.jsx";
+export type { BannerProps } from "./components/ui/banner.jsx";
+export type { ButtonProps } from "./components/ui/form/button.jsx";

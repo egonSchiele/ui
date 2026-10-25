@@ -34,6 +34,9 @@ export type NumberFieldProps = NumberFieldValueProps & {
   max?: number;
   step?: number;
   emptyValue?: "allow" | "reject";
+  invalidBlur?: "keep" | "restore";
+  density?: "default" | "compact";
+  showSteppers?: boolean;
   invalid?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -50,6 +53,7 @@ type NumberFieldState = {
   canDecrease: boolean;
   error: string | null;
   commit: () => void;
+  onBlur: () => void;
   increment: (amount: number) => void;
   onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onTextChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -201,6 +205,18 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
     }
   }
 
+  function onBlur(): void {
+    const parsed: ParsedNumber = parseDraft(
+      draft,
+      props.emptyValue !== "reject",
+    );
+    if (!parsed.valid && props.invalidBlur === "restore") {
+      restore();
+      return;
+    }
+    commit();
+  }
+
   function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>): void {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -242,6 +258,7 @@ function useNumberField(props: NumberFieldProps): NumberFieldState {
     canDecrease,
     error,
     commit,
+    onBlur,
     increment,
     onKeyDown,
     onTextChange,
@@ -252,6 +269,7 @@ type StepButtonProps = {
   direction: -1 | 1;
   label: string;
   disabled: boolean;
+  compact: boolean;
   onStep: (amount: number) => void;
 };
 
@@ -259,6 +277,7 @@ function StepButton({
   direction,
   label,
   disabled,
+  compact,
   onStep,
 }: StepButtonProps): React.JSX.Element {
   return (
@@ -266,6 +285,7 @@ function StepButton({
       type="button"
       variant="outline"
       size="icon"
+      className={compact ? "size-8" : undefined}
       aria-label={`${direction === -1 ? "Decrease" : "Increase"} ${label}`}
       disabled={disabled}
       onPointerDown={(event: React.PointerEvent<HTMLButtonElement>): void => {
@@ -286,6 +306,7 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
   const generatedId: string = React.useId();
   const id: string = props.id ?? generatedId;
   const field: NumberFieldState = useNumberField(props);
+  const compact: boolean = props.density === "compact";
   const describedBy: string = [
     props["aria-describedby"],
     props.help ? `${id}-help` : null,
@@ -299,17 +320,24 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
       : (props["aria-label"] ?? "value");
   return (
     <div
-      className={cn("flex flex-col gap-2", props.className)}
+      className={cn(
+        "flex flex-col",
+        compact ? "gap-1" : "gap-2",
+        props.className,
+      )}
       data-slot="number-field"
     >
       {props.label && <Label htmlFor={id}>{props.label}</Label>}
-      <div className="flex items-center gap-2">
-        <StepButton
-          direction={-1}
-          label={actionLabel}
-          disabled={Boolean(props.disabled) || !field.canDecrease}
-          onStep={field.increment}
-        />
+      <div className={cn("flex items-center", compact ? "gap-1" : "gap-2")}>
+        {props.showSteppers !== false && (
+          <StepButton
+            direction={-1}
+            label={actionLabel}
+            disabled={Boolean(props.disabled) || !field.canDecrease}
+            compact={compact}
+            onStep={field.increment}
+          />
+        )}
         <Input
           id={id}
           name={props.name}
@@ -317,6 +345,7 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
           role="spinbutton"
           inputMode="decimal"
           autoComplete="off"
+          className={compact ? "h-8 px-2" : undefined}
           value={field.draft}
           placeholder={props.placeholder}
           disabled={props.disabled}
@@ -328,18 +357,21 @@ export function NumberField(props: NumberFieldProps): React.JSX.Element {
           aria-valuemax={props.max}
           aria-valuenow={field.value ?? undefined}
           onChange={field.onTextChange}
-          onBlur={field.commit}
+          onBlur={field.onBlur}
           onKeyDown={field.onKeyDown}
         />
         {props.unit && (
           <span className="text-sm text-muted-foreground">{props.unit}</span>
         )}
-        <StepButton
-          direction={1}
-          label={actionLabel}
-          disabled={Boolean(props.disabled) || !field.canIncrease}
-          onStep={field.increment}
-        />
+        {props.showSteppers !== false && (
+          <StepButton
+            direction={1}
+            label={actionLabel}
+            disabled={Boolean(props.disabled) || !field.canIncrease}
+            compact={compact}
+            onStep={field.increment}
+          />
+        )}
       </div>
       {props.help && (
         <p id={`${id}-help`} className="text-sm text-muted-foreground">

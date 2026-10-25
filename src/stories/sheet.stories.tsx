@@ -23,7 +23,7 @@ const meta: Meta = {
         type: "select",
         options: ["left", "right", "top", "bottom"],
       },
-    }
+    },
   },
 } satisfies Meta<typeof SheetDemo>;
 
@@ -32,6 +32,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    side: "left"
+    side: "left",
   },
+};
+
+export const Right: Story = {
+  args: { side: "right" },
 };

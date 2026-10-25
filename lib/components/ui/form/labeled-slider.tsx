@@ -44,6 +44,8 @@ export type LabeledSliderProps = LabeledSliderValueProps & {
   max: number;
   step?: number;
   disabled?: boolean;
+  density?: "default" | "compact";
+  invalidBlur?: "keep" | "restore";
   unit?: React.ReactNode;
   help?: React.ReactNode;
   className?: string;
@@ -150,12 +152,17 @@ export function LabeledSlider(props: LabeledSliderProps): React.JSX.Element {
   const generatedId: string = React.useId();
   const id: string = props.id ?? generatedId;
   const slider: LabeledSliderValue = useLabeledSliderValue(props);
+  const compact: boolean = props.density === "compact";
   const descriptionId: string | undefined =
     props.help || slider.missingDefault ? `${id}-help` : undefined;
   return (
     <div
       data-slot="labeled-slider"
-      className={cn("flex flex-col gap-3", props.className)}
+      className={cn(
+        "flex flex-col",
+        compact ? "gap-2" : "gap-3",
+        props.className,
+      )}
     >
       <LabeledSliderHeader
         id={id}
@@ -163,7 +170,7 @@ export function LabeledSlider(props: LabeledSliderProps): React.JSX.Element {
         disabled={props.disabled}
         onReset={props.onReset ? slider.reset : undefined}
       />
-      <div className="flex items-center gap-4">
+      <div className={cn("flex items-center", compact ? "gap-2" : "gap-4")}>
         <Slider
           value={slider.thumbValue}
           onChange={slider.change}
@@ -191,9 +198,12 @@ export function LabeledSlider(props: LabeledSliderProps): React.JSX.Element {
           }
           disabled={slider.disabled}
           unit={props.unit}
+          density={props.density}
+          showSteppers={!compact}
+          invalidBlur={props.invalidBlur}
           aria-label={props.label}
           aria-describedby={descriptionId}
-          className="w-40 shrink-0"
+          className={cn("shrink-0", compact ? "w-[5.5rem]" : "w-40")}
         />
       </div>
       {descriptionId && (

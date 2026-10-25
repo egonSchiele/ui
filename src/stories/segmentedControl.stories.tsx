@@ -43,15 +43,24 @@ export const Icons: Story = {
     ],
   },
 };
-function ControlledSegments(): React.JSX.Element {
+function ControlledSegments({
+  fullWidth = false,
+}: {
+  fullWidth?: boolean;
+}): React.JSX.Element {
   const [value, setValue]: [
     SettingsTier,
     React.Dispatch<React.SetStateAction<SettingsTier>>,
   ] = React.useState<SettingsTier>("basic");
   return (
-    <div className="flex flex-col gap-3">
+    <div
+      className={
+        fullWidth ? "flex w-[320px] flex-col gap-3" : "flex flex-col gap-3"
+      }
+    >
       <SegmentedControl
         aria-label="Settings tier"
+        fullWidth={fullWidth}
         options={options}
         value={value}
         onValueChange={setValue}
@@ -62,4 +71,8 @@ function ControlledSegments(): React.JSX.Element {
 }
 export const Controlled: Story = {
   render: (): React.JSX.Element => <ControlledSegments />,
+};
+
+export const FullWidth: Story = {
+  render: (): React.JSX.Element => <ControlledSegments fullWidth />,
 };

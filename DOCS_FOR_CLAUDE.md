@@ -1,5 +1,11 @@
 This repo contains React components you can use for building UI.
 
+`pnpm test` rebuilds the package before type checks and browser tests. Stories importing `egon-ui` exercise the public `dist` entry point, so rebuild with `pnpm run build` after source changes when running Storybook directly.
+
+Keep the exact `@radix-ui/react-dialog` and `@radix-ui/react-popover` versions paired: both must resolve the same `@radix-ui/react-dismissable-layer` version. Separate layer contexts cause Escape to close both a nested popup and its parent Sheet. When updating these dependencies, update both together and run the nested Sheet/ComboBox browser tests.
+
+`--input-background` controls Input, Textarea, and NumberField input fills independently of their borders. If it is unset, the fill falls back to `--input`, preserving existing themes. `--input` continues to set the border color. Set the optional token on the app root or a containing element; no descendant selectors are needed.
+
 ## Components
 
 ### Form Components
@@ -12,6 +18,8 @@ A versatile button component with multiple style variants and sizes. Can also re
 <Button onClick={() => alert('Clicked!')}>Click Me</Button>
 <Button variant="destructive">Delete</Button>
 <Button size="sm">Small Button</Button>
+<Button pending={saving} pendingLabel="Saving…">Save</Button>
+<Button size="icon-sm" aria-label="Add image">+</Button>
 <Button href="/dashboard">Go to Dashboard</Button>
 <Button href="https://example.com" target="_blank" rel="noopener noreferrer">
   External Link
@@ -22,9 +30,11 @@ Properties:
 - `onClick`: Function to call when the button is clicked
 - `children`: The content inside the button
 - `variant`: Style variant: `default | destructive | outline | secondary | ghost | link`
-- `size`: Size variant: `default | sm | lg | icon`
+- `size`: Size variant: `default | sm | lg | icon | icon-sm`; `icon-sm` is 32px square
 - `asChild`: If true, renders as a Slot component for composition
-- `disabled`: Disables the button
+- `disabled`: Disables a native button; it stays disabled when pending ends
+- `pending`: Defaults to `false`. Marks the action `aria-busy` and `aria-disabled` and blocks click activation, including Enter and Space. A native button stays enabled and focusable, so a button that becomes pending from its own click keeps keyboard focus. Links and composed children also leave the tab order while pending.
+- `pendingLabel`: Optional replacement content during pending; without it the label stays unchanged. With `asChild`, replaces the child's contents while preserving its element and props.
 - `href`: When provided, renders as an `<a>` tag for navigation instead of a `<button>`
 - `target`: Link target (e.g., `_blank` for new tab) - only used when `href` is provided
 - `rel`: Link relationship (e.g., `noopener noreferrer`) - only used when `href` is provided
@@ -52,7 +62,8 @@ A labelled numeric input with private text drafts, bounded stepping, and nullabl
 
 ```tsx
 <NumberField label="Guidance" value={guidance} onChange={setGuidance}
-  min={0} max={20} step={0.1} placeholder="Model default" />
+  min={0} max={20} step={0.1} placeholder="Model default"
+  density="compact" showSteppers={false} invalidBlur="restore" />
 ```
 
 Properties:
@@ -62,6 +73,9 @@ Properties:
 - `onCommit`: Reports accepted commits (blur, Enter, stepping); slider consumers can share their commit callback here.
 - `min`, `max`, `step`: Finite numeric bounds and positive step (default `1`). Commits align to steps relative to `min` or zero, then clamp to bounds.
 - `emptyValue`: `allow` (default) commits empty input as `null`; `reject` retains the previous value and shows an error.
+- `invalidBlur`: `keep` (default) preserves invalid text on blur. `restore` restores the committed value and clears the error on blur when text cannot parse or required text is empty. It emits neither change nor commit. Valid text still commits, and Enter still validates normally.
+- `density`: `default` or `compact`; compact uses a 32px input/button height and smaller gaps.
+- `showSteppers`: Whether to render the Increase/Decrease buttons, default `true`. Hiding them preserves keyboard stepping and the spinbutton's accessible attributes.
 - `invalid`: Marks the input `aria-invalid` for a validation problem the caller owns, such as a required value. Pair it with `aria-describedby` that points at the caller's message.
 - `label`, `id`, `name`: Associated visible label, input ID, and form field name.
 - `aria-label`, `aria-labelledby`, `aria-describedby`: Accessible naming and shared descriptions for composed controls.
@@ -87,6 +101,7 @@ Properties:
 - `value` / `onValueChange`: Controlled selection and callback, mutually exclusive with `defaultValue`. `SegmentedControl<Value>` infers `Value` from `options` only, so a `value` or `defaultValue` outside the options fails to compile. The callback receives the same union. The generic defaults to `string`.
 - `defaultValue`: Required initial value for uncontrolled use. Supply a value matching an enabled option.
 - `size`: `sm`, `md` (default), or `lg`.
+- `fullWidth`: Defaults to `false`. Fills the parent width and gives horizontal options equal widths; vertical options fill the group width.
 - `disabled`, `name`, `orientation`, `dir`, `loop`, `aria-label`, `aria-labelledby`, `className`: Radix radio-group props. Orientation defaults to horizontal.
 
 Selecting the active segment keeps it selected. Arrow keys select enabled options and skip disabled choices. The root and items use Radix radio primitives directly; the circular RadioGroupItem is not reused. Both controlled and uncontrolled forms require an initial valid selection.
@@ -564,22 +579,39 @@ Properties:
 
 #### SectionHeading
 
-A section heading with optional description and actions.
+A section heading with optional description and actions, in bordered or compact presentation.
 
 ```jsx
-<SectionHeading
-  description="Manage your team members"
-  actions={<Button>Add Member</Button>}
->
+<SectionHeading description="Manage your team members" actions={<Button>Add Member</Button>}>
   Team
+</SectionHeading>
+<SectionHeading variant="compact" level="h2" headingId="preview-heading"
+  headingRef={previewHeadingRef} tabIndex={-1} actions={<Button size="sm">Download</Button>}>
+  Preview
 </SectionHeading>
 ```
 
 Properties:
-- `children`: Heading text
-- `description`: Optional description text
-- `actions`: Optional action buttons or elements
-- `className`: Additional CSS classes
+- `children`: Heading content.
+- `description`: Optional description text.
+- `actions`: Optional action buttons or elements; compact actions wrap when space is limited.
+- `variant`: `default` (bordered, existing presentation) or `compact` (normal-case, small medium-weight heading without a border).
+- `level`: Semantic `h2` or `h3` (default), independent of presentation.
+- `headingId`, `headingRef`, `tabIndex`: Applied to the heading itself for `aria-labelledby` and explicit focus management.
+- `className`: Additional classes on the outer layout.
+
+#### HelperText
+
+Static muted help text for fields and other concise descriptions.
+
+```jsx
+<Input aria-label="Image title" aria-describedby="title-help" />
+<HelperText id="title-help">A short title helps you find the image later.</HelperText>
+```
+
+Properties:
+- All native paragraph props, including `children`, `id`, `ref`, and `className`.
+- No alert role or live announcement is added automatically. Dynamic statuses and errors should use their own explicit semantics.
 
 ### Dialog & Modal Components
 
@@ -647,11 +679,11 @@ A slide-out panel component (drawer/sidebar).
 
 ```jsx
 <Sheet open={isOpen} onOpenChange={setIsOpen}>
-  <SheetTrigger>
+  <SheetTrigger asChild>
     <Button>Open Sheet</Button>
   </SheetTrigger>
-  <SheetContent side="right">
-    <SheetHeader>
+  <SheetContent side="right" className="w-full sm:max-w-[24rem]">
+    <SheetHeader className="pr-12">
       <SheetTitle>Sheet Title</SheetTitle>
       <SheetDescription>Sheet description</SheetDescription>
     </SheetHeader>
@@ -674,8 +706,8 @@ Sub-components:
 - `SheetDescription`: Sheet description
 - `SheetFooter`: Footer section
 - `SheetClose`: Close button
-- `SheetOverlay`: Backdrop overlay
-- `SheetPortal`: Portal for rendering
+
+Sheet and the seven parts above are exported from `egon-ui`. Sheet accepts Radix Dialog root props including controlled `open` and `onOpenChange`. Triggers and close controls support `asChild`. SheetContent accepts `side`, `className`, children, and Radix Dialog content props. Header and footer accept div props; title and description accept their Radix Dialog props. The content includes its overlay and an accessible close button. Leave right padding in headers for that button. Modal focus is contained, Escape closes the sheet, and focus returns to its trigger.
 
 #### Drawer
 
@@ -806,6 +838,8 @@ A searchable, grouped option picker with controlled selection, responsive popove
   aria-label="Model"
   placeholder="Search models"
   renderItem={(item) => <span>{item.label} {item.metadata?.size}</span>}
+  renderSelected={(item) => <span>{item.key}</span>}
+  showChevron
 />
 ```
 
@@ -815,9 +849,11 @@ Properties:
 - `defaultSelectedKey`: Initial uncontrolled key or `null` (default).
 - `onSelectedKeyChange`: Receives the selected key. Set the controlled key to `null` externally to clear it.
 - `onSelect`: Existing callback receiving the selected item, including typed metadata.
-- `renderItem`: Optional display-only row renderer. Rows must not contain nested interactive controls; the trigger always displays the label.
+- `renderItem`: Optional display-only row renderer. Rows must not contain nested interactive controls.
+- `renderSelected`: Optional display-only renderer for the selected trigger content. Defaults to the full label and leaves the unselected placeholder and label search unchanged. Do not put interactive controls inside the trigger.
+- `showChevron`: Shows a trailing decorative chevron, default `false`.
 - `placeholder`: Search placeholder and unselected trigger text (default: `Select an item...`).
-- `aria-label`: Field name for the trigger and mobile drawer. When selected, the trigger announces both the name and selection, for example `Model: Flux Dev`.
+- `aria-label`: Field name for the trigger and mobile drawer. With a selection, the trigger name is `${ariaLabel}: ${item.label}`. Without this prop, its name is `item.label`, including when `renderSelected` shows shorter content.
 - `disabled`: Disables the trigger and closes an open picker. Re-enabling leaves it closed until the user opens it.
 - `loading` / `loadingState`: Show a status instead of options; default status is `Loading options…`.
 - `emptyState`: Custom content when a search has no matches.
@@ -1211,14 +1247,16 @@ A notification banner component for alerts and messages.
 <Banner style="info" onDismiss={() => console.log('dismissed')}>
   This is an informational message
 </Banner>
-<Banner style="error">
-  An error occurred
+<Banner style="error" role="alert">
+  <p>The image could not be saved.</p>
+  <Button>Try again</Button>
 </Banner>
 ```
 
 Properties:
 - `style`: Banner style: `info | error`
-- `children`: Banner message content (string or React nodes)
+- `children`: Banner message content, including paragraphs and action controls, rendered in a div
+- Native div props such as `role`, `aria-live`, `aria-labelledby`, `id`, and `ref` are forwarded to the outer banner. Announcements are opt-in. Native CSS `style` is excluded because the existing `style` prop selects the banner variant.
 - `onDismiss`: Optional callback when dismiss button is clicked
 - `className`: Additional CSS classes
 
@@ -1263,13 +1301,16 @@ Slider selects a single number with pointer and keyboard input. LabeledSlider ad
 const [value, setValue] = useState<number | null>(null);
 <LabeledSlider label="Strength" value={value} onChange={setValue}
   onCommit={(next) => console.log(next)} placeholderValue={0.75}
-  min={0} max={1} step={0.05} onReset={() => setValue(null)} />
+  min={0} max={1} step={0.05} onReset={() => setValue(null)}
+  density="compact" invalidBlur="restore" />
 <Slider aria-label="Volume" defaultValue={25} min={0} max={100} step={5} />
 ```
 
 - Slider: `value: number` plus `onChange(number)`, or `defaultValue?: number` and optional `onChange`. The two modes are mutually exclusive. `min=0`, `max=100`, `step=1`, `disabled`, `orientation`, and remaining Radix Root props are supported. Supply `aria-label` or `aria-labelledby`. Accessible labels, descriptions, and `aria-valuetext` apply to the thumb.
 - `onChange` reports slider movement; `onCommit` reports completed pointer or keyboard interactions. NumberField edits report change/commit when the edit commits.
 - LabeledSlider: `label`, `min`, `max`, and controlled `value: number | null` plus `onChange`, or uncontrolled `defaultValue`. Optional `id`, `step`, `disabled`, `unit`, `help`, `className`, `onCommit`, and `onReset`.
+- `density`: `default` or `compact`. Compact keeps the value beside the slider, uses an approximately 5.5rem-wide NumberField without steppers, and tightens gaps.
+- `invalidBlur`: Forwarded to NumberField; `keep` preserves invalid drafts on blur and `restore` restores the last committed value. The default is `keep`.
 - A nullable value requires finite, in-bounds `placeholderValue`. Null displays that default on the thumb and as input placeholder, without emitting it. A numeric slider with no placeholder rejects empty edits. Providing `onReset` shows the Reset button. In uncontrolled mode, Reset restores `defaultValue` (or null) and emits `onChange` when that changes the value, then calls `onReset`. In controlled mode, `onReset` is responsible for updating `value`. Reset never emits `onCommit`. Reset also clears any invalid text and its error from the input.
 
 ## Progress

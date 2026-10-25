@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { defaultFilter } from "cmdk";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/form/button";
 import {
@@ -48,6 +48,8 @@ export type ComboBoxProps<T = unknown> = SelectionProps & {
   onSelect?: (item: ComboBoxItem<T>) => void;
   onSelectedKeyChange?: (key: string | null) => void;
   renderItem?: (item: ComboBoxItem<T>) => React.ReactNode;
+  renderSelected?: (item: ComboBoxItem<T>) => React.ReactNode;
+  showChevron?: boolean;
   className?: string;
   buttonClassName?: string;
   contentClassName?: string;
@@ -65,6 +67,34 @@ type ItemListProps<T> = {
   onSelect: (item: ComboBoxItem<T>) => void;
 };
 type ItemGroup<T> = { heading: string | undefined; items: ComboBoxItem<T>[] };
+
+function triggerLabel<T>({
+  item,
+  label,
+}: {
+  item: ComboBoxItem<T> | undefined;
+  label: string | undefined;
+}): string | undefined {
+  if (item === undefined) {
+    return label;
+  }
+  return label ? `${label}: ${item.label}` : item.label;
+}
+
+function SelectedContent<T>({
+  item,
+  placeholder,
+  renderSelected,
+}: {
+  item: ComboBoxItem<T> | undefined;
+  placeholder: string;
+  renderSelected?: (item: ComboBoxItem<T>) => React.ReactNode;
+}): React.ReactNode {
+  if (item === undefined) {
+    return placeholder;
+  }
+  return renderSelected ? renderSelected(item) : item.label;
+}
 
 function groupItems<T>(items: ComboBoxItem<T>[]): ItemGroup<T>[] {
   const groups: ItemGroup<T>[] = [];
@@ -162,6 +192,8 @@ export function ComboBox<T = unknown>({
   buttonClassName,
   contentClassName,
   modal = false,
+  renderSelected,
+  showChevron = false,
   "aria-label": ariaLabel,
   ...listProps
 }: ComboBoxProps<T>): React.JSX.Element {
@@ -203,14 +235,22 @@ export function ComboBox<T = unknown>({
       type="button"
       variant="outline"
       disabled={disabled}
-      aria-label={
-        selectedItem && ariaLabel
-          ? `${ariaLabel}: ${selectedItem.label}`
-          : ariaLabel
-      }
+      aria-label={triggerLabel({ item: selectedItem, label: ariaLabel })}
       className={cn("w-[150px] justify-start", buttonClassName)}
     >
-      {selectedItem?.label ?? placeholder}
+      <span className="min-w-0 flex-1 truncate text-left">
+        <SelectedContent
+          item={selectedItem}
+          placeholder={placeholder}
+          renderSelected={renderSelected}
+        />
+      </span>
+      {showChevron && (
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="ml-auto size-4 shrink-0"
+        />
+      )}
     </Button>
   );
   const list: React.JSX.Element = (

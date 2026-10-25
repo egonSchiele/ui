@@ -64,12 +64,13 @@ export function LabeledSlider(props) {
     const generatedId = React.useId();
     const id = (_a = props.id) !== null && _a !== void 0 ? _a : generatedId;
     const slider = useLabeledSliderValue(props);
+    const compact = props.density === "compact";
     const descriptionId = props.help || slider.missingDefault ? `${id}-help` : undefined;
-    return (<div data-slot="labeled-slider" className={cn("flex flex-col gap-3", props.className)}>
+    return (<div data-slot="labeled-slider" className={cn("flex flex-col", compact ? "gap-2" : "gap-3", props.className)}>
       <LabeledSliderHeader id={id} label={props.label} disabled={props.disabled} onReset={props.onReset ? slider.reset : undefined}/>
-      <div className="flex items-center gap-4">
+      <div className={cn("flex items-center", compact ? "gap-2" : "gap-4")}>
         <Slider value={slider.thumbValue} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} disabled={slider.disabled} aria-labelledby={`${id}-label`} aria-describedby={descriptionId} className="min-w-12 flex-1"/>
-        <NumberField key={slider.resetCount} id={id} value={slider.value} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} emptyValue={slider.placeholderValid ? "allow" : "reject"} placeholder={slider.placeholderValid ? String(props.placeholderValue) : undefined} disabled={slider.disabled} unit={props.unit} aria-label={props.label} aria-describedby={descriptionId} className="w-40 shrink-0"/>
+        <NumberField key={slider.resetCount} id={id} value={slider.value} onChange={slider.change} onCommit={props.onCommit} min={props.min} max={props.max} step={props.step} emptyValue={slider.placeholderValid ? "allow" : "reject"} placeholder={slider.placeholderValid ? String(props.placeholderValue) : undefined} disabled={slider.disabled} unit={props.unit} density={props.density} showSteppers={!compact} invalidBlur={props.invalidBlur} aria-label={props.label} aria-describedby={descriptionId} className={cn("shrink-0", compact ? "w-[5.5rem]" : "w-40")}/>
       </div>
       {descriptionId && (<p id={descriptionId} className={cn("text-sm", slider.missingDefault
                 ? "text-destructive"

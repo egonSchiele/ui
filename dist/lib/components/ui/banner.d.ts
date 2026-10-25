@@ -1,8 +1,7 @@
 import React from "react";
 export type BannerStyle = "info" | "error";
-export declare function Banner({ style, children, className, onDismiss, }: {
+export type BannerProps = Omit<React.ComponentProps<"div">, "style"> & {
     style?: BannerStyle;
-    children?: React.ReactNode | string;
-    className?: string;
     onDismiss?: () => void;
-}): React.JSX.Element;
+};
+export declare function Banner({ style, children, className, onDismiss, ...props }: BannerProps): React.JSX.Element;

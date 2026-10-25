@@ -24,10 +24,12 @@ export type ComboBoxProps<T = unknown> = SelectionProps & {
     onSelect?: (item: ComboBoxItem<T>) => void;
     onSelectedKeyChange?: (key: string | null) => void;
     renderItem?: (item: ComboBoxItem<T>) => React.ReactNode;
+    renderSelected?: (item: ComboBoxItem<T>) => React.ReactNode;
+    showChevron?: boolean;
     className?: string;
     buttonClassName?: string;
     contentClassName?: string;
     modal?: boolean;
 };
-export declare function ComboBox<T = unknown>({ items, placeholder, selectedKey, defaultSelectedKey, onSelect, onSelectedKeyChange, disabled, className, buttonClassName, contentClassName, modal, "aria-label": ariaLabel, ...listProps }: ComboBoxProps<T>): React.JSX.Element;
+export declare function ComboBox<T = unknown>({ items, placeholder, selectedKey, defaultSelectedKey, onSelect, onSelectedKeyChange, disabled, className, buttonClassName, contentClassName, modal, renderSelected, showChevron, "aria-label": ariaLabel, ...listProps }: ComboBoxProps<T>): React.JSX.Element;
 export {};

@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ComboBox, ComboBoxItem } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/form/button";
+import {
+  ComboBox as PublicComboBox,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "egon-ui";
 import React from "react";
 import "../../globals.css";
 
@@ -168,4 +177,97 @@ function TemporarilyDisabledComboBox(): React.JSX.Element {
 }
 export const TemporarilyDisabled: Story = {
   render: (): React.JSX.Element => <TemporarilyDisabledComboBox />,
+};
+
+type ModelMetadata = { shortName: string };
+const modelItems: ComboBoxItem<ModelMetadata>[] = Array.from(
+  { length: 60 },
+  (_unused: unknown, index: number): ComboBoxItem<ModelMetadata> => ({
+    key: `model-${index}`,
+    label: `Studio model ${index} · repository/image-model-${index}`,
+    metadata: { shortName: `Model ${index}` },
+  }),
+);
+
+function renderModelSelection(
+  item: ComboBoxItem<ModelMetadata>,
+): React.ReactNode {
+  return (
+    <span className="block truncate">
+      {item.metadata?.shortName ?? item.label}
+    </span>
+  );
+}
+
+function SelectedDisplayDemo({ label }: { label?: string }): React.JSX.Element {
+  return (
+    <ComboBox
+      items={modelItems}
+      defaultSelectedKey="model-0"
+      aria-label={label}
+      renderSelected={renderModelSelection}
+      showChevron
+      buttonClassName="w-60"
+    />
+  );
+}
+
+export const SelectedDisplay: Story = {
+  render: (): React.JSX.Element => <SelectedDisplayDemo label="Model" />,
+};
+
+export const SelectedDisplayWithoutLabel: Story = {
+  render: (): React.JSX.Element => <SelectedDisplayDemo />,
+};
+
+function ComboBoxInSheet({ modal }: { modal: boolean }): React.JSX.Element {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button>Open settings</Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-full sm:max-w-[24rem]">
+        <SheetHeader className="pr-12">
+          <SheetTitle>Settings</SheetTitle>
+          <SheetDescription>Select a model for the image.</SheetDescription>
+        </SheetHeader>
+        <div className="px-4">
+          <PublicComboBox
+            items={modelItems}
+            aria-label="Model"
+            placeholder="Search models"
+            renderSelected={renderModelSelection}
+            showChevron
+            modal={modal}
+            buttonClassName="w-full"
+            contentClassName="max-w-[calc(100vw-2rem)]"
+          />
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+export const InSheetModal: Story = {
+  render: (): React.JSX.Element => <ComboBoxInSheet modal />,
+};
+
+export const InSheetNonModal: Story = {
+  render: (): React.JSX.Element => <ComboBoxInSheet modal={false} />,
+};
+
+export const LongSelectedLabel: Story = {
+  args: {
+    "aria-label": "Model",
+    items: [
+      {
+        key: "long-model",
+        label:
+          "Long repository name / illustration-model-version-with-detailed-configuration",
+      },
+    ],
+    defaultSelectedKey: "long-model",
+    buttonClassName: "w-[220px]",
+    showChevron: true,
+  },
 };
