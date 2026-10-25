@@ -147,8 +147,15 @@ function Button({
     );
   }
 
+  // A pending button stays enabled so it keeps keyboard focus. Disabling a
+  // focused button moves focus to the page body.
   return (
-    <button {...props} {...sharedProps} disabled={pending || props.disabled}>
+    <button
+      {...props}
+      {...sharedProps}
+      aria-disabled={pending || props["aria-disabled"]}
+      onClickCapture={pending ? preventPendingActivation : props.onClickCapture}
+    >
       {content}
     </button>
   );

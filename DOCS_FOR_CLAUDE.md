@@ -33,7 +33,7 @@ Properties:
 - `size`: Size variant: `default | sm | lg | icon | icon-sm`; `icon-sm` is 32px square
 - `asChild`: If true, renders as a Slot component for composition
 - `disabled`: Disables a native button; it stays disabled when pending ends
-- `pending`: Defaults to `false`. Marks the action `aria-busy` and disables native buttons. Links and composed children receive `aria-disabled`, leave the tab order, and block click activation while pending.
+- `pending`: Defaults to `false`. Marks the action `aria-busy` and `aria-disabled` and blocks click activation, including Enter and Space. A native button stays enabled and focusable, so a button that becomes pending from its own click keeps keyboard focus. Links and composed children also leave the tab order while pending.
 - `pendingLabel`: Optional replacement content during pending; without it the label stays unchanged. With `asChild`, replaces the child's contents while preserving its element and props.
 - `href`: When provided, renders as an `<a>` tag for navigation instead of a `<button>`
 - `target`: Link target (e.g., `_blank` for new tab) - only used when `href` is provided

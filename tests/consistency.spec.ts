@@ -8,10 +8,16 @@ test("pending buttons block activation and preserve explicit disabled state", as
   );
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await page.getByRole("button", { name: "Toggle pending" }).click();
-  const saving: Locator = page.getByRole("button", { name: "Saving…" });
-  await expect(saving).toBeDisabled();
-  await expect(saving).toHaveAttribute("aria-busy", "true");
-  await expect(page.getByRole("button", { name: "Keep label" })).toBeDisabled();
+  for (const name of ["Saving…", "Keep label"]) {
+    const pendingButton: Locator = page.getByRole("button", { name });
+    await expect(pendingButton).not.toHaveAttribute("disabled");
+    await expect(pendingButton).toHaveAttribute("aria-busy", "true");
+    await expect(pendingButton).toHaveAttribute("aria-disabled", "true");
+    await pendingButton.dispatchEvent("click");
+    await pendingButton.focus();
+    await pendingButton.press("Enter");
+    await pendingButton.press(" ");
+  }
   for (const name of ["Opening…", "Composing…"]) {
     const link: Locator = page.getByRole("link", { name });
     await expect(link).toHaveAttribute("aria-busy", "true");
@@ -35,6 +41,26 @@ test("pending buttons block activation and preserve explicit disabled state", as
   ).toHaveAttribute("href", "#child-target");
   await page.getByRole("link", { name: "Composed link" }).click();
   await expect(page.getByText("Activations: 2")).toBeVisible();
+});
+
+test("a button keeps focus while its own click makes it pending", async ({
+  page,
+}) => {
+  await page.goto(
+    "/iframe.html?id=examples-button-states--self-pending-action-example&viewMode=story",
+  );
+  const queue: Locator = page.getByRole("button", { name: "Queue" });
+  await queue.focus();
+  await queue.press("Enter");
+  const queuing: Locator = page.getByRole("button", { name: "Queuing…" });
+  await expect(queuing).toHaveAttribute("aria-disabled", "true");
+  await expect(queuing).toBeFocused();
+  await queuing.press("Enter");
+  await expect(page.getByText("Queued: 1")).toBeVisible();
+  await page.getByRole("button", { name: "Finish" }).click();
+  await queue.focus();
+  await queue.press("Enter");
+  await expect(page.getByText("Queued: 2")).toBeVisible();
 });
 
 test("compact headings name sections and accept explicit focus targets", async ({

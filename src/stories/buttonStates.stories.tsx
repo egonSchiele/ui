@@ -54,6 +54,33 @@ function PendingActions(): React.JSX.Element {
     </div>
   );
 }
+// The button becomes pending from its own click, as a submit action does.
+function SelfPendingAction(): React.JSX.Element {
+  const [pending, setPending] = React.useState<boolean>(false);
+  const [activations, setActivations] = React.useState<number>(0);
+  return (
+    <div className="flex flex-col gap-3">
+      <Button
+        pending={pending}
+        pendingLabel="Queuing…"
+        onClick={(): void => {
+          setActivations((value: number): number => value + 1);
+          setPending(true);
+        }}
+      >
+        Queue
+      </Button>
+      <Button variant="outline" onClick={(): void => setPending(false)}>
+        Finish
+      </Button>
+      <output>Queued: {activations}</output>
+    </div>
+  );
+}
+export const SelfPendingActionExample: Story = {
+  render: (): React.JSX.Element => <SelfPendingAction />,
+};
+
 export const PendingActionsExample: Story = {
   render: (): React.JSX.Element => <PendingActions />,
 };
