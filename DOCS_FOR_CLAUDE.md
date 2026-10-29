@@ -2,7 +2,11 @@ This repo contains React components you can use for building UI.
 
 `pnpm test` rebuilds the package before type checks and browser tests. Stories importing `egon-ui` exercise the public `dist` entry point, so rebuild with `pnpm run build` after source changes when running Storybook directly.
 
-Keep the exact `@radix-ui/react-dialog` and `@radix-ui/react-popover` versions paired: both must resolve the same `@radix-ui/react-dismissable-layer` version. Separate layer contexts cause Escape to close both a nested popup and its parent Sheet. When updating these dependencies, update both together and run the nested Sheet/ComboBox browser tests.
+Pin these Radix packages to exact versions, and update them together: Dialog, Popover, Select, Tooltip, ContextMenu, DropdownMenu, Menubar, and NavigationMenu. All of them must resolve one copy of `@radix-ui/react-dismissable-layer` and one copy of `@radix-ui/react-focus-scope`. Each copy keeps its own stack of open layers and focus traps. With two copies, Escape closes both a popup and the Sheet or Dialog under it. A Dialog also keeps focus away from a menu or Select inside it.
+
+A test in `tests/layer2-controls.spec.ts` fails when the lockfile resolves more than one copy. After an update, also run the browser tests for a ComboBox in a Sheet and for a menu, Select, and tooltip in a Dialog.
+
+A Radix layer starts to take Escape a few frames after it mounts. Until then, the layer under it takes Escape. A browser test that presses Escape right after a popup opens must first wait two animation frames. See `waitForLayers` in `tests/layer2-controls.spec.ts`.
 
 `--input-background` controls Input, Textarea, and NumberField input fills independently of their borders. If it is unset, the fill falls back to `--input`, preserving existing themes. `--input` continues to set the border color. Set the optional token on the app root or a containing element; no descendant selectors are needed.
 

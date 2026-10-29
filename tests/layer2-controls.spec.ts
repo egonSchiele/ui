@@ -1,4 +1,18 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+
+// A Radix layer starts to take Escape a few frames after it mounts. Until
+// then, the layer under it takes Escape. Wait two animation frames before
+// pressing Escape in a layer that just opened.
+async function waitForLayers(page: Page): Promise<void> {
+  await page.evaluate(
+    (): Promise<void> =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
 test("scalar Slider reports keyboard changes, commits, external resets, and bounds", async ({
   page,
 }) => {
@@ -415,4 +429,61 @@ test("Progress applies dimensions and styles to the bar and customizes its indic
   const barRight: number = (bar?.x ?? 0) + (bar?.width ?? 0);
   const valueRight: number = (valueText?.x ?? 0) + (valueText?.width ?? 0);
   expect(Math.abs(barRight - valueRight)).toBeLessThanOrEqual(1);
+});
+
+// Each copy of these packages keeps its own stack of open layers and focus
+// traps. With two copies, Escape closes both a popup and the dialog under
+// it. The dialog also keeps focus away from the popup.
+test("the lockfile resolves one copy of each Radix layer package", (): void => {
+  const lockfile: string = readFileSync("pnpm-lock.yaml", "utf8");
+  for (const name of ["react-dismissable-layer", "react-focus-scope"]) {
+    const versions: string[] = [
+      ...lockfile.matchAll(
+        new RegExp(`^  '@radix-ui/${name}@([^(']+)`, "gm"),
+      ),
+    ].map((match: RegExpMatchArray): string => match[1]);
+    const unique: string[] = [...new Set(versions)];
+    expect(
+      unique,
+      `@radix-ui/${name} resolves to ${unique.join(", ")}`,
+    ).toHaveLength(1);
+  }
+});
+
+test("a Select inside a dialog takes focus, and Escape closes only the list", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-select--in-dialog&viewMode=story");
+  const trigger: Locator = page.getByRole("combobox", { name: "Fruit" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("option", { name: "Apple" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("option", { name: "Banana" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Fruit: banana")).toBeVisible();
+  await trigger.press("Enter");
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("listbox")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Pick a fruit" })).toBeVisible();
+  await expect(trigger).toBeFocused();
+});
+
+test("Escape closes a tooltip inside a dialog without closing the dialog", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-simpletooltip--in-dialog&viewMode=story");
+  await expect(page.getByRole("button", { name: "Rename" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("tooltip")).toHaveText("Download the original");
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Image" })).toBeVisible();
 });

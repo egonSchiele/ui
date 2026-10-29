@@ -11,6 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/form/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta: Meta = {
@@ -70,4 +77,35 @@ export const Default: Story = {
     ),
     onValueChange: console.log,
   },
+};
+
+// A Select inside a dialog. The list must take focus from the dialog's
+// focus trap, and Escape must close the list without closing the dialog.
+function InDialogDemo(): React.JSX.Element {
+  const [fruit, setFruit]: [string, React.Dispatch<React.SetStateAction<string>>] =
+    React.useState<string>("None");
+  return (
+    <Dialog defaultOpen>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Pick a fruit</DialogTitle>
+          <DialogDescription>A dialog with a Select.</DialogDescription>
+        </DialogHeader>
+        <Select onValueChange={setFruit}>
+          <SelectTrigger aria-label="Fruit" className="w-[180px]">
+            <SelectValue placeholder="Select a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+          </SelectContent>
+        </Select>
+        <output>Fruit: {fruit}</output>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export const InDialog: Story = {
+  render: (): React.JSX.Element => <InDialogDemo />,
 };

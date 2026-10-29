@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/form/button";
 import type { Meta, StoryObj } from "@storybook/react";
 import "../../globals.css";
 import { SimpleTooltip } from "@/components/ui/simpleTooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const SIDE_OPTIONS = ["top", "right", "bottom", "left"];
 const ALIGN_OPTIONS = ["start", "center", "end"];
@@ -217,4 +224,25 @@ export const TextTrigger: Story = {
     children: "More information",
     tooltipContent: "A plain text trigger creates a button.",
   },
+};
+
+// A tooltip inside a dialog. Escape must close the tooltip without
+// closing the dialog.
+export const InDialog: Story = {
+  render: (): React.JSX.Element => (
+    <Dialog defaultOpen>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Image</DialogTitle>
+          <DialogDescription>A dialog with a tooltip.</DialogDescription>
+        </DialogHeader>
+        <div className="flex gap-2">
+          <Button variant="outline">Rename</Button>
+          <SimpleTooltip asChild tooltipContent="Download the original">
+            <Button>Download</Button>
+          </SimpleTooltip>
+        </div>
+      </DialogContent>
+    </Dialog>
+  ),
 };
