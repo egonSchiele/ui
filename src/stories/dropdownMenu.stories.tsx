@@ -14,6 +14,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/form/button";
 import "../../globals.css";
 
@@ -122,4 +129,101 @@ function ActionsButtonDemo(): React.JSX.Element {
 
 export const ActionsButton: Story = {
   render: (): React.JSX.Element => <ActionsButtonDemo />,
+};
+
+// A menu item that opens a dialog. After the dialog closes, the page must
+// take clicks again.
+function OpensDialogDemo(): React.JSX.Element {
+  const [open, setOpen]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] =
+    React.useState<boolean>(false);
+  const [clicks, setClicks]: [number, React.Dispatch<React.SetStateAction<number>>] =
+    React.useState<number>(0);
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Actions</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onSelect={(): void => setOpen(true)}>
+            Rename
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename</DialogTitle>
+            <DialogDescription>Opened from the menu.</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+      <Button
+        variant="outline"
+        onClick={(): void => setClicks((count: number): number => count + 1)}
+      >
+        Count
+      </Button>
+      <output>Clicks: {clicks}</output>
+    </div>
+  );
+}
+
+export const OpensDialog: Story = {
+  render: (): React.JSX.Element => <OpensDialogDemo />,
+};
+
+// A menu inside a dialog. The menu must take focus from the dialog's
+// focus trap.
+function InDialogDemo(): React.JSX.Element {
+  const [action, setAction]: [string, React.Dispatch<React.SetStateAction<string>>] =
+    React.useState<string>("None");
+  return (
+    <Dialog open>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Image</DialogTitle>
+          <DialogDescription>A dialog with an actions menu.</DialogDescription>
+        </DialogHeader>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">Image actions</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onSelect={(): void => setAction("Rename")}>
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={(): void => setAction("Move")}>
+              Move
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <output>Action: {action}</output>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export const InDialog: Story = {
+  render: (): React.JSX.Element => <InDialogDemo />,
+};
+
+// More items than fit beside the trigger. The menu scrolls.
+function LongMenuDemo(): React.JSX.Element {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Sixty folders</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {Array.from({ length: 60 }, (_unused: unknown, index: number) => (
+          <DropdownMenuItem key={index}>Folder {index + 1}</DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export const LongMenu: Story = {
+  render: (): React.JSX.Element => <LongMenuDemo />,
 };

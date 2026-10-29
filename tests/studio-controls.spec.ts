@@ -143,6 +143,15 @@ for (const width of [800, 600]) {
       });
       await expect(selected).toBeFocused();
       await selected.click();
+      await expect(page.getByRole("listbox")).toBeVisible();
+      // Radix 1.2 gives a new layer Escape a few renders after it mounts.
+      // Until then the Sheet holds it, so wait out those frames.
+      await page.evaluate(
+        (): Promise<void> =>
+          new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      );
       await page.getByRole("combobox").press("Escape");
       await expect(page.getByRole("combobox")).toHaveCount(0);
       await expect(

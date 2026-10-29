@@ -223,20 +223,86 @@ test("dropdown menu opens from its trigger, moves by keyboard, and restores focu
   await expect(page.getByText("Action: Archived")).toBeVisible();
 });
 
-test("dropdown menu matches the context menu's item styles", async ({
+test("dropdown menu moves into and out of a submenu by keyboard, and Escape closes it", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "File actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  const moveTo: Locator = page.getByRole("menuitem", {
+    name: "Move to",
+    exact: true,
+  });
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(moveTo).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("menuitem", { name: "Archive", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("ArrowLeft");
+  await expect(moveTo).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test("dropdown menu item that opens a dialog leaves the page clickable", async ({
   page,
 }: {
   page: Page;
 }): Promise<void> => {
   await page.goto(
-    "/iframe.html?id=ui-dropdownmenu--actions-button&viewMode=story",
+    "/iframe.html?id=ui-dropdownmenu--opens-dialog&viewMode=story",
   );
-  await page.getByRole("button", { name: "Actions for Cover 3" }).click();
-  const item: Locator = page.getByRole("menuitem", { name: "Rename" });
-  await expect(item).toHaveAttribute("data-slot", "dropdown-menu-item");
-  await expect(item).toHaveClass(/rounded-sm/);
-  await item.click();
-  await expect(page.getByText("Action: Rename")).toBeVisible();
+  await page.getByRole("button", { name: "Actions" }).click();
+  await page.getByRole("menuitem", { name: "Rename" }).click();
+  await expect(page.getByRole("dialog", { name: "Rename" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.pointerEvents))
+    .not.toBe("none");
+  await page.getByRole("button", { name: "Count" }).click();
+  await expect(page.getByText("Clicks: 1")).toBeVisible();
+});
+
+test("dropdown menu inside a dialog takes focus and moves by keyboard", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--in-dialog&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "Image actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menuitem", { name: "Rename" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menuitem", { name: "Move" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Action: Move")).toBeVisible();
+});
+
+test("a dropdown menu taller than the window scrolls inside it", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  await page.goto("/iframe.html?id=ui-dropdownmenu--long-menu&viewMode=story");
+  await page.getByRole("button", { name: "Sixty folders" }).click();
+  const menu: Locator = page.getByRole("menu");
+  const box = await menu.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box?.y ?? -1).toBeGreaterThanOrEqual(0);
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(600);
+  await page.getByRole("menuitem", { name: "Folder 60" }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole("menuitem", { name: "Folder 60" })).toBeInViewport();
 });
 
 test("Slider places accessible labels and value text only on its thumb", async ({
