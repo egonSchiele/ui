@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Button } from "../../components/ui/form/button";
-import { chooseFiles, droppedEntry, inHiddenFolder, readDroppedItems, } from "../../components/ui/drop-zone-files";
+import { chooseFiles, droppedEntry, pickedFolderFiles, readDroppedItems, } from "../../components/ui/drop-zone-files";
 import { cn } from "../../utils";
 const READING_FOLDERS = "Reading folders…";
 function isEditable(target) {
@@ -219,12 +219,9 @@ function useDropTarget(options) {
         onDrop,
         onPaste });
 }
-// The files a picker returned. A folder pick leaves out hidden files and
-// the files in hidden folders, as a folder drop does.
 function pickedFiles(input) {
     var _a;
-    const files = Array.from((_a = input.files) !== null && _a !== void 0 ? _a : []);
-    return foundFiles(files.filter((file) => !inHiddenFolder(file)));
+    return foundFiles(pickedFolderFiles(Array.from((_a = input.files) !== null && _a !== void 0 ? _a : [])));
 }
 function defaultDescription({ multiple, folders, pasteActive, }) {
     const files = multiple ? "files" : "a file";

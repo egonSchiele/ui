@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/form/button";
 import {
   chooseFiles,
   droppedEntry,
-  inHiddenFolder,
+  pickedFolderFiles,
   readDroppedItems,
   type DropZoneChoice,
   type DropZoneRejection,
@@ -403,13 +403,8 @@ function useDropTarget<Value>(options: TargetOptions<Value>): DropTargetState {
   };
 }
 
-// The files a picker returned. A folder pick leaves out hidden files and
-// the files in hidden folders, as a folder drop does.
 function pickedFiles(input: HTMLInputElement): Promise<FoundFile[]> {
-  const files: File[] = Array.from(input.files ?? []);
-  return foundFiles(
-    files.filter((file: File): boolean => !inHiddenFolder(file)),
-  );
+  return foundFiles(pickedFolderFiles(Array.from(input.files ?? [])));
 }
 
 function defaultDescription({

@@ -332,13 +332,11 @@ test("Choose folder picks a folder's files and leaves out hidden ones", async ({
     .getByLabel("Folder for Images", { exact: true })
     .setInputFiles("tests/fixtures/picked-folder");
   await expect(page.getByText("Selections: 1")).toBeVisible();
-  const line: string =
-    (await page.getByText(/^Selection 1:/).textContent()) ?? "";
-  expect(line).toContain("a.png accepted");
-  expect(line).toContain("b.png accepted");
-  expect(line).toContain("notes.txt file-type");
-  expect(line).not.toContain("c.png");
-  expect(line).not.toContain(".hidden.png");
+  await expect(
+    page.getByText(
+      "Selection 1: a.png accepted, notes.txt file-type, b.png accepted",
+    ),
+  ).toBeVisible();
 });
 
 test("DropArea shows its overlay during a drag and takes drops and pastes", async ({

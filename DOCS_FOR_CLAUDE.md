@@ -1384,7 +1384,7 @@ Props: required `label`; optional `onSelect(Promise<DropZoneChoice[]>)`, `onFile
 
 `onSelect` is called once per drop, paste, or pick, as soon as it starts. Its promise resolves with every file in the order the browser gave them. A `DropZoneChoice` is `{ accepted: true, file }` or `{ accepted: false, rejection }`. The promise never rejects. `onFiles` and `onReject` still fire after it resolves, with the accepted files and the rejections.
 
-With `folders`, a dropped folder gives the files inside it, subfolders included, sorted by name within each folder. Hidden files and folders inside it are skipped. A read that fails is logged and becomes an `unreadable` rejection. `folders` also adds a "Choose folder" picker. While a folder is read, the zone sets `aria-busy` and its description reads "Reading folders…".
+With `folders`, a dropped folder gives the files inside it, subfolders included, sorted by name within each folder. Hidden files and folders inside it are skipped. A read that fails is logged and becomes an `unreadable` rejection. `folders` also adds a "Choose folder" picker, which gives the folder's files in path order and leaves out hidden ones. While a folder is read, the zone sets `aria-busy` and its description reads "Reading folders…".
 
 The default description reflects `multiple`, `folders`, and whether `pasteActive` allows paste outside the focused zone. The picker says "Choose file" or "Choose files" by default; `pickerLabel` sets both its visible text and the start of its accessible name. `description` replaces the instructions associated with the zone.
 

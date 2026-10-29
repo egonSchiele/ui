@@ -60,8 +60,19 @@ function isHidden(name) {
     return name.startsWith(".");
 }
 // True when any folder on a picked file's relative path is hidden.
-export function inHiddenFolder(file) {
+function inHiddenFolder(file) {
     return file.webkitRelativePath.split("/").some(isHidden);
+}
+function byRelativePath(left, right) {
+    return left.webkitRelativePath.localeCompare(right.webkitRelativePath);
+}
+// The files a folder pick returned, in path order, as a folder drop gives
+// them. Hidden files and the files in hidden folders are left out. A
+// file pick has no relative paths, so it keeps the browser's order.
+export function pickedFolderFiles(files) {
+    return files
+        .filter((file) => !inHiddenFolder(file))
+        .sort(byRelativePath);
 }
 function unreadable(path, error) {
     console.error(`DropZone could not read ${path}.`, error);

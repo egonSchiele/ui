@@ -38,7 +38,7 @@ type ChooseOptions = {
     multiple?: boolean;
 };
 export declare function chooseFiles(found: FoundFile[], { accept, multiple }: ChooseOptions): DropZoneChoice[];
-export declare function inHiddenFolder(file: File): boolean;
+export declare function pickedFolderFiles(files: File[]): File[];
 export declare function readDroppedItems(items: DroppedItem[]): Promise<FoundFile[]>;
 export declare function droppedEntry(entry: FileSystemEntry): DroppedEntry;
 export {};
