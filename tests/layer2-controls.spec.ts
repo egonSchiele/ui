@@ -259,11 +259,32 @@ test("dropdown menu moves into and out of a submenu by keyboard, and Escape clos
   await expect(
     page.getByRole("menuitem", { name: "Archive", exact: true }),
   ).toBeFocused();
+  // An unset CSS variable makes max-height compute to "none".
+  const subMenuMaxHeight: string = await page
+    .locator('[data-slot="dropdown-menu-sub-content"]')
+    .evaluate((element: Element): string => getComputedStyle(element).maxHeight);
+  expect(subMenuMaxHeight).not.toBe("none");
   await page.keyboard.press("ArrowLeft");
   await expect(moveTo).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("menu")).toHaveCount(0);
   await expect(trigger).toBeFocused();
+});
+
+test("a click outside a dropdown menu closes it without choosing an item", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  await page.getByRole("button", { name: "File actions" }).click();
+  await expect(page.getByRole("menu")).toBeVisible();
+  await page.mouse.click(5, 5);
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(page.getByText("Action: None")).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.pointerEvents))
+    .not.toBe("none");
 });
 
 test("dropdown menu item that opens a dialog leaves the page clickable", async ({
@@ -286,7 +307,7 @@ test("dropdown menu item that opens a dialog leaves the page clickable", async (
   await expect(page.getByText("Clicks: 1")).toBeVisible();
 });
 
-test("dropdown menu inside a dialog takes focus and moves by keyboard", async ({
+test("dropdown menu inside a dialog takes focus, and Escape closes only the menu", async ({
   page,
 }: {
   page: Page;
@@ -300,6 +321,13 @@ test("dropdown menu inside a dialog takes focus and moves by keyboard", async ({
   await expect(page.getByRole("menuitem", { name: "Move" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByText("Action: Move")).toBeVisible();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Image" })).toBeVisible();
+  await expect(trigger).toBeFocused();
 });
 
 test("a dropdown menu taller than the window scrolls inside it", async ({

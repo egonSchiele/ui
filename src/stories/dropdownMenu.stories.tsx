@@ -174,12 +174,12 @@ export const OpensDialog: Story = {
 };
 
 // A menu inside a dialog. The menu must take focus from the dialog's
-// focus trap.
+// focus trap, and Escape must close the menu without closing the dialog.
 function InDialogDemo(): React.JSX.Element {
   const [action, setAction]: [string, React.Dispatch<React.SetStateAction<string>>] =
     React.useState<string>("None");
   return (
-    <Dialog open>
+    <Dialog defaultOpen>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Image</DialogTitle>
