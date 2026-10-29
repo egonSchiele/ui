@@ -288,3 +288,83 @@ test("DropZone instructions match file count, paste scope, and caller labels", a
   await picker.click();
   await (await chooser).setFiles(image);
 });
+
+async function mixedTransfer(page: Page): Promise<JSHandle<DataTransfer>> {
+  return page.evaluateHandle((): DataTransfer => {
+    const transfer: DataTransfer = new DataTransfer();
+    transfer.items.add(new File(["png"], "a.png", { type: "image/png" }));
+    transfer.items.add(new File(["text"], "notes.txt", { type: "text/plain" }));
+    transfer.items.add(new File(["png"], "b.png", { type: "image/png" }));
+    return transfer;
+  });
+}
+
+test("onSelect reports one drop as one ordered selection", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropzone--folders&viewMode=story");
+  const transfer: JSHandle<DataTransfer> = await mixedTransfer(page);
+  await page
+    .getByRole("group", { name: "Images", exact: true })
+    .dispatchEvent("drop", { dataTransfer: transfer });
+  await expect(page.getByText("Selections: 1")).toBeVisible();
+  await expect(
+    page.getByText(
+      "Selection 1: a.png accepted, notes.txt file-type, b.png accepted",
+    ),
+  ).toBeVisible();
+});
+
+test("Choose folder picks a folder's files and leaves out hidden ones", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropzone--folders&viewMode=story");
+  await expect(
+    page.getByRole("group", { name: "Images", exact: true }),
+  ).toHaveAccessibleDescription(
+    "Drop files or folders here, or paste while this area is focused.",
+  );
+  await page
+    .getByLabel("Folder for Images", { exact: true })
+    .setInputFiles("tests/fixtures/picked-folder");
+  await expect(page.getByText("Selections: 1")).toBeVisible();
+  const line: string =
+    (await page.getByText(/^Selection 1:/).textContent()) ?? "";
+  expect(line).toContain("a.png accepted");
+  expect(line).toContain("b.png accepted");
+  expect(line).toContain("notes.txt file-type");
+  expect(line).not.toContain("c.png");
+  expect(line).not.toContain("DS_Store");
+});
+
+test("DropArea shows its overlay during a drag and takes drops and pastes", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropzone--area&viewMode=story");
+  const content: Locator = page.getByTestId("area-content");
+  const area: Locator = page.locator('[data-slot="drop-zone"]');
+  await expect(area).not.toHaveAttribute("tabindex");
+  const transfer: JSHandle<DataTransfer> = await mixedTransfer(page);
+  await content.dispatchEvent("dragenter", { dataTransfer: transfer });
+  await content.dispatchEvent("dragover", { dataTransfer: transfer });
+  await expect(page.locator('[data-slot="drop-area-overlay"]')).toHaveText(
+    "Drop images to add them",
+  );
+  await content.dispatchEvent("drop", { dataTransfer: transfer });
+  await expect(page.locator('[data-slot="drop-area-overlay"]')).toHaveCount(0);
+  await expect(
+    page.getByText(
+      "Selection 1: a.png accepted, notes.txt file-type, b.png accepted",
+    ),
+  ).toBeVisible();
+  await pasteFiles(page.getByRole("textbox", { name: "Area text" }), transfer);
+  await expect(page.getByText("Selections: 1")).toBeVisible();
+  await pasteFiles(page.locator("body"), transfer);
+  await expect(page.getByText("Selections: 2")).toBeVisible();
+});

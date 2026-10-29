@@ -58,5 +58,5 @@ export { Progress } from "./components/ui/progress";
 export { ScrollArea, ScrollBar } from "./components/ui/scroll-area";
 export { Kbd } from "./components/ui/kbd";
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "./components/ui/layout/resizable";
-export { DropZone } from "./components/ui/drop-zone";
+export { DropArea, DropZone } from "./components/ui/drop-zone";
 export { ContextMenu, ContextMenuTrigger, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuRadioGroup, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSubTrigger, ContextMenuSubContent } from "./components/ui/context-menu";
