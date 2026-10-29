@@ -192,6 +192,53 @@ test("context menu supports keyboard invocation, disabled entries, submenus, and
   await expect(page.getByText("Action: Archived")).toBeVisible();
 });
 
+test("dropdown menu opens from its trigger, moves by keyboard, and restores focus", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "File actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await expect(
+    page.getByRole("menuitem", { name: "Unavailable" }),
+  ).toHaveAttribute("aria-disabled", "true");
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menuitem", { name: "Move to", exact: true })).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Action: Opened")).toBeVisible();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await page.getByRole("menuitem", { name: "Move to", exact: true }).hover();
+  await page.getByRole("menuitem", { name: "Archive", exact: true }).click();
+  await expect(page.getByText("Action: Archived")).toBeVisible();
+});
+
+test("dropdown menu matches the context menu's item styles", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto(
+    "/iframe.html?id=ui-dropdownmenu--actions-button&viewMode=story",
+  );
+  await page.getByRole("button", { name: "Actions for Cover 3" }).click();
+  const item: Locator = page.getByRole("menuitem", { name: "Rename" });
+  await expect(item).toHaveAttribute("data-slot", "dropdown-menu-item");
+  await expect(item).toHaveClass(/rounded-sm/);
+  await item.click();
+  await expect(page.getByText("Action: Rename")).toBeVisible();
+});
+
 test("Slider places accessible labels and value text only on its thumb", async ({
   page,
 }: {

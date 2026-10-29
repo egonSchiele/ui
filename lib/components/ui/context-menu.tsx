@@ -5,6 +5,7 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/utils";
+import { menuContentClassName, menuItemClassName } from "./menu-classes";
 
 export const ContextMenu = ContextMenuPrimitive.Root;
 
@@ -57,12 +58,6 @@ export const ContextMenuSub = ContextMenuPrimitive.Sub;
 
 export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 
-const contentClassName: string =
-  "bg-popover text-popover-foreground z-50 min-w-40 overflow-hidden rounded-md border p-1 shadow-md outline-none";
-
-const itemClassName: string =
-  "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
-
 export function ContextMenuContent({
   className,
   ...props
@@ -74,7 +69,7 @@ export function ContextMenuContent({
       <ContextMenuPrimitive.Content
         {...props}
         data-slot="context-menu-content"
-        className={cn(contentClassName, className)}
+        className={cn(menuContentClassName, className)}
       />
     </ContextMenuPrimitive.Portal>
   );
@@ -94,7 +89,7 @@ export function ContextMenuItem({
       {...props}
       data-slot="context-menu-item"
       className={cn(
-        itemClassName,
+        menuItemClassName,
         inset && "pl-8",
         variant === "destructive" && "text-destructive focus:text-destructive",
         className,
@@ -114,7 +109,7 @@ export function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       {...props}
       data-slot="context-menu-checkbox-item"
-      className={cn(itemClassName, "pl-8", className)}
+      className={cn(menuItemClassName, "pl-8", className)}
     >
       <span className="absolute left-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
@@ -137,7 +132,7 @@ export function ContextMenuRadioItem({
     <ContextMenuPrimitive.RadioItem
       {...props}
       data-slot="context-menu-radio-item"
-      className={cn(itemClassName, "pl-8", className)}
+      className={cn(menuItemClassName, "pl-8", className)}
     >
       <span className="absolute left-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
@@ -204,7 +199,7 @@ export function ContextMenuSubTrigger({
       {...props}
       data-slot="context-menu-sub-trigger"
       className={cn(
-        itemClassName,
+        menuItemClassName,
         "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
         inset && "pl-8",
         className,
@@ -227,7 +222,7 @@ export function ContextMenuSubContent({
       <ContextMenuPrimitive.SubContent
         {...props}
         data-slot="context-menu-sub-content"
-        className={cn(contentClassName, className)}
+        className={cn(menuContentClassName, className)}
       />
     </ContextMenuPrimitive.Portal>
   );

@@ -1423,3 +1423,22 @@ ContextMenu supplies themed Radix context menus with keyboard navigation, submen
 ```
 
 All parts accept the corresponding Radix props. Use a focusable trigger for keyboard invocation. `ContextMenuTrigger asChild` preserves the child’s tab order, including when the menu is disabled; disabling the menu does not disable the child’s primary action. A plain span trigger defaults to tabIndex 0 when enabled and -1 when disabled; an explicit `tabIndex` is preserved. Exported parts: ContextMenu, Trigger, Content, Group, Portal, Item, CheckboxItem, RadioGroup, RadioItem, Label, Separator, Shortcut, Sub, SubTrigger, SubContent (all prefixed ContextMenu). Item also supports `inset` and `variant: "default" | "destructive"`. Label and SubTrigger support `inset`. Shortcut accepts Kbd props. Content and SubContent include their portals.
+
+## DropdownMenu family
+
+DropdownMenu supplies themed Radix menus that open from a trigger, such as an actions button on a card. Its parts look the same as the ContextMenu parts, so an item's actions button and its right-click menu can show the same items.
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button size="icon" variant="ghost" aria-label="Actions for Cover 3"><MoreHorizontalIcon /></Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    <DropdownMenuItem onSelect={rename}>Rename</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem variant="destructive" onSelect={trash}>Move to Trash</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+All parts accept the corresponding Radix props. Exported parts: DropdownMenu, Trigger, Content, Group, Portal, Item, CheckboxItem, RadioGroup, RadioItem, Label, Separator, Shortcut, Sub, SubTrigger, SubContent (all prefixed DropdownMenu). Item supports `inset` and `variant: "default" | "destructive"`. Label and SubTrigger support `inset`. Shortcut accepts Kbd props. Content and SubContent include their portals. Content takes `sideOffset`, 4 by default, and Radix's `onCloseAutoFocus` to move focus somewhere other than the trigger when the menu closes.
