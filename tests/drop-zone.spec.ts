@@ -338,7 +338,7 @@ test("Choose folder picks a folder's files and leaves out hidden ones", async ({
   expect(line).toContain("b.png accepted");
   expect(line).toContain("notes.txt file-type");
   expect(line).not.toContain("c.png");
-  expect(line).not.toContain("DS_Store");
+  expect(line).not.toContain(".hidden.png");
 });
 
 test("DropArea shows its overlay during a drag and takes drops and pastes", async ({
