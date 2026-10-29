@@ -1,7 +1,9 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import {
+  DropArea,
   DropZone,
+  type DropZoneChoice,
   type DropZoneDecodeResult,
   type DropZoneRejection,
 } from "@/components/ui/drop-zone";
@@ -127,6 +129,101 @@ function NestedDropZoneDemo({
   );
 }
 
+function choiceText(choice: DropZoneChoice): string {
+  return choice.accepted
+    ? `${choice.file.name} accepted`
+    : `${choice.rejection.file?.name ?? "item"} ${choice.rejection.code}`;
+}
+
+// Records each selection as one line, in the order of its choices.
+function useSelections(): {
+  lines: string[];
+  reading: number;
+  onSelect: (choices: Promise<DropZoneChoice[]>) => void;
+} {
+  const [lines, setLines]: [
+    string[],
+    React.Dispatch<React.SetStateAction<string[]>>,
+  ] = React.useState<string[]>([]);
+  const [reading, setReading]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = React.useState<number>(0);
+  const onSelect = React.useCallback(
+    (choices: Promise<DropZoneChoice[]>): void => {
+      setReading((count: number): number => count + 1);
+      void choices.then((list: DropZoneChoice[]): void => {
+        setReading((count: number): number => count - 1);
+        setLines((previous: string[]): string[] => [
+          ...previous,
+          list.map(choiceText).join(", "),
+        ]);
+      });
+    },
+    [],
+  );
+  return { lines, reading, onSelect };
+}
+
+function SelectionOutput({
+  lines,
+  reading,
+}: {
+  lines: string[];
+  reading: number;
+}): React.JSX.Element {
+  return (
+    <>
+      <output>Selections: {lines.length}</output>
+      <output>Reading: {reading}</output>
+      {lines.map(
+        (line: string, index: number): React.JSX.Element => (
+          <output key={index}>
+            Selection {index + 1}: {line}
+          </output>
+        ),
+      )}
+    </>
+  );
+}
+
+function FoldersDemo(): React.JSX.Element {
+  const selections = useSelections();
+  return (
+    <div className="flex w-96 flex-col gap-3">
+      <DropZone
+        label="Images"
+        accept="image/png,.png"
+        multiple
+        folders
+        onSelect={selections.onSelect}
+      />
+      <SelectionOutput lines={selections.lines} reading={selections.reading} />
+    </div>
+  );
+}
+
+function DropAreaDemo(): React.JSX.Element {
+  const selections = useSelections();
+  return (
+    <div className="flex w-[32rem] flex-col gap-3">
+      <DropArea
+        prompt="Drop images to add them"
+        accept="image/png,.png"
+        multiple
+        folders
+        pasteActive
+        onSelect={selections.onSelect}
+        className="h-64 rounded-lg border p-4"
+      >
+        <p data-testid="area-content">Page content</p>
+        <Input aria-label="Area text" />
+      </DropArea>
+      <SelectionOutput lines={selections.lines} reading={selections.reading} />
+    </div>
+  );
+}
+
 export const Default: Story = {
   render: (): React.JSX.Element => <DropZoneDemo />,
 };
@@ -167,4 +264,12 @@ export const CustomInstructions: Story = {
       console.info("Selected reference image", files);
     },
   },
+};
+
+export const Folders: Story = {
+  render: (): React.JSX.Element => <FoldersDemo />,
+};
+
+export const Area: Story = {
+  render: (): React.JSX.Element => <DropAreaDemo />,
 };

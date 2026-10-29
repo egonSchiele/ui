@@ -1374,20 +1374,38 @@ These wrappers use react-resizable-panels 4.14.8 to arrange bounded, collapsible
 DropZone receives files from a picker, drag and drop, or scoped paste, and can decode a caller-defined internal drag payload.
 
 ```tsx
-<DropZone label="Images" accept="image/*,.png" multiple
-  onFiles={(files) => enqueueFiles(files)}
-  onReject={(rejections) => showErrors(rejections)}
-  description="Drop images from your computer or paste them here."
+<DropZone label="Images" accept="image/*,.png" multiple folders
+  onSelect={(choices) => queue(choices)}
+  description="Drop images or folders from your computer, or paste them here."
   pickerLabel="Browse images" />
 ```
 
-Props: required `label` and `onFiles(File[])`; optional `children`, `className`, `description: ReactNode`, `pickerLabel: string`, `accept` (standard comma-delimited MIME/extension tokens), `multiple=false`, `disabled`, `pasteActive=false`, `onReject(DropZoneRejection[])`, and `internalDrop`.
+Props: required `label`; optional `onSelect(Promise<DropZoneChoice[]>)`, `onFiles(File[])`, `onReject(DropZoneRejection[])`, `children`, `className`, `description: ReactNode`, `pickerLabel: string`, `accept` (standard comma-delimited MIME/extension tokens), `multiple=false`, `folders=false`, `disabled`, `pasteActive=false`, and `internalDrop`.
 
-The default description reflects `multiple` and whether `pasteActive` allows paste outside the focused zone. The picker says "Choose file" or "Choose files" by default; `pickerLabel` sets both its visible text and the start of its accessible name. `description` replaces the instructions associated with the zone.
+`onSelect` is called once per drop, paste, or pick, as soon as it starts. Its promise resolves with every file in the order the browser gave them. A `DropZoneChoice` is `{ accepted: true, file }` or `{ accepted: false, rejection }`. The promise never rejects. `onFiles` and `onReject` still fire after it resolves, with the accepted files and the rejections.
+
+With `folders`, a dropped folder gives the files inside it, subfolders included, sorted by name within each folder. Hidden files and folders inside it are skipped. A read that fails is logged and becomes an `unreadable` rejection. `folders` also adds a "Choose folder" picker, which gives the folder's files in path order and leaves out hidden ones. While a folder is read, the zone sets `aria-busy` and its description reads "Reading folders…".
+
+The default description reflects `multiple`, `folders`, and whether `pasteActive` allows paste outside the focused zone. The picker says "Choose file" or "Choose files" by default; `pickerLabel` sets both its visible text and the start of its accessible name. `description` replaces the instructions associated with the zone.
 
 `internalDrop` contains `mimeType`, `decode(payload): DropZoneDecodeResult<Value>`, and `onDrop(value)`. The result is `{ ok: true, value }` or `{ ok: false, message }`. Hover reads MIME types only; decoding occurs on drop. The component catches thrown decoder failures and reports an invalid-payload rejection. Use lowercase MIME names.
 
-Rejections have `code` (`file-type`, `too-many-files`, or `invalid-payload`), `message`, and optional `file`. For single-file mode the first accepted file is emitted and excess files are rejected. Paste applies inside the focused zone or when `pasteActive` enables outside noneditable targets. Text inputs keep their normal paste behavior. Nested zones own their own drop. Disabled zones prevent native file navigation without accepting files or forwarding them to an outer zone. Interactive children do not open the picker. The zone and its picker button provide keyboard access; the caller owns uploads and domain validation.
+Rejections have `code` (`file-type`, `too-many-files`, `invalid-payload`, or `unreadable`), `message`, and optional `file`. For single-file mode the first accepted file is emitted and excess files are rejected. Paste applies inside the focused zone or when `pasteActive` enables outside noneditable targets. Text inputs keep their normal paste behavior. Nested zones own their own drop. Disabled zones prevent native file navigation without accepting files or forwarding them to an outer zone. Interactive children do not open the picker. The zone and its picker button provide keyboard access; the caller owns uploads and domain validation.
+
+## DropArea
+
+DropArea makes other content, such as a whole page, a drop target, with no box, picker, or tab stop of its own.
+
+```tsx
+<DropArea prompt="Drop images to import them" accept="image/png" multiple folders
+  pasteActive onSelect={(choices) => queue(choices)} className="h-full">
+  <Page />
+</DropArea>
+```
+
+Props: required `prompt` and `children`; optional `onSelect`, `onFiles`, `onReject`, `className`, `accept`, `multiple`, `folders`, `disabled`, and `pasteActive`, with the same meaning as on DropZone.
+
+While files are dragged over it, an overlay with a dashed border shows `prompt`. While dropped folders are read, the overlay reads "Reading folders…" and the area sets `aria-busy`. A drop isn't keyboard accessible, so pair a DropArea with a picker, such as a DropZone in a dialog.
 
 ## ContextMenu family
 

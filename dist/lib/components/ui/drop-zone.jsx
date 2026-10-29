@@ -1,49 +1,9 @@
 "use client";
 import * as React from "react";
 import { Button } from "../../components/ui/form/button";
+import { chooseFiles, droppedEntry, pickedFolderFiles, readDroppedItems, } from "../../components/ui/drop-zone-files";
 import { cn } from "../../utils";
-function matchesAccept(file, accept) {
-    const tokens = (accept !== null && accept !== void 0 ? accept : "")
-        .split(",")
-        .map((token) => token.trim().toLowerCase())
-        .filter(Boolean);
-    if (tokens.length === 0) {
-        return true;
-    }
-    return tokens.some((token) => {
-        if (token.startsWith(".")) {
-            return file.name.toLowerCase().endsWith(token);
-        }
-        if (token.endsWith("/*")) {
-            return file.type.toLowerCase().startsWith(token.slice(0, -1));
-        }
-        return file.type.toLowerCase() === token;
-    });
-}
-function selectFiles(files, { accept, multiple, }) {
-    const accepted = [];
-    const rejected = [];
-    for (const file of files) {
-        if (!matchesAccept(file, accept)) {
-            rejected.push({
-                file,
-                code: "file-type",
-                message: `${file.name} is not an accepted file type.`,
-            });
-        }
-        else if (!multiple && accepted.length > 0) {
-            rejected.push({
-                file,
-                code: "too-many-files",
-                message: "Choose one file at a time.",
-            });
-        }
-        else {
-            accepted.push(file);
-        }
-    }
-    return { accepted, rejected };
-}
+const READING_FOLDERS = "Reading folders…";
 function isEditable(target) {
     return (target instanceof Element &&
         Boolean(target.closest("input, textarea, [role='textbox'], [contenteditable]:not([contenteditable='false'])")));
@@ -52,28 +12,47 @@ function ownsTarget(root, target) {
     return (target instanceof Element &&
         target.closest('[data-slot="drop-zone"]') === root);
 }
-function useFileSelection(props) {
-    return React.useCallback((files) => {
+function foundFiles(files) {
+    return Promise.resolve(files.map((file) => ({ file })));
+}
+// Calls the older two callbacks, for callers that don't use onSelect.
+function emitChoices(choices, { onFiles, onReject }) {
+    const files = choices.flatMap((choice) => choice.accepted ? [choice.file] : []);
+    const rejections = choices.flatMap((choice) => choice.accepted ? [] : [choice.rejection]);
+    if (files.length > 0) {
+        onFiles === null || onFiles === void 0 ? void 0 : onFiles(files);
+    }
+    if (rejections.length > 0) {
+        onReject === null || onReject === void 0 ? void 0 : onReject(rejections);
+    }
+}
+// Turns each selection into one ordered list of choices. `reading` is
+// true while a selection's folders are still being read.
+function useSelection(props) {
+    const [pending, setPending] = React.useState(0);
+    const receive = React.useCallback((found) => {
         var _a;
         if (props.disabled) {
             return;
         }
-        const selection = selectFiles(files, props);
-        if (selection.accepted.length > 0) {
-            props.onFiles(selection.accepted);
-        }
-        if (selection.rejected.length > 0) {
-            (_a = props.onReject) === null || _a === void 0 ? void 0 : _a.call(props, selection.rejected);
-        }
+        setPending((count) => count + 1);
+        const choices = found.then((files) => chooseFiles(files, props));
+        (_a = props.onSelect) === null || _a === void 0 ? void 0 : _a.call(props, choices);
+        void choices.then((list) => {
+            setPending((count) => count - 1);
+            emitChoices(list, props);
+        });
     }, [
         props.accept,
         props.multiple,
         props.disabled,
+        props.onSelect,
         props.onFiles,
         props.onReject,
     ]);
+    return { reading: pending > 0, receive };
 }
-function useScopedPaste({ rootRef, disabled, pasteActive, receiveFiles, }) {
+function useScopedPaste({ rootRef, disabled, pasteActive, receive, }) {
     React.useEffect(() => {
         if (!pasteActive || disabled) {
             return;
@@ -91,13 +70,13 @@ function useScopedPaste({ rootRef, disabled, pasteActive, receiveFiles, }) {
                 return;
             }
             event.preventDefault();
-            receiveFiles(files);
+            receive(foundFiles(files));
         }
         document.addEventListener("paste", onPaste);
         return () => {
             document.removeEventListener("paste", onPaste);
         };
-    }, [pasteActive, disabled, receiveFiles]);
+    }, [pasteActive, disabled, receive]);
     return (event) => {
         if (disabled ||
             event.defaultPrevented ||
@@ -111,7 +90,7 @@ function useScopedPaste({ rootRef, disabled, pasteActive, receiveFiles, }) {
         }
         event.preventDefault();
         event.stopPropagation();
-        receiveFiles(files);
+        receive(foundFiles(files));
     };
 }
 function useDropHover({ rootRef, disabled, mimeType, }) {
@@ -164,21 +143,50 @@ function decodeInternal(payload, decoder) {
         return { ok: false, message: "The dropped data could not be read." };
     }
 }
-function useDropZone(props) {
+// The items must be read during the drop event, because the browser
+// clears them after it. Reading the folders can happen later.
+function droppedFiles({ transfer, folders, }) {
+    if (!folders) {
+        return foundFiles(Array.from(transfer.files));
+    }
+    const items = Array.from(transfer.items)
+        .filter((item) => item.kind === "file")
+        .map((item) => {
+        const entry = item.webkitGetAsEntry();
+        return {
+            entry: entry === null ? null : droppedEntry(entry),
+            file: item.getAsFile(),
+        };
+    });
+    return readDroppedItems(items);
+}
+function dropInternal({ transfer, options, }) {
+    var _a;
+    if (!options.internalDrop) {
+        return;
+    }
+    const result = decodeInternal(transfer.getData(options.internalDrop.mimeType.toLowerCase()), options.internalDrop.decode);
+    if (result.ok) {
+        options.internalDrop.onDrop(result.value);
+    }
+    else {
+        (_a = options.onReject) === null || _a === void 0 ? void 0 : _a.call(options, [{ code: "invalid-payload", message: result.message }]);
+    }
+}
+function useDropTarget(options) {
     var _a;
     const rootRef = React.useRef(null);
-    const inputRef = React.useRef(null);
-    const receiveFiles = useFileSelection(props);
+    const selection = useSelection(options);
     const onPaste = useScopedPaste({
         rootRef,
-        disabled: props.disabled,
-        pasteActive: props.pasteActive,
-        receiveFiles,
+        disabled: options.disabled,
+        pasteActive: options.pasteActive,
+        receive: selection.receive,
     });
     const hover = useDropHover({
         rootRef,
-        disabled: props.disabled,
-        mimeType: (_a = props.internalDrop) === null || _a === void 0 ? void 0 : _a.mimeType,
+        disabled: options.disabled,
+        mimeType: (_a = options.internalDrop) === null || _a === void 0 ? void 0 : _a.mimeType,
     });
     function onDragOver(event) {
         if (!hover.ownsTransfer(event)) {
@@ -186,81 +194,126 @@ function useDropZone(props) {
         }
         event.preventDefault();
         event.stopPropagation();
-        event.dataTransfer.dropEffect = props.disabled ? "none" : "copy";
+        event.dataTransfer.dropEffect = options.disabled ? "none" : "copy";
     }
     function onDrop(event) {
-        var _a;
         if (!hover.ownsTransfer(event)) {
             return;
         }
         event.preventDefault();
         event.stopPropagation();
         hover.clear();
-        if (props.disabled) {
+        if (options.disabled) {
             return;
         }
         if (event.dataTransfer.files.length > 0) {
-            receiveFiles(Array.from(event.dataTransfer.files));
+            selection.receive(droppedFiles({
+                transfer: event.dataTransfer,
+                folders: options.folders,
+            }));
             return;
         }
-        if (!props.internalDrop) {
-            return;
-        }
-        const result = decodeInternal(event.dataTransfer.getData(props.internalDrop.mimeType.toLowerCase()), props.internalDrop.decode);
-        if (result.ok) {
-            props.internalDrop.onDrop(result.value);
-        }
-        else {
-            (_a = props.onReject) === null || _a === void 0 ? void 0 : _a.call(props, [{ code: "invalid-payload", message: result.message }]);
-        }
+        dropInternal({ transfer: event.dataTransfer, options });
     }
-    function openPicker() {
-        var _a;
-        if (!props.disabled) {
-            (_a = inputRef.current) === null || _a === void 0 ? void 0 : _a.click();
-        }
-    }
-    return Object.assign(Object.assign({ rootRef,
-        inputRef }, hover), { receiveFiles,
-        onDragOver,
+    return Object.assign(Object.assign({ rootRef }, hover), { reading: selection.reading, receive: selection.receive, onDragOver,
         onDrop,
-        onPaste,
-        openPicker });
+        onPaste });
 }
-function defaultDescription({ multiple, pasteActive, }) {
+function pickedFiles(input) {
+    var _a;
+    return foundFiles(pickedFolderFiles(Array.from((_a = input.files) !== null && _a !== void 0 ? _a : [])));
+}
+function defaultDescription({ multiple, folders, pasteActive, }) {
     const files = multiple ? "files" : "a file";
+    const dropped = folders ? `${files} or folders` : files;
     return pasteActive
-        ? `Drop ${files} here, or paste ${files}.`
-        : `Drop ${files} here, or paste while this area is focused.`;
+        ? `Drop ${dropped} here, or paste ${files}.`
+        : `Drop ${dropped} here, or paste while this area is focused.`;
+}
+function openPicker({ inputRef, disabled, }) {
+    var _a;
+    if (!disabled) {
+        (_a = inputRef.current) === null || _a === void 0 ? void 0 : _a.click();
+    }
+}
+// A button and its hidden file input. `folder` makes it pick a folder.
+function Picker(props) {
+    // React has no prop for webkitdirectory, so the input gets it here.
+    const folderAttributes = props.folder
+        ? { webkitdirectory: "" }
+        : {};
+    return (<>
+      <Button type="button" variant="outline" disabled={props.disabled} onClick={() => openPicker(props)} aria-label={`${props.label} for ${props.zoneLabel}`}>
+        {props.label}
+      </Button>
+      <input ref={props.inputRef} type="file" hidden accept={props.folder ? undefined : props.accept} multiple={props.folder || props.multiple} disabled={props.disabled} aria-label={`${props.inputLabel} for ${props.zoneLabel}`} {...folderAttributes} onChange={(event) => {
+            const found = pickedFiles(event.currentTarget);
+            event.currentTarget.value = "";
+            props.receive(found);
+        }}/>
+    </>);
+}
+function ZonePickers({ props, fileInputRef, folderInputRef, receive, }) {
+    var _a;
+    const pickerLabel = (_a = props.pickerLabel) !== null && _a !== void 0 ? _a : (props.multiple ? "Choose files" : "Choose file");
+    return (<div className="flex flex-wrap justify-center gap-2">
+      <Picker inputRef={fileInputRef} label={pickerLabel} zoneLabel={props.label} inputLabel="Files" disabled={props.disabled} accept={props.accept} multiple={props.multiple} folder={false} receive={receive}/>
+      {props.folders && (<Picker inputRef={folderInputRef} label="Choose folder" zoneLabel={props.label} inputLabel="Folder" disabled={props.disabled} folder receive={receive}/>)}
+    </div>);
 }
 export function DropZone(props) {
-    var _a, _b, _c;
-    const zone = useDropZone(props);
+    var _a, _b;
+    const zone = useDropTarget(props);
     const descriptionId = React.useId();
-    const pickerLabel = (_a = props.pickerLabel) !== null && _a !== void 0 ? _a : (props.multiple ? "Choose files" : "Choose file");
-    return (<div ref={zone.rootRef} role="group" aria-label={props.label} aria-describedby={descriptionId} aria-disabled={props.disabled} tabIndex={props.disabled ? -1 : 0} data-slot="drop-zone" data-drag-active={zone.dragActive || undefined} className={cn("border-input bg-background flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring", zone.dragActive && "border-primary bg-accent", props.disabled && "opacity-50", props.className)} onDragEnter={zone.onDragEnter} onDragLeave={zone.onDragLeave} onDrop={zone.onDrop} onPaste={zone.onPaste} onDragOver={zone.onDragOver} onClick={(event) => {
+    const fileInputRef = React.useRef(null);
+    const folderInputRef = React.useRef(null);
+    const openFiles = () => openPicker({ inputRef: fileInputRef, disabled: props.disabled });
+    return (<div ref={zone.rootRef} role="group" aria-label={props.label} aria-describedby={descriptionId} aria-disabled={props.disabled} aria-busy={zone.reading || undefined} tabIndex={props.disabled ? -1 : 0} data-slot="drop-zone" data-drag-active={zone.dragActive || undefined} className={cn("border-input bg-background flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring", zone.dragActive && "border-primary bg-accent", props.disabled && "opacity-50", props.className)} onDragEnter={zone.onDragEnter} onDragLeave={zone.onDragLeave} onDrop={zone.onDrop} onPaste={zone.onPaste} onDragOver={zone.onDragOver} onClick={(event) => {
             if (event.target === event.currentTarget) {
-                zone.openPicker();
+                openFiles();
             }
         }} onKeyDown={(event) => {
             if (event.target === event.currentTarget &&
                 (event.key === "Enter" || event.key === " ")) {
                 event.preventDefault();
-                zone.openPicker();
+                openFiles();
             }
         }}>
-      {(_b = props.children) !== null && _b !== void 0 ? _b : <span className="font-medium">{props.label}</span>}
+      {(_a = props.children) !== null && _a !== void 0 ? _a : <span className="font-medium">{props.label}</span>}
       <span id={descriptionId} className="text-muted-foreground text-sm">
-        {(_c = props.description) !== null && _c !== void 0 ? _c : defaultDescription(props)}
+        {zone.reading
+            ? READING_FOLDERS
+            : ((_b = props.description) !== null && _b !== void 0 ? _b : defaultDescription(props))}
       </span>
-      <Button type="button" variant="outline" disabled={props.disabled} onClick={zone.openPicker} aria-label={`${pickerLabel} for ${props.label}`}>
-        {pickerLabel}
-      </Button>
-      <input ref={zone.inputRef} type="file" hidden accept={props.accept} multiple={props.multiple} disabled={props.disabled} aria-label={`Files for ${props.label}`} onChange={(event) => {
-            var _a;
-            const files = Array.from((_a = event.currentTarget.files) !== null && _a !== void 0 ? _a : []);
-            event.currentTarget.value = "";
-            zone.receiveFiles(files);
-        }}/>
+      <ZonePickers props={props} fileInputRef={fileInputRef} folderInputRef={folderInputRef} receive={zone.receive}/>
+    </div>);
+}
+// The overlay's text: the prompt during a drag, a note while folders are
+// read, and nothing otherwise.
+function overlayText({ dragActive, reading, prompt, }) {
+    if (dragActive) {
+        return prompt;
+    }
+    if (reading) {
+        return READING_FOLDERS;
+    }
+    return null;
+}
+// A drop target that wraps other content, such as a whole page, with no
+// box, picker, or tab stop of its own. An overlay shows while files are
+// dragged over it. A drop isn't keyboard accessible, so the page must
+// also offer a picker.
+export function DropArea(props) {
+    const area = useDropTarget(props);
+    const overlay = overlayText({
+        dragActive: area.dragActive,
+        reading: area.reading,
+        prompt: props.prompt,
+    });
+    return (<div ref={area.rootRef} aria-busy={area.reading || undefined} data-slot="drop-zone" data-drag-active={area.dragActive || undefined} className={cn("relative", props.className)} onDragEnter={area.onDragEnter} onDragLeave={area.onDragLeave} onDrop={area.onDrop} onPaste={area.onPaste} onDragOver={area.onDragOver}>
+      {props.children}
+      {overlay !== null && (<div aria-hidden="true" data-slot="drop-area-overlay" className="border-primary bg-accent/80 text-foreground pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-lg border-2 border-dashed text-sm font-medium">
+          {overlay}
+        </div>)}
     </div>);
 }
