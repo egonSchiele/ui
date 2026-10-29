@@ -15,6 +15,7 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import { Kbd } from "../../components/ui/kbd";
 import { cn } from "../../utils";
+import { menuContentClassName, menuItemClassName } from "./menu-classes";
 export const ContextMenu = ContextMenuPrimitive.Root;
 export function ContextMenuTrigger(_a) {
     var { onKeyDown, disabled, asChild, tabIndex } = _a, props = __rest(_a, ["onKeyDown", "disabled", "asChild", "tabIndex"]);
@@ -41,21 +42,19 @@ export const ContextMenuGroup = ContextMenuPrimitive.Group;
 export const ContextMenuPortal = ContextMenuPrimitive.Portal;
 export const ContextMenuSub = ContextMenuPrimitive.Sub;
 export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
-const contentClassName = "bg-popover text-popover-foreground z-50 min-w-40 overflow-hidden rounded-md border p-1 shadow-md outline-none";
-const itemClassName = "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 export function ContextMenuContent(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
     return (<ContextMenuPrimitive.Portal>
-      <ContextMenuPrimitive.Content {...props} data-slot="context-menu-content" className={cn(contentClassName, className)}/>
+      <ContextMenuPrimitive.Content {...props} data-slot="context-menu-content" className={cn(menuContentClassName, className)}/>
     </ContextMenuPrimitive.Portal>);
 }
 export function ContextMenuItem(_a) {
     var { className, inset = false, variant = "default" } = _a, props = __rest(_a, ["className", "inset", "variant"]);
-    return (<ContextMenuPrimitive.Item {...props} data-slot="context-menu-item" className={cn(itemClassName, inset && "pl-8", variant === "destructive" && "text-destructive focus:text-destructive", className)}/>);
+    return (<ContextMenuPrimitive.Item {...props} data-slot="context-menu-item" className={cn(menuItemClassName, inset && "pl-8", variant === "destructive" && "text-destructive focus:text-destructive", className)}/>);
 }
 export function ContextMenuCheckboxItem(_a) {
     var { children, className } = _a, props = __rest(_a, ["children", "className"]);
-    return (<ContextMenuPrimitive.CheckboxItem {...props} data-slot="context-menu-checkbox-item" className={cn(itemClassName, "pl-8", className)}>
+    return (<ContextMenuPrimitive.CheckboxItem {...props} data-slot="context-menu-checkbox-item" className={cn(menuItemClassName, "pl-8", className)}>
       <span className="absolute left-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
           <CheckIcon aria-hidden="true" className="size-4"/>
@@ -66,7 +65,7 @@ export function ContextMenuCheckboxItem(_a) {
 }
 export function ContextMenuRadioItem(_a) {
     var { children, className } = _a, props = __rest(_a, ["children", "className"]);
-    return (<ContextMenuPrimitive.RadioItem {...props} data-slot="context-menu-radio-item" className={cn(itemClassName, "pl-8", className)}>
+    return (<ContextMenuPrimitive.RadioItem {...props} data-slot="context-menu-radio-item" className={cn(menuItemClassName, "pl-8", className)}>
       <span className="absolute left-2 flex size-4 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
           <CircleIcon aria-hidden="true" className="size-2 fill-current"/>
@@ -89,7 +88,7 @@ export function ContextMenuShortcut(_a) {
 }
 export function ContextMenuSubTrigger(_a) {
     var { className, children, inset = false } = _a, props = __rest(_a, ["className", "children", "inset"]);
-    return (<ContextMenuPrimitive.SubTrigger {...props} data-slot="context-menu-sub-trigger" className={cn(itemClassName, "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground", inset && "pl-8", className)}>
+    return (<ContextMenuPrimitive.SubTrigger {...props} data-slot="context-menu-sub-trigger" className={cn(menuItemClassName, "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground", inset && "pl-8", className)}>
       {children}
       <ChevronRightIcon aria-hidden="true" className="ml-auto size-4"/>
     </ContextMenuPrimitive.SubTrigger>);
@@ -97,6 +96,6 @@ export function ContextMenuSubTrigger(_a) {
 export function ContextMenuSubContent(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
     return (<ContextMenuPrimitive.Portal>
-      <ContextMenuPrimitive.SubContent {...props} data-slot="context-menu-sub-content" className={cn(contentClassName, className)}/>
+      <ContextMenuPrimitive.SubContent {...props} data-slot="context-menu-sub-content" className={cn(menuContentClassName, className)}/>
     </ContextMenuPrimitive.Portal>);
 }

@@ -60,3 +60,4 @@ export { Kbd } from "./components/ui/kbd";
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "./components/ui/layout/resizable";
 export { DropArea, DropZone } from "./components/ui/drop-zone";
 export { ContextMenu, ContextMenuTrigger, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuRadioGroup, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSubTrigger, ContextMenuSubContent } from "./components/ui/context-menu";
+export { DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuRadioGroup, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSubTrigger, DropdownMenuSubContent } from "./components/ui/dropdown-menu";

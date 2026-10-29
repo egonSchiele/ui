@@ -1,4 +1,18 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+
+// A Radix layer starts to take Escape a few frames after it mounts. Until
+// then, the layer under it takes Escape. Wait two animation frames before
+// pressing Escape in a layer that just opened.
+async function waitForLayers(page: Page): Promise<void> {
+  await page.evaluate(
+    (): Promise<void> =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
 test("scalar Slider reports keyboard changes, commits, external resets, and bounds", async ({
   page,
 }) => {
@@ -192,6 +206,147 @@ test("context menu supports keyboard invocation, disabled entries, submenus, and
   await expect(page.getByText("Action: Archived")).toBeVisible();
 });
 
+test("dropdown menu opens from its trigger, moves by keyboard, and restores focus", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "File actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await expect(
+    page.getByRole("menuitem", { name: "Unavailable" }),
+  ).toHaveAttribute("aria-disabled", "true");
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menuitem", { name: "Move to", exact: true })).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Action: Opened")).toBeVisible();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await page.getByRole("menuitem", { name: "Move to", exact: true }).hover();
+  await page.getByRole("menuitem", { name: "Archive", exact: true }).click();
+  await expect(page.getByText("Action: Archived")).toBeVisible();
+});
+
+test("dropdown menu moves into and out of a submenu by keyboard, and Escape closes it", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "File actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  const moveTo: Locator = page.getByRole("menuitem", {
+    name: "Move to",
+    exact: true,
+  });
+  await expect(
+    page.getByRole("menuitem", { name: "Open", exact: false }),
+  ).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(moveTo).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("menuitem", { name: "Archive", exact: true }),
+  ).toBeFocused();
+  // An unset CSS variable makes max-height compute to "none".
+  const subMenuMaxHeight: string = await page
+    .locator('[data-slot="dropdown-menu-sub-content"]')
+    .evaluate((element: Element): string => getComputedStyle(element).maxHeight);
+  expect(subMenuMaxHeight).not.toBe("none");
+  await page.keyboard.press("ArrowLeft");
+  await expect(moveTo).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test("a click outside a dropdown menu closes it without choosing an item", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--default&viewMode=story");
+  await page.getByRole("button", { name: "File actions" }).click();
+  await expect(page.getByRole("menu")).toBeVisible();
+  await page.mouse.click(5, 5);
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(page.getByText("Action: None")).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.pointerEvents))
+    .not.toBe("none");
+});
+
+test("dropdown menu item that opens a dialog leaves the page clickable", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto(
+    "/iframe.html?id=ui-dropdownmenu--opens-dialog&viewMode=story",
+  );
+  await page.getByRole("button", { name: "Actions" }).click();
+  await page.getByRole("menuitem", { name: "Rename" }).click();
+  await expect(page.getByRole("dialog", { name: "Rename" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.pointerEvents))
+    .not.toBe("none");
+  await page.getByRole("button", { name: "Count" }).click();
+  await expect(page.getByText("Clicks: 1")).toBeVisible();
+});
+
+test("dropdown menu inside a dialog takes focus, and Escape closes only the menu", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-dropdownmenu--in-dialog&viewMode=story");
+  const trigger: Locator = page.getByRole("button", { name: "Image actions" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menuitem", { name: "Rename" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("menuitem", { name: "Move" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Action: Move")).toBeVisible();
+  await trigger.press("Enter");
+  await expect(page.getByRole("menu")).toBeVisible();
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("menu")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Image" })).toBeVisible();
+  await expect(trigger).toBeFocused();
+});
+
+test("a dropdown menu taller than the window scrolls inside it", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  await page.goto("/iframe.html?id=ui-dropdownmenu--long-menu&viewMode=story");
+  await page.getByRole("button", { name: "Sixty folders" }).click();
+  const menu: Locator = page.getByRole("menu");
+  const box = await menu.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box?.y ?? -1).toBeGreaterThanOrEqual(0);
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(600);
+  await page.getByRole("menuitem", { name: "Folder 60" }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole("menuitem", { name: "Folder 60" })).toBeInViewport();
+});
+
 test("Slider places accessible labels and value text only on its thumb", async ({
   page,
 }: {
@@ -302,4 +457,61 @@ test("Progress applies dimensions and styles to the bar and customizes its indic
   const barRight: number = (bar?.x ?? 0) + (bar?.width ?? 0);
   const valueRight: number = (valueText?.x ?? 0) + (valueText?.width ?? 0);
   expect(Math.abs(barRight - valueRight)).toBeLessThanOrEqual(1);
+});
+
+// Each copy of these packages keeps its own stack of open layers and focus
+// traps. With two copies, Escape closes both a popup and the dialog under
+// it. The dialog also keeps focus away from the popup.
+test("the lockfile resolves one copy of each Radix layer package", (): void => {
+  const lockfile: string = readFileSync("pnpm-lock.yaml", "utf8");
+  for (const name of ["react-dismissable-layer", "react-focus-scope"]) {
+    const versions: string[] = [
+      ...lockfile.matchAll(
+        new RegExp(`^  '@radix-ui/${name}@([^(']+)`, "gm"),
+      ),
+    ].map((match: RegExpMatchArray): string => match[1]);
+    const unique: string[] = [...new Set(versions)];
+    expect(
+      unique,
+      `@radix-ui/${name} resolves to ${unique.join(", ")}`,
+    ).toHaveLength(1);
+  }
+});
+
+test("a Select inside a dialog takes focus, and Escape closes only the list", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-select--in-dialog&viewMode=story");
+  const trigger: Locator = page.getByRole("combobox", { name: "Fruit" });
+  await trigger.focus();
+  await trigger.press("Enter");
+  await expect(page.getByRole("option", { name: "Apple" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByRole("option", { name: "Banana" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("Fruit: banana")).toBeVisible();
+  await trigger.press("Enter");
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("listbox")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Pick a fruit" })).toBeVisible();
+  await expect(trigger).toBeFocused();
+});
+
+test("Escape closes a tooltip inside a dialog without closing the dialog", async ({
+  page,
+}: {
+  page: Page;
+}): Promise<void> => {
+  await page.goto("/iframe.html?id=ui-simpletooltip--in-dialog&viewMode=story");
+  await expect(page.getByRole("button", { name: "Rename" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("tooltip")).toHaveText("Download the original");
+  await waitForLayers(page);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("tooltip")).toHaveCount(0);
+  await expect(page.getByRole("dialog", { name: "Image" })).toBeVisible();
 });

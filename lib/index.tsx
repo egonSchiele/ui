@@ -427,6 +427,7 @@ export { Kbd } from "@/components/ui/kbd";
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle, type ResizableLayout, type ResizableLayoutChangedMeta, type ResizablePanelSize, type ResizablePanelGroupProps, type ResizablePanelProps, type ResizableHandleProps } from "@/components/ui/layout/resizable";
 export { DropArea, DropZone, type DropAreaProps, type DropZoneChoice, type DropZoneProps, type DropZoneRejection, type DropZoneDecodeResult, type DropZoneInternalDrop } from "@/components/ui/drop-zone";
 export { ContextMenu, ContextMenuTrigger, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuRadioGroup, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSubTrigger, ContextMenuSubContent } from "@/components/ui/context-menu";
+export { DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuRadioGroup, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown-menu";
 
 export type { HelperTextProps } from "./components/ui/typography/helperText.jsx";
 export type { SectionHeadingProps } from "./components/ui/typography/sectionHeading.jsx";
